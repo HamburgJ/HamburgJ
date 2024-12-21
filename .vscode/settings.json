@@ -1,0 +1,16 @@
+{
+    "git.ignoreLimitWarning": true,
+    "files.watcherExclude": {
+        "**/node_modules/**": true
+    },
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 1000,
+    "emeraldwalk.runonsave": {
+        "commands": [
+            {
+                "match": "projects.json$",
+                "cmd": "node ${workspaceFolder}/scripts/sync-projects.js && node ${workspaceFolder}/scripts/generate-readme.js"
+            }
+        ]
+    }
+}

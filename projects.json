@@ -1,0 +1,31 @@
+{
+  "projects": [
+    {
+      "name": "Grocery Buddy",
+      "description": "Find the best grocery prices in Ontario. Compare prices across stores, and save money on your groceries. 🛒",
+      "color": "#4CAF50",
+      "liveUrl": "https://hamburgj.github.io/grocery-buddy",
+      "repoUrl": "https://github.com/HamburgJ/grocery-buddy",
+      "actionText": "Try It Now"
+    },
+    {
+      "name": "Infinite Levels!",
+      "description": "A mind-bending infinite puzzle game that challenges your understanding of reality. 🌀",
+      "color": "#DD6387",
+      "liveUrl": "https://hamburgj.github.io/Infinite-Levels",
+      "repoUrl": "https://github.com/HamburgJ/Infinite-Levels",
+      "actionText": "Play Now"
+    },
+    {
+      "name": "Match 5",
+      "description": "A dynamic word puzzle game exploring multiple meanings. 🎯",
+      "color": "#FF5722",
+      "liveUrl": "https://hamburgj.github.io/match-five",
+      "repoUrl": "https://github.com/HamburgJ/match-five",
+      "actionText": "Play Now"
+    }
+  ],
+  "socialLinks": {
+    "linkedin": "https://www.linkedin.com/in/joshua-hamburger-0807342b8/"
+  }
+} 

@@ -11,6 +11,7 @@
 </h2>
 
 <div align="center" style="margin: 30px 0">
+
   <div style="background: #1a1b27; padding: 20px; border-radius: 10px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between;">
     <div style="flex: 1; padding-right: 20px;">
       <h3 style="color: #4CAF50; font-size: 24px; margin-bottom: 10px;">Grocery Buddy</h3>
@@ -18,7 +19,7 @@
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <a href="https://hamburgj.github.io/grocery-buddy" target="_blank">
-        <img src="https://img.shields.io/badge/Try_It_Now-4CAF50?style=for-the-badge&logo=react&logoColor=white" alt="Try Grocery Buddy" height="40">
+        <img src="https://img.shields.io/badge/Try_It_Now-4CAF50?style=for-the-badge&logo=react&logoColor=white" alt="Try It Now" height="40">
       </a>
       <a href="https://github.com/HamburgJ/grocery-buddy" target="_blank">
         <img src="https://img.shields.io/badge/View_Code-2a2e3b?style=for-the-badge&logo=github&logoColor=white" alt="View Code" height="40">
@@ -33,7 +34,7 @@
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <a href="https://hamburgj.github.io/Infinite-Levels" target="_blank">
-        <img src="https://img.shields.io/badge/Play_Now-DD6387?style=for-the-badge&logo=react&logoColor=white" alt="Play Infinite Levels" height="40">
+        <img src="https://img.shields.io/badge/Play_Now-DD6387?style=for-the-badge&logo=react&logoColor=white" alt="Play Now" height="40">
       </a>
       <a href="https://github.com/HamburgJ/Infinite-Levels" target="_blank">
         <img src="https://img.shields.io/badge/View_Code-2a2e3b?style=for-the-badge&logo=github&logoColor=white" alt="View Code" height="40">
@@ -48,7 +49,7 @@
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <a href="https://hamburgj.github.io/match-five" target="_blank">
-        <img src="https://img.shields.io/badge/Play_Now-FF5722?style=for-the-badge&logo=react&logoColor=white" alt="Play Match 5" height="40">
+        <img src="https://img.shields.io/badge/Play_Now-FF5722?style=for-the-badge&logo=react&logoColor=white" alt="Play Now" height="40">
       </a>
       <a href="https://github.com/HamburgJ/match-five" target="_blank">
         <img src="https://img.shields.io/badge/View_Code-2a2e3b?style=for-the-badge&logo=github&logoColor=white" alt="View Code" height="40">
@@ -56,6 +57,7 @@
     </div>
   </div>
 </div>
+
 <br>
 <div align="center">
   <a href="https://www.linkedin.com/in/joshua-hamburger-0807342b8/" target="_blank">
