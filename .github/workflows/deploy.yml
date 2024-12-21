@@ -75,15 +75,16 @@ jobs:
         working-directory: web
         env:
           CI: false
+          PUBLIC_URL: https://hamburgj.github.io/HamburgJ
         run: npm run build
+
+      - name: Ensure images directory exists
+        run: mkdir -p web/build/images
 
       - name: Copy public files
         run: |
-          cp -r web/public/* web/build/ 2>/dev/null || :
-          # Ensure manifest.json exists in build directory
-          if [ ! -f web/build/manifest.json ]; then
-            cp web/public/manifest.json web/build/
-          fi
+          cp -r web/public/images/* web/build/images/ 2>/dev/null || :
+          cp web/public/manifest.json web/build/ 2>/dev/null || :
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
