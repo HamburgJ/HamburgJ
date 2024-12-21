@@ -1,5 +1,6 @@
 {
   "name": "web",
+  "homepage": "https://hamburgj.github.io/HamburgJ",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
