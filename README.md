@@ -1,11 +1,11 @@
 <h1 align="center">
-  <a href="#">
+  <a href="#" target="_blank">
     <img src="https://readme-typing-svg.demolab.com?font=Roberto&weight=700&size=60&duration=1&pause=1000&color=ffffff&center=true&vCenter=true&repeat=false&width=600&height=70&lines=Joshua+Hamburger" alt="Joshua Hamburger" />
   </a>
 </h1>
 
 <h2 align="center">
-  <a href="#">
+  <a href="#" target="_blank">
     <img src="https://readme-typing-svg.demolab.com?font=Roberto&weight=100&size=30&duration=1&pause=1000&color=ffffff&center=true&vCenter=true&repeat=false&width=600&height=70&lines=Projects" alt="Projects" />
   </a>
 </h2>
@@ -17,10 +17,10 @@
       <p style="font-size: 16px; margin: 15px 0;">Find the best grocery prices in Ontario. Compare prices across stores, and save money on your groceries. 🛒</p>
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px;">
-      <a href="https://hamburgj.github.io/grocery-buddy">
+      <a href="https://hamburgj.github.io/grocery-buddy" target="_blank">
         <img src="https://img.shields.io/badge/Try_It_Now-4CAF50?style=for-the-badge&logo=react&logoColor=white" alt="Try Grocery Buddy" height="40">
       </a>
-      <a href="https://github.com/HamburgJ/grocery-buddy">
+      <a href="https://github.com/HamburgJ/grocery-buddy" target="_blank">
         <img src="https://img.shields.io/badge/View_Code-2a2e3b?style=for-the-badge&logo=github&logoColor=white" alt="View Code" height="40">
       </a>
     </div>
@@ -32,10 +32,10 @@
       <p style="font-size: 16px; margin: 15px 0;">A mind-bending infinite puzzle game that challenges your understanding of reality. 🌀</p>
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px;">
-      <a href="https://hamburgj.github.io/Infinite-Levels">
+      <a href="https://hamburgj.github.io/Infinite-Levels" target="_blank">
         <img src="https://img.shields.io/badge/Play_Now-DD6387?style=for-the-badge&logo=react&logoColor=white" alt="Play Infinite Levels" height="40">
       </a>
-      <a href="https://github.com/HamburgJ/Infinite-Levels">
+      <a href="https://github.com/HamburgJ/Infinite-Levels" target="_blank">
         <img src="https://img.shields.io/badge/View_Code-2a2e3b?style=for-the-badge&logo=github&logoColor=white" alt="View Code" height="40">
       </a>
     </div>
@@ -47,10 +47,10 @@
       <p style="font-size: 16px; margin: 15px 0;">A dynamic word puzzle game exploring multiple meanings. 🎯</p>
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px;">
-      <a href="https://hamburgj.github.io/match-five">
+      <a href="https://hamburgj.github.io/match-five" target="_blank">
         <img src="https://img.shields.io/badge/Play_Now-FF5722?style=for-the-badge&logo=react&logoColor=white" alt="Play Match 5" height="40">
       </a>
-      <a href="https://github.com/HamburgJ/match-five">
+      <a href="https://github.com/HamburgJ/match-five" target="_blank">
         <img src="https://img.shields.io/badge/View_Code-2a2e3b?style=for-the-badge&logo=github&logoColor=white" alt="View Code" height="40">
       </a>
     </div>
@@ -58,7 +58,7 @@
 </div>
 <br>
 <div align="center">
-  <a href="https://www.linkedin.com/in/joshua-hamburger-0807342b8/">
+  <a href="https://www.linkedin.com/in/joshua-hamburger-0807342b8/" target="_blank">
     <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
   </a>
 </div>
