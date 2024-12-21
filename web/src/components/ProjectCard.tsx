@@ -3,7 +3,6 @@ import { Card, CardContent, Typography, Button, Stack, Box } from '@mui/material
 import { Project } from '../data/projects';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LaunchIcon from '@mui/icons-material/Launch';
-import { getAssetPath } from '../utils/paths';
 
 interface ProjectCardProps {
   project: Project;
