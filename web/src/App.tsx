@@ -111,7 +111,7 @@ const App: React.FC = () => {
                   <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
                     <Box
                       component="img"
-                      src="HamburgJ/images/1709583939547.jpg"
+                      src="images/1709583939547.jpg"
                       alt="Joshua Hamburger"
                       sx={{
                         width: 80,

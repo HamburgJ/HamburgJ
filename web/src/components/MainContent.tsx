@@ -9,21 +9,21 @@ const workExperiences = [
     company: "Descartes Systems Group Inc",
     role: "Software Developer",
     period: "Jan 2024 - Apr 2024",
-    logo: "HamburgJ/images/descartes_systems_group_logo.jpg",
+    logo: "images/descartes_systems_group_logo.jpg",
     description: "Worked on logistics and supply chain management software"
     },
     {
         company: "CharityCAN",
         role: "Full-Stack Software Engineering Intern",
         period: "May 2022 - Aug 2022, Jan 2023 - Apr 2023",
-        logo: "HamburgJ/images/charitycan_logo.jpg",
+        logo: "images/charitycan_logo.jpg",
         description: "Built fundraising analytics and donor management solutions"
       },
 {
     company: "Cadence Agriculture Systems Inc",
     role: "Full-Stack/Embedded Software Engineering Intern",
     period: "Sept 2021 - Apr 2022",
-    logo: "HamburgJ/images/1660839913252.jpg",
+    logo: "images/1660839913252.jpg",
     description: "Developed transportation management solutions"
     },
   
@@ -32,7 +32,7 @@ const workExperiences = [
     company: "Quilt.AI",
     role: "AI/ML Software Engineering Intern",
     period: "Jan 2021 - Apr 2021",
-    logo: "HamburgJ/images/quiltdotai_logo.jpg",
+    logo: "images/quiltdotai_logo.jpg",
     description: "Developed AI-powered social impact analysis tools"
   },
   
@@ -86,7 +86,7 @@ const MainContent: React.FC = () => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
           <Box
             component="img"
-            src="HamburgJ/images/University_of_Waterloo_seal.svg.png"
+            src="images/University_of_Waterloo_seal.svg.png"
             alt="University of Waterloo"
             sx={{
               width: 60,

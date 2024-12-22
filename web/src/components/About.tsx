@@ -20,7 +20,7 @@ const About: React.FC = () => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
           <Box
             component="img"
-            src="HamburgJ/images/University_of_Waterloo_seal.svg.png"
+            src="images/University_of_Waterloo_seal.svg.png"
             alt="University of Waterloo"
             sx={{
               width: 80,
