@@ -6,22 +6,30 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.14.18",
+    "@mui/icons-material": "^5.16.12",
     "@mui/material": "^5.14.18",
+    "@react-three/drei": "^9.120.4",
+    "@react-three/fiber": "^8.17.10",
+    "@types/three": "^0.171.0",
+    "framer-motion": "^11.15.0",
     "react": "^18.2.0",
     "react-dom": "^18.3.1",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "react-type-animation": "^3.2.0",
+    "three": "^0.171.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@types/node": "^20.9.4",
     "@types/react": "^18.2.38",
     "@types/react-dom": "^18.2.17",
+    "react-snap": "^1.23.0",
     "typescript": "^4.9.5"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "CI=false react-scripts build",
+    "build": "set DISABLE_ESLINT_PLUGIN=true && react-scripts build",
+    "postbuild": "react-snap",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

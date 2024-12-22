@@ -14,12 +14,12 @@
 
   <div style="background: #1a1b27; padding: 20px; border-radius: 10px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between;">
     <div style="flex: 1; padding-right: 20px;">
-      <h3 style="color: #4CAF50; font-size: 24px; margin-bottom: 10px;">Grocery Buddy</h3>
+      <h3 style="color: #2E7D32; font-size: 24px; margin-bottom: 10px;">Grocery Buddy</h3>
       <p style="font-size: 16px; margin: 15px 0;">Find the best grocery prices in Ontario. Compare prices across stores, and save money on your groceries. 🛒</p>
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <a href="https://hamburgj.github.io/grocery-buddy" target="_blank">
-        <img src="https://img.shields.io/badge/Try_It_Now-4CAF50?style=for-the-badge&logo=react&logoColor=white" alt="Try It Now" height="40">
+        <img src="https://img.shields.io/badge/Try_It_Now-2E7D32?style=for-the-badge&logo=react&logoColor=white" alt="Try It Now" height="40">
       </a>
       <a href="https://github.com/HamburgJ/grocery-buddy" target="_blank">
         <img src="https://img.shields.io/badge/View_Code-2a2e3b?style=for-the-badge&logo=github&logoColor=white" alt="View Code" height="40">
@@ -29,12 +29,12 @@
 
   <div style="background: #1a1b27; padding: 20px; border-radius: 10px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between;">
     <div style="flex: 1; padding-right: 20px;">
-      <h3 style="color: #DD6387; font-size: 24px; margin-bottom: 10px;">Infinite Levels!</h3>
+      <h3 style="color: #5C6BC0; font-size: 24px; margin-bottom: 10px;">Infinite Levels!</h3>
       <p style="font-size: 16px; margin: 15px 0;">A mind-bending infinite puzzle game that challenges your understanding of reality. 🌀</p>
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <a href="https://hamburgj.github.io/Infinite-Levels" target="_blank">
-        <img src="https://img.shields.io/badge/Play_Now-DD6387?style=for-the-badge&logo=react&logoColor=white" alt="Play Now" height="40">
+        <img src="https://img.shields.io/badge/Play_Now-5C6BC0?style=for-the-badge&logo=react&logoColor=white" alt="Play Now" height="40">
       </a>
       <a href="https://github.com/HamburgJ/Infinite-Levels" target="_blank">
         <img src="https://img.shields.io/badge/View_Code-2a2e3b?style=for-the-badge&logo=github&logoColor=white" alt="View Code" height="40">
@@ -44,12 +44,12 @@
 
   <div style="background: #1a1b27; padding: 20px; border-radius: 10px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between;">
     <div style="flex: 1; padding-right: 20px;">
-      <h3 style="color: #FF5722; font-size: 24px; margin-bottom: 10px;">Match 5</h3>
+      <h3 style="color: #7B1FA2; font-size: 24px; margin-bottom: 10px;">Match 5</h3>
       <p style="font-size: 16px; margin: 15px 0;">A dynamic word puzzle game exploring multiple meanings. 🎯</p>
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <a href="https://hamburgj.github.io/match-five" target="_blank">
-        <img src="https://img.shields.io/badge/Play_Now-FF5722?style=for-the-badge&logo=react&logoColor=white" alt="Play Now" height="40">
+        <img src="https://img.shields.io/badge/Play_Now-7B1FA2?style=for-the-badge&logo=react&logoColor=white" alt="Play Now" height="40">
       </a>
       <a href="https://github.com/HamburgJ/match-five" target="_blank">
         <img src="https://img.shields.io/badge/View_Code-2a2e3b?style=for-the-badge&logo=github&logoColor=white" alt="View Code" height="40">

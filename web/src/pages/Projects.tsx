@@ -1,12 +1,23 @@
 import React from 'react';
-import { Container, Typography, Box } from '@mui/material';
+import { Container, Typography, Box, SxProps, Theme } from '@mui/material';
 import { ProjectCard } from '../components/ProjectCard';
 import { projects } from '../data/projects';
+import { styled } from '@mui/material/styles';
+
+const StyledContainer = styled(Container)({
+  paddingTop: 64,
+  paddingBottom: 64,
+});
+
+const HeaderBox = styled(Box)({
+  marginBottom: 48,
+  textAlign: 'center',
+});
 
 export const Projects: React.FC = () => {
   return (
-    <Container maxWidth="lg" sx={{ py: 8 }}>
-      <Box sx={{ mb: 6, textAlign: 'center' }}>
+    <StyledContainer maxWidth="lg">
+      <HeaderBox>
         <Typography
           component="h1"
           variant="h2"
@@ -22,11 +33,11 @@ export const Projects: React.FC = () => {
         >
           Check out some of my recent work
         </Typography>
-      </Box>
+      </HeaderBox>
 
       {projects.map((project) => (
         <ProjectCard key={project.name} project={project} />
       ))}
-    </Container>
+    </StyledContainer>
   );
 }; 

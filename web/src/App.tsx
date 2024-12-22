@@ -1,46 +1,143 @@
 import React from 'react';
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import { createTheme } from '@mui/material/styles';
-import { Projects } from './pages/Projects';
+import { Container, Grid, Paper, Box, CssBaseline } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
+import { keyframes } from '@mui/system';
+import theme from './theme';
+import MainContent from './components/MainContent';
+import Contact from './components/Contact';
+import Hero from './components/Hero';
 
-const theme = createTheme({
-  palette: {
-    mode: 'dark',
-    background: {
-      default: '#0a0a0a',
-      paper: '#1a1b27',
-    },
-    text: {
-      primary: '#ffffff',
-      secondary: 'rgba(255, 255, 255, 0.7)',
-    },
-  },
-  typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-    h2: {
-      fontWeight: 700,
-    },
-    h5: {
-      fontWeight: 500,
-    },
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
-          fontWeight: 500,
-        },
-      },
-    },
-  },
-});
+// Single variable to control the rainbow intensity
+const RAINBOW_OPACITY = 0.08;
 
-export const App: React.FC = () => {
+const rainbowMove = keyframes`
+  0% {
+    background-size: 100% 100%;
+    opacity: ${RAINBOW_OPACITY};
+  }
+  50% {
+    background-size: 150% 150%;
+    opacity: ${RAINBOW_OPACITY * 1.5};
+  }
+  100% {
+    background-size: 100% 100%;
+    opacity: ${RAINBOW_OPACITY};
+  }
+`;
+
+const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Projects />
+      <Box 
+        sx={{ 
+          minHeight: '100vh',
+          width: '100%',
+          background: '#ffffff',
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          '&::before': {
+            content: '""',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage: `radial-gradient(circle at center, 
+              rgba(255,255,255,0.5) 0%, 
+              rgba(255,20,147,${RAINBOW_OPACITY * 3}) 10%, 
+              rgba(255,0,0,${RAINBOW_OPACITY * 3}) 20%, 
+              rgba(255,165,0,${RAINBOW_OPACITY * 3}) 30%, 
+              rgba(255,255,0,${RAINBOW_OPACITY * 3}) 40%, 
+              rgba(0,255,0,${RAINBOW_OPACITY * 3}) 50%, 
+              rgba(0,191,255,${RAINBOW_OPACITY * 3}) 60%, 
+              rgba(138,43,226,${RAINBOW_OPACITY * 3}) 70%, 
+              rgba(255,255,255,0.5) 100%
+            )`,
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: '100% 100%',
+            animation: `${rainbowMove} 8s ease-in-out infinite`,
+            pointerEvents: 'none',
+            zIndex: 0,
+            transformOrigin: 'center center',
+            filter: 'blur(30px)',
+          }
+        }}
+      >
+        <Container 
+          maxWidth="lg" 
+          sx={{ 
+            py: 4, 
+            position: 'relative', 
+            zIndex: 1,
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column'
+          }}
+        >
+          <Grid 
+            container 
+            spacing={3} 
+            sx={{ 
+              flex: 1,
+              position: 'relative'
+            }}
+          >
+            <Grid 
+              item 
+              xs={12} 
+              md={3.5}
+            >
+              <Box
+                sx={{
+                  position: 'sticky',
+                  top: 24,
+                  width: '100%',
+                  height: 'fit-content'
+                }}
+              >
+                <Paper
+                  sx={{
+                    p: 3,
+                    width: { xs: '100%', md: '315px' },
+                    marginRight: { md: 6 },
+                    '@media (max-width: 900px)': {
+                      width: '100%',
+                    }
+                  }}
+                >
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
+                    <Box
+                      component="img"
+                      src="HamburgJ/images/1709583939547.jpg"
+                      alt="Joshua Hamburger"
+                      sx={{
+                        width: 80,
+                        height: 80,
+                        mb: 2,
+                        borderRadius: '50%',
+                        border: '3px solid',
+                        borderColor: 'primary.main',
+                      }}
+                    />
+                    <Hero />
+                  </Box>
+                  <Contact />
+                </Paper>
+              </Box>
+            </Grid>
+
+            {/* Right Column - Main Content */}
+            <Grid item xs={12} md={7.5} sx={{ pl: { md: 4 } }}>
+              <MainContent />
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
     </ThemeProvider>
   );
-}; 
+};
+
+export default App; 
