@@ -7,7 +7,7 @@ import { projects } from '../data/projects';
 const workExperiences = [
 {
     company: "Descartes Systems Group Inc",
-    role: "Software Developer",
+    role: "Full-Stack Software Engineering Intern",
     period: "Jan 2024 - Apr 2024",
     logo: "images/descartes_systems_group_logo.jpg",
     description: "Worked on logistics and supply chain management software"
@@ -26,8 +26,6 @@ const workExperiences = [
     logo: "images/1660839913252.jpg",
     description: "Developed transportation management solutions"
     },
-  
-
   {
     company: "Quilt.AI",
     role: "AI/ML Software Engineering Intern",
