@@ -115,7 +115,7 @@ const MainContent: React.FC = () => {
                 fontSize: '0.9rem',
               }}
             >
-              <Terminal sx={{ fontSize: 16, mr: 1, verticalAlign: 'middle' }} />
+      
               4th Year Computer Engineering
             </Typography>
           </Box>
@@ -180,23 +180,50 @@ const MainContent: React.FC = () => {
                   flexDirection: 'column',
                   border: '1px solid',
                   borderColor: 'rgba(230,235,240,0.9)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '3px',
+                    background: `linear-gradient(90deg, transparent, ${project.color}, transparent)`,
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease-in-out',
+                  },
                   '&:hover': {
                     transform: 'translateY(-4px)',
-                    transition: 'transform 0.2s ease-in-out',
                     borderColor: project.color,
+                    boxShadow: `0 8px 24px rgba(0,0,0,0.12)`,
+                    '&::before': {
+                      opacity: 1
+                    },
+                    '& .project-title': {
+                      transform: 'translateX(8px)',
+                      color: project.color
+                    },
+                    '& .project-description': {
+                      opacity: 1,
+                      transform: 'translateY(0)'
+                    }
                   }
                 }}
               >
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                   <Typography 
+                    className="project-title"
                     variant="h6" 
                     component="h3" 
                     sx={{ 
-                      color: project.color,
+                      color: 'text.primary',
                       fontWeight: 600,
                       display: 'flex',
                       alignItems: 'center',
                       gap: 1,
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     }}
                   >
                     {project.name}
@@ -210,9 +237,12 @@ const MainContent: React.FC = () => {
                       sx={{ 
                         borderColor: project.color,
                         color: project.color,
+                        transition: 'all 0.2s ease-in-out',
                         '&:hover': {
+                          transform: 'translateY(-2px)',
                           borderColor: project.color,
-                          backgroundColor: `${project.color}10`
+                          backgroundColor: `${project.color}10`,
+                          boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
                         }
                       }}
                     >
@@ -225,9 +255,12 @@ const MainContent: React.FC = () => {
                       onClick={() => window.open(project.liveUrl, '_blank')}
                       sx={{ 
                         backgroundColor: project.color,
+                        transition: 'all 0.2s ease-in-out',
                         '&:hover': {
                           backgroundColor: project.color,
-                          filter: 'brightness(0.9)'
+                          filter: 'brightness(0.9)',
+                          transform: 'translateY(-2px)',
+                          boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
                         }
                       }}
                     >
@@ -235,7 +268,16 @@ const MainContent: React.FC = () => {
                     </Button>
                   </Box>
                 </Box>
-                <Typography variant="body1" color="text.secondary">
+                <Typography 
+                  className="project-description"
+                  variant="body1" 
+                  color="text.secondary"
+                  sx={{
+                    opacity: 0.85,
+                    transform: 'translateY(4px)',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                  }}
+                >
                   {project.description}
                 </Typography>
               </Paper>
@@ -302,14 +344,45 @@ const MainContent: React.FC = () => {
                   gap: 3,
                   border: '1px solid',
                   borderColor: 'rgba(230,235,240,0.9)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '3px',
+                    background: 'linear-gradient(90deg, transparent, #2962ff, transparent)',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease-in-out',
+                  },
                   '&:hover': {
                     transform: 'translateY(-4px)',
-                    transition: 'transform 0.2s ease-in-out',
+                    borderColor: 'primary.main',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                    '&::before': {
+                      opacity: 1
+                    },
+                    '& .experience-image': {
+                      transform: 'scale(1.05)',
+                      filter: 'grayscale(0)'
+                    },
+                    '& .experience-title': {
+                      color: 'primary.main',
+                      transform: 'translateX(8px)'
+                    },
+                    '& .experience-details': {
+                      opacity: 1,
+                      transform: 'translateY(0)'
+                    }
                   }
                 }}
               >
                 <Box
                   component="img"
+                  className="experience-image"
                   src={experience.logo}
                   alt={`${experience.company} logo`}
                   sx={{
@@ -317,36 +390,47 @@ const MainContent: React.FC = () => {
                     height: 80,
                     objectFit: 'contain',
                     borderRadius: 1,
+                    filter: 'grayscale(0.2)',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                   }}
                 />
                 <Box sx={{ flex: 1 }}>
                   <Typography 
+                    className="experience-title"
                     variant="h6" 
                     component="h3" 
                     sx={{ 
                       fontWeight: 600,
                       mb: 0.5,
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                     }}
                   >
                     {experience.company}
                   </Typography>
                   <Typography 
+                    className="experience-details"
                     variant="subtitle1" 
                     sx={{ 
                       color: 'text.secondary',
                       mb: 0.5,
                       fontFamily: '"JetBrains Mono", monospace',
                       fontSize: '0.9rem',
+                      opacity: 0.85,
+                      transform: 'translateY(4px)',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                     }}
                   >
                     {experience.role}
                   </Typography>
                   <Typography 
+                    className="experience-details"
                     variant="body2" 
                     sx={{ 
                       color: 'text.secondary',
-                      opacity: 0.8,
+                      opacity: 0.7,
                       mb: 1,
+                      transform: 'translateY(4px)',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                     }}
                   >
                     {experience.period}

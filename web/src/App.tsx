@@ -82,13 +82,18 @@ const App: React.FC = () => {
             spacing={3} 
             sx={{ 
               flex: 1,
-              position: 'relative'
+              position: 'relative',
+              width: '100%',
+              margin: 0
             }}
           >
             <Grid 
               item 
               xs={12} 
-              md={3.5}
+              md={4}
+              sx={{
+                width: '100%'
+              }}
             >
               <Box
                 sx={{
@@ -101,11 +106,7 @@ const App: React.FC = () => {
                 <Paper
                   sx={{
                     p: 3,
-                    width: { xs: '100%', md: '315px' },
-                    marginRight: { md: 6 },
-                    '@media (max-width: 900px)': {
-                      width: '100%',
-                    }
+                    width: '100%'
                   }}
                 >
                   <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
@@ -130,7 +131,7 @@ const App: React.FC = () => {
             </Grid>
 
             {/* Right Column - Main Content */}
-            <Grid item xs={12} md={7.5} sx={{ pl: { md: 4 } }}>
+            <Grid item xs={12} md={8}>
               <MainContent />
             </Grid>
           </Grid>

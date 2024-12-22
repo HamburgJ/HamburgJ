@@ -79,7 +79,18 @@ const Contact: React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 2,
+                  cursor: 'pointer',
+                  width: '100%',
+                  '&:hover': {
+                    '& .MuiTypography-root': {
+                      color: 'primary.main',
+                    },
+                    '& .MuiIconButton-root': {
+                      background: link.bgColor,
+                    }
+                  }
                 }}
+                onClick={link.onClick}
               >
                 <motion.div
                   initial={{ rotate: 0 }}
@@ -92,14 +103,11 @@ const Contact: React.FC = () => {
                 >
                   <IconButton
                     color="primary"
-                    onClick={link.onClick}
                     size="large"
                     aria-label={link.label}
                     sx={{
                       background: 'rgba(25, 118, 210, 0.04)',
-                      '&:hover': {
-                        background: link.bgColor,
-                      }
+                      pointerEvents: 'none'
                     }}
                   >
                     {link.icon}
@@ -114,6 +122,7 @@ const Contact: React.FC = () => {
                     sx={{ 
                       color: 'text.primary',
                       fontWeight: 500,
+                      transition: 'color 0.2s ease-in-out'
                     }}
                   >
                     {link.label}
