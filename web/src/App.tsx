@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Grid, Paper, Box, CssBaseline } from '@mui/material';
+import { Container, Grid, Paper, Box, CssBaseline, useMediaQuery } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { keyframes } from '@mui/system';
 import theme from './theme';
@@ -26,6 +26,8 @@ const rainbowMove = keyframes`
 `;
 
 const App: React.FC = () => {
+  const isMobile = useMediaQuery('(max-width:899px)');
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -77,38 +79,11 @@ const App: React.FC = () => {
             flexDirection: 'column'
           }}
         >
-          <Grid 
-            container 
-            spacing={3} 
-            sx={{ 
-              flex: 1,
-              position: 'relative',
-              width: '100%',
-              margin: 0
-            }}
-          >
-            <Grid 
-              item 
-              xs={12} 
-              md={4}
-              sx={{
-                width: '100%'
-              }}
-            >
-              <Box
-                sx={{
-                  position: 'sticky',
-                  top: 24,
-                  width: '100%',
-                  height: 'fit-content'
-                }}
-              >
-                <Paper
-                  sx={{
-                    p: 3,
-                    width: '100%'
-                  }}
-                >
+          {isMobile ? (
+            // Mobile Layout
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <Box>
+                <Paper sx={{ p: 3, width: '100%' }}>
                   <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
                     <Box
                       component="img"
@@ -128,13 +103,41 @@ const App: React.FC = () => {
                   <Contact />
                 </Paper>
               </Box>
+              <Box>
+                <MainContent />
+              </Box>
+            </Box>
+          ) : (
+            // Desktop Layout
+            <Grid container spacing={3} sx={{ flex: 1, position: 'relative', width: '100%', margin: 0 }}>
+              <Grid item xs={12} md={4}>
+                <Box sx={{ position: 'sticky', top: 24, width: '100%', height: 'fit-content' }}>
+                  <Paper sx={{ p: 3, width: '100%' }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
+                      <Box
+                        component="img"
+                        src="images/1709583939547.jpg"
+                        alt="Joshua Hamburger"
+                        sx={{
+                          width: 80,
+                          height: 80,
+                          mb: 2,
+                          borderRadius: '50%',
+                          border: '3px solid',
+                          borderColor: 'primary.main',
+                        }}
+                      />
+                      <Hero />
+                    </Box>
+                    <Contact />
+                  </Paper>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={8}>
+                <MainContent />
+              </Grid>
             </Grid>
-
-            {/* Right Column - Main Content */}
-            <Grid item xs={12} md={8}>
-              <MainContent />
-            </Grid>
-          </Grid>
+          )}
         </Container>
       </Box>
     </ThemeProvider>

@@ -65,9 +65,28 @@ const theme = createTheme({
     MuiContainer: {
       styleOverrides: {
         root: {
+          paddingLeft: '16px',
+          paddingRight: '16px',
           '@media (min-width: 600px)': {
             paddingLeft: '32px',
             paddingRight: '32px',
+          },
+        },
+      },
+    },
+    MuiGrid: {
+      styleOverrides: {
+        root: {
+          '@media (max-width: 600px)': {
+            margin: 0,
+            width: '100%',
+            padding: 0,
+          },
+        },
+        item: {
+          '@media (max-width: 600px)': {
+            paddingLeft: 0,
+            paddingTop: 0,
           },
         },
       },
