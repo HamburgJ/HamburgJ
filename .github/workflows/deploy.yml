@@ -55,6 +55,13 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
+          fetch-depth: 0
+
+      - name: Fetch latest changes
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -83,6 +90,8 @@ jobs:
           PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome
         run: |
           sudo apt-get install -y google-chrome-stable
+          rm -rf build
+          rm -rf node_modules/.cache
           npm run build
 
       - name: Ensure images directory exists
