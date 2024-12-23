@@ -15,7 +15,7 @@
   <div style="background: #1a1b27; padding: 20px; border-radius: 10px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between;">
     <div style="flex: 1; padding-right: 20px;">
       <h3 style="color: #2E7D32; font-size: 24px; margin-bottom: 10px;">Grocery Buddy</h3>
-      <p style="font-size: 16px; margin: 15px 0;">Find the best grocery prices in Ontario. Compare prices across stores, and save money on your groceries. 🛒</p>
+      <p style="font-size: 16px; margin: 15px 0;">Live automated tracking of the best grocery prices in Ontario by item. Compare prices across stores, and save money on your groceries. 🛒</p>
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <a href="https://hamburgj.github.io/grocery-buddy" target="_blank">
@@ -30,7 +30,7 @@
   <div style="background: #1a1b27; padding: 20px; border-radius: 10px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between;">
     <div style="flex: 1; padding-right: 20px;">
       <h3 style="color: #5C6BC0; font-size: 24px; margin-bottom: 10px;">Infinite Levels!</h3>
-      <p style="font-size: 16px; margin: 15px 0;">A mind-bending infinite puzzle game that challenges your understanding of reality. 🌀</p>
+      <p style="font-size: 16px; margin: 15px 0;">A mind-bending infinite puzzle game that challenges you to navigate an infinite set of levels. ∞</p>
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <a href="https://hamburgj.github.io/Infinite-Levels" target="_blank">
@@ -45,7 +45,7 @@
   <div style="background: #1a1b27; padding: 20px; border-radius: 10px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between;">
     <div style="flex: 1; padding-right: 20px;">
       <h3 style="color: #7B1FA2; font-size: 24px; margin-bottom: 10px;">Match 5</h3>
-      <p style="font-size: 16px; margin: 15px 0;">A dynamic word puzzle game exploring multiple meanings. 🎯</p>
+      <p style="font-size: 16px; margin: 15px 0;">A word-based puzzle game exploring matching words to their multiple meanings.</p>
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <a href="https://hamburgj.github.io/match-five" target="_blank">
