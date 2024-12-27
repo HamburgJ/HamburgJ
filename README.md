@@ -44,7 +44,7 @@
 
   <div style="background: #1a1b27; padding: 20px; border-radius: 10px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between;">
     <div style="flex: 1; padding-right: 20px;">
-      <h3 style="color: #7B1FA2; font-size: 24px; margin-bottom: 10px;">Match 5</h3>
+      <h3 style="color: #7B1FA2; font-size: 24px; margin-bottom: 10px;">Match Five</h3>
       <p style="font-size: 16px; margin: 15px 0;">A word-based puzzle game exploring matching words to their multiple meanings.</p>
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px;">
@@ -52,6 +52,21 @@
         <img src="https://img.shields.io/badge/Play_Now-7B1FA2?style=for-the-badge&logo=react&logoColor=white" alt="Play Now" height="40">
       </a>
       <a href="https://github.com/HamburgJ/match-five" target="_blank">
+        <img src="https://img.shields.io/badge/View_Code-2a2e3b?style=for-the-badge&logo=github&logoColor=white" alt="View Code" height="40">
+      </a>
+    </div>
+  </div>
+
+  <div style="background: #1a1b27; padding: 20px; border-radius: 10px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between;">
+    <div style="flex: 1; padding-right: 20px;">
+      <h3 style="color: #FF5722; font-size: 24px; margin-bottom: 10px;">Four Nines</h3>
+      <p style="font-size: 16px; margin: 15px 0;">A daily mathematical game where you craft expressions using exactly four digits to reach the target number. 🔢</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <a href="https://hamburgj.github.io/four-nines-game" target="_blank">
+        <img src="https://img.shields.io/badge/Play_Now-FF5722?style=for-the-badge&logo=react&logoColor=white" alt="Play Now" height="40">
+      </a>
+      <a href="https://github.com/HamburgJ/four-nines-game" target="_blank">
         <img src="https://img.shields.io/badge/View_Code-2a2e3b?style=for-the-badge&logo=github&logoColor=white" alt="View Code" height="40">
       </a>
     </div>

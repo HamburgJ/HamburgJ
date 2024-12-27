@@ -17,11 +17,19 @@
       "actionText": "Play Now"
     },
     {
-      "name": "Match 5",
+      "name": "Match Five",
       "description": "A word-based puzzle game exploring matching words to their multiple meanings.",
       "color": "#7B1FA2",
       "liveUrl": "https://hamburgj.github.io/match-five",
       "repoUrl": "https://github.com/HamburgJ/match-five",
+      "actionText": "Play Now"
+    },
+    {
+      "name": "Four Nines",
+      "description": "A daily mathematical game where you craft expressions using exactly four digits to reach the target number. 🔢",
+      "color": "#FF5722",
+      "liveUrl": "https://hamburgj.github.io/four-nines-game",
+      "repoUrl": "https://github.com/HamburgJ/four-nines-game",
       "actionText": "Play Now"
     }
   ],
