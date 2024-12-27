@@ -42,8 +42,8 @@ const MainContent: React.FC = () => {
       {/* Education Section */}
       <Paper
         component={motion.div}
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
         elevation={1}
@@ -123,8 +123,8 @@ const MainContent: React.FC = () => {
       {/* Projects Section */}
       <Paper
         component={motion.div}
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
         elevation={1}
@@ -167,8 +167,8 @@ const MainContent: React.FC = () => {
             <Grid item xs={12} key={project.name}>
               <Paper
                 component={motion.div}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 elevation={1}
@@ -287,8 +287,8 @@ const MainContent: React.FC = () => {
       {/* Work Experience Section */}
       <Paper
         component={motion.div}
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
         elevation={1}
@@ -330,8 +330,8 @@ const MainContent: React.FC = () => {
             <Grid item xs={12} key={index}>
               <Paper
                 component={motion.div}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 elevation={1}
