@@ -12,7 +12,7 @@
       "name": "Infinite Levels!",
       "description": "A mind-bending infinite puzzle game that challenges you to navigate an infinite set of levels. ∞",
       "color": "#5C6BC0",
-      "liveUrl": "https://hamburgj.github.io/Infinite-Levels",
+      "liveUrl": "https://burgerfun.tech/infinite-levels/",
       "repoUrl": "https://github.com/HamburgJ/Infinite-Levels",
       "actionText": "Play Now"
     },
@@ -20,7 +20,7 @@
       "name": "Match Five",
       "description": "A word-based puzzle game exploring matching words to their multiple meanings.",
       "color": "#7B1FA2",
-      "liveUrl": "https://hamburgj.github.io/match-five",
+      "liveUrl": "https://burgerfun.tech/match-five",
       "repoUrl": "https://github.com/HamburgJ/match-five",
       "actionText": "Play Now"
     },
@@ -28,7 +28,7 @@
       "name": "Four Nines",
       "description": "A daily mathematical game where you craft expressions using exactly four digits to reach the target number. 🔢",
       "color": "#FF5722",
-      "liveUrl": "https://hamburgj.github.io/four-nines-game",
+      "liveUrl": "https://burgerfun.tech/four-nines/",
       "repoUrl": "https://github.com/HamburgJ/four-nines-game",
       "actionText": "Play Now"
     }
