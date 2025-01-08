@@ -1,12 +1,12 @@
 const generateTemplate = (data) => `<h1 align="center">
-  <a href="#" target="_blank">
-    <img src="https://readme-typing-svg.demolab.com?font=Roberto&weight=700&size=60&duration=1&pause=1000&color=ffffff&center=true&vCenter=true&repeat=false&width=600&height=70&lines=Joshua+Hamburger" alt="Joshua Hamburger" />
+  <a href="#" style="text-decoration: none; font-size: 60px; font-weight: 700;">
+    Joshua Hamburger
   </a>
 </h1>
 
 <h2 align="center">
-  <a href="#" target="_blank">
-    <img src="https://readme-typing-svg.demolab.com?font=Roberto&weight=100&size=30&duration=1&pause=1000&color=ffffff&center=true&vCenter=true&repeat=false&width=600&height=70&lines=Projects" alt="Projects" />
+  <a href="#" style="text-decoration: none; font-size: 30px; font-weight: 100;">
+    Projects
   </a>
 </h2>
 
