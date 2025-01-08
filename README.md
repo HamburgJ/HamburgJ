@@ -33,7 +33,7 @@
       <p style="font-size: 16px; margin: 15px 0;">A mind-bending infinite puzzle game that challenges you to navigate an infinite set of levels. ∞</p>
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px;">
-      <a href="https://hamburgj.github.io/Infinite-Levels" target="_blank">
+      <a href="https://burgerfun.tech/infinite-levels/" target="_blank">
         <img src="https://img.shields.io/badge/Play_Now-5C6BC0?style=for-the-badge&logo=react&logoColor=white" alt="Play Now" height="40">
       </a>
       <a href="https://github.com/HamburgJ/Infinite-Levels" target="_blank">
@@ -48,7 +48,7 @@
       <p style="font-size: 16px; margin: 15px 0;">A word-based puzzle game exploring matching words to their multiple meanings.</p>
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px;">
-      <a href="https://hamburgj.github.io/match-five" target="_blank">
+      <a href="https://burgerfun.tech/match-five" target="_blank">
         <img src="https://img.shields.io/badge/Play_Now-7B1FA2?style=for-the-badge&logo=react&logoColor=white" alt="Play Now" height="40">
       </a>
       <a href="https://github.com/HamburgJ/match-five" target="_blank">
@@ -63,7 +63,7 @@
       <p style="font-size: 16px; margin: 15px 0;">A daily mathematical game where you craft expressions using exactly four digits to reach the target number. 🔢</p>
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px;">
-      <a href="https://hamburgj.github.io/four-nines-game" target="_blank">
+      <a href="https://burgerfun.tech/four-nines/" target="_blank">
         <img src="https://img.shields.io/badge/Play_Now-FF5722?style=for-the-badge&logo=react&logoColor=white" alt="Play Now" height="40">
       </a>
       <a href="https://github.com/HamburgJ/four-nines-game" target="_blank">
