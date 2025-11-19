@@ -50,7 +50,7 @@ const Hero: React.FC = () => {
           opacity: 0.9,
         }}
       >
-        4th Year Computer Engineering Student at the University of Waterloo, making software for humans.
+        Software Developer at Expertise AI. Building the future of AI (the helpful kind).
       </Typography>
     </Box>
   );

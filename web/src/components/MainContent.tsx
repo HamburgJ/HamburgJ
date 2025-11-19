@@ -5,35 +5,43 @@ import { motion } from 'framer-motion';
 import { projects } from '../data/projects';
 
 const workExperiences = [
-{
+  {
+    company: "Expertise AI",
+    role: "Software Developer",
+    period: "May 2025 - Present",
+    logo: "images/expertise_ai_logo.png",
+    description: "Permanent Full-time position.",
+    link: "https://expertise.ai",
+    featured: true
+  },
+  {
     company: "Descartes Systems Group Inc",
     role: "Full-Stack Software Engineering Intern",
     period: "Jan 2024 - Apr 2024",
     logo: "images/descartes_systems_group_logo.jpg",
     description: "Worked on logistics and supply chain management software"
-    },
-    {
-        company: "CharityCAN",
-        role: "Full-Stack Software Engineering Intern",
-        period: "May 2022 - Aug 2022, Jan 2023 - Apr 2023",
-        logo: "images/charitycan_logo.jpg",
-        description: "Built fundraising analytics and donor management solutions"
-      },
-{
+  },
+  {
+    company: "CharityCAN",
+    role: "Full-Stack Software Engineering Intern",
+    period: "May 2022 - Aug 2022, Jan 2023 - Apr 2023",
+    logo: "images/charitycan_logo.jpg",
+    description: "Built fundraising analytics and donor management solutions"
+  },
+  {
     company: "Cadence Agriculture Systems Inc",
     role: "Full-Stack/Embedded Software Engineering Intern",
     period: "Sept 2021 - Apr 2022",
     logo: "images/1660839913252.jpg",
     description: "Developed transportation management solutions"
-    },
+  },
   {
     company: "Quilt.AI",
     role: "AI/ML Software Engineering Intern",
     period: "Jan 2021 - Apr 2021",
     logo: "images/quiltdotai_logo.jpg",
     description: "Developed AI-powered social impact analysis tools"
-  },
-  
+  }
 ];
 
 const MainContent: React.FC = () => {
@@ -113,8 +121,36 @@ const MainContent: React.FC = () => {
                 fontSize: '0.9rem',
               }}
             >
-      
-              4th Year Computer Engineering
+              Bachelor of Applied Science (BASc), Computer Engineering
+            </Typography>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: 'text.secondary',
+                opacity: 0.8,
+                mt: 0.5,
+              }}
+            >
+              Sep 2020 - Apr 2025
+            </Typography>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: 'text.secondary',
+                opacity: 0.8,
+                mt: 0.5,
+              }}
+            >
+              • Graduated with Dean’s Honours
+            </Typography>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: 'text.secondary',
+                opacity: 0.8,
+              }}
+            >
+              • Dean’s Honour List: Fall 2022 (2B), Spring 2024 (4A)
             </Typography>
           </Box>
         </Box>
@@ -334,16 +370,22 @@ const MainContent: React.FC = () => {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                elevation={1}
+                elevation={experience.featured ? 4 : 1}
+                onClick={() => experience.link && window.open(experience.link, '_blank')}
                 sx={{
                   p: 2.5,
                   display: 'flex',
                   alignItems: 'center',
                   gap: 3,
                   border: '1px solid',
-                  borderColor: 'rgba(230,235,240,0.9)',
+                  borderColor: experience.featured ? 'rgba(255,255,255,0.1)' : 'rgba(230,235,240,0.9)',
                   position: 'relative',
                   overflow: 'hidden',
+                  cursor: experience.link ? 'pointer' : 'default',
+                  background: experience.featured 
+                    ? '#000000'
+                    : 'white',
+                  color: experience.featured ? 'white' : 'inherit',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   '&::before': {
                     content: '""',
@@ -351,29 +393,37 @@ const MainContent: React.FC = () => {
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: '3px',
-                    background: 'linear-gradient(90deg, transparent, #2962ff, transparent)',
-                    opacity: 0,
+                    height: experience.featured ? '100%' : '3px',
+                    width: experience.featured ? '4px' : '100%',
+                    background: experience.featured 
+                      ? '#055b4e'
+                      : 'linear-gradient(90deg, transparent, #2962ff, transparent)',
+                    opacity: experience.featured ? 1 : 0,
                     transition: 'opacity 0.3s ease-in-out',
                   },
                   '&:hover': {
                     transform: 'translateY(-4px)',
-                    borderColor: 'primary.main',
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                    borderColor: experience.featured ? '#055b4e' : 'primary.main',
+                    boxShadow: experience.featured 
+                      ? '0 8px 32px rgba(5, 91, 78, 0.3)'
+                      : '0 8px 24px rgba(0,0,0,0.12)',
                     '&::before': {
-                      opacity: 1
+                      opacity: 1,
+                      boxShadow: experience.featured ? '0 0 15px #055b4e' : 'none'
                     },
                     '& .experience-image': {
                       transform: 'scale(1.05)',
                       filter: 'grayscale(0)'
                     },
                     '& .experience-title': {
-                      color: 'primary.main',
-                      transform: 'translateX(8px)'
+                      color: experience.featured ? '#055b4e' : 'primary.main',
+                      transform: 'translateX(8px)',
+                      textShadow: experience.featured ? '0 0 10px rgba(5, 91, 78, 0.5)' : 'none'
                     },
                     '& .experience-details': {
                       opacity: 1,
-                      transform: 'translateY(0)'
+                      transform: 'translateY(0)',
+                      color: experience.featured ? 'rgba(255,255,255,0.9)' : 'text.secondary'
                     }
                   }
                 }}
@@ -388,28 +438,36 @@ const MainContent: React.FC = () => {
                     height: 80,
                     objectFit: 'contain',
                     borderRadius: 1,
-                    filter: 'grayscale(0.2)',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                    filter: experience.featured ? 'none' : 'grayscale(0.2)',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    bgcolor: experience.featured ? 'white' : 'transparent',
+                    p: experience.featured ? 1 : 0
                   }}
                 />
                 <Box sx={{ flex: 1 }}>
-                  <Typography 
-                    className="experience-title"
-                    variant="h6" 
-                    component="h3" 
-                    sx={{ 
-                      fontWeight: 600,
-                      mb: 0.5,
-                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                    }}
-                  >
-                    {experience.company}
-                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography 
+                      className="experience-title"
+                      variant="h6" 
+                      component="h3" 
+                      sx={{ 
+                        fontWeight: 600,
+                        mb: 0.5,
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        color: experience.featured ? 'white' : 'text.primary'
+                      }}
+                    >
+                      {experience.company}
+                    </Typography>
+                    {experience.featured && (
+                      <Launch sx={{ fontSize: 16, opacity: 0.7, color: 'white' }} />
+                    )}
+                  </Box>
                   <Typography 
                     className="experience-details"
                     variant="subtitle1" 
                     sx={{ 
-                      color: 'text.secondary',
+                      color: experience.featured ? 'rgba(255,255,255,0.7)' : 'text.secondary',
                       mb: 0.5,
                       fontFamily: '"JetBrains Mono", monospace',
                       fontSize: '0.9rem',
@@ -424,7 +482,7 @@ const MainContent: React.FC = () => {
                     className="experience-details"
                     variant="body2" 
                     sx={{ 
-                      color: 'text.secondary',
+                      color: experience.featured ? 'rgba(255,255,255,0.5)' : 'text.secondary',
                       opacity: 0.7,
                       mb: 1,
                       transform: 'translateY(4px)',
@@ -432,6 +490,19 @@ const MainContent: React.FC = () => {
                     }}
                   >
                     {experience.period}
+                  </Typography>
+                  <Typography 
+                    className="experience-details"
+                    variant="body2" 
+                    sx={{ 
+                      color: experience.featured ? 'rgba(255,255,255,0.8)' : 'text.secondary',
+                      opacity: 0.9,
+                      mb: 1.5,
+                      transform: 'translateY(4px)',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                    }}
+                  >
+                    {experience.description}
                   </Typography>
                 </Box>
               </Paper>
@@ -443,4 +514,4 @@ const MainContent: React.FC = () => {
   );
 };
 
-export default MainContent; 
+export default MainContent;
