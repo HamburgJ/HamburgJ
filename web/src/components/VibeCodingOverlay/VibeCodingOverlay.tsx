@@ -18,11 +18,22 @@ export interface TerminalLine {
   text: string;
 }
 
+export interface VibeStep {
+  /** Terminal comment Josh makes before this step's copilot exchange */
+  joshReaction: TerminalLine[];
+  /** The copilot exchange for this step */
+  copilotMessages: CopilotMessage[];
+}
+
 export interface VibeCodingSequence {
   /** Terminal lines Josh types before copilot opens */
   joshLines: TerminalLine[];
-  /** Copilot conversation */
+  /** Copilot conversation (used if steps is not provided) */
   copilotMessages: CopilotMessage[];
+  /** Optional: multi-step copilot exchanges (plays sequentially after joshLines) */
+  steps?: VibeStep[];
+  /** Called after each step completes (step index passed) */
+  onStepComplete?: (stepIndex: number) => void;
   /** Callback when the whole sequence finishes */
   onComplete: () => void;
   /** Optional: show an error overlay before/during the sequence */
@@ -287,6 +298,117 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
     [startClosing],
   );
 
+  // ── Multi-step sequencer ───────────────────────────────────────────────
+
+  const playSteps = useCallback(
+    (steps: VibeStep[], index: number) => {
+      if (index >= steps.length) {
+        // All steps done — close
+        const t = setTimeout(startClosing, 1800);
+        timersRef.current.push(t);
+        return;
+      }
+      const step = steps[index];
+
+      const afterReaction = () => {
+        // Play this step's copilot messages
+        // Override the onComplete behavior: instead of closing, move to next step
+        const playStepMessages = (msgs: CopilotMessage[], msgIdx: number) => {
+          if (msgIdx >= msgs.length) {
+            // Step complete — notify and move to next
+            if (sequence.onStepComplete) sequence.onStepComplete(index);
+            const t = setTimeout(() => playSteps(steps, index + 1), 800);
+            timersRef.current.push(t);
+            return;
+          }
+          const msg = msgs[msgIdx];
+
+          if (msg.role === 'user') {
+            let i = 0;
+            const typeChar = () => {
+              if (i < msg.text.length) {
+                setInputTypingBuffer(msg.text.slice(0, i + 1));
+                i++;
+                const delay = 22 + Math.random() * 38;
+                const t = setTimeout(typeChar, delay);
+                timersRef.current.push(t);
+              } else {
+                const t = setTimeout(() => {
+                  setCopilotMessages(prev => [...prev, msg]);
+                  setInputTypingBuffer('');
+                  const t2 = setTimeout(() => playStepMessages(msgs, msgIdx + 1), 500);
+                  timersRef.current.push(t2);
+                }, 350);
+                timersRef.current.push(t);
+              }
+            };
+            const t = setTimeout(typeChar, 300);
+            timersRef.current.push(t);
+          } else {
+            setShowTypingIndicator(true);
+            const dotDelay = 700 + Math.random() * 500;
+            const t = setTimeout(() => {
+              setShowTypingIndicator(false);
+              setCurrentStreamingMsg(msg);
+              setShowStreamingFileEdit(false);
+              setStreamingText('');
+              let charIdx = 0;
+              const fullText = msg.text;
+              const streamWord = () => {
+                if (charIdx < fullText.length) {
+                  let end = fullText.indexOf(' ', charIdx + 1);
+                  if (end === -1) end = fullText.length;
+                  else end += 1;
+                  setStreamingText(fullText.slice(0, end));
+                  charIdx = end;
+                  const delay = 30 + Math.random() * 40;
+                  const t2 = setTimeout(streamWord, delay);
+                  timersRef.current.push(t2);
+                } else {
+                  if (msg.fileEdit) {
+                    const t2 = setTimeout(() => {
+                      setShowStreamingFileEdit(true);
+                      const t3 = setTimeout(() => {
+                        setCopilotMessages(prev => [...prev, msg]);
+                        setStreamingText('');
+                        setCurrentStreamingMsg(null);
+                        setShowStreamingFileEdit(false);
+                        const t4 = setTimeout(() => playStepMessages(msgs, msgIdx + 1), 600);
+                        timersRef.current.push(t4);
+                      }, 1200);
+                      timersRef.current.push(t3);
+                    }, 400);
+                    timersRef.current.push(t2);
+                  } else {
+                    const t2 = setTimeout(() => {
+                      setCopilotMessages(prev => [...prev, msg]);
+                      setStreamingText('');
+                      setCurrentStreamingMsg(null);
+                      const t3 = setTimeout(() => playStepMessages(msgs, msgIdx + 1), 600);
+                      timersRef.current.push(t3);
+                    }, 400);
+                    timersRef.current.push(t2);
+                  }
+                }
+              };
+              streamWord();
+            }, dotDelay);
+            timersRef.current.push(t);
+          }
+        };
+        playStepMessages(step.copilotMessages, 0);
+      };
+
+      // Type josh's reaction lines first (if any)
+      if (step.joshReaction.length > 0) {
+        typeJoshLines(step.joshReaction, 0, afterReaction);
+      } else {
+        afterReaction();
+      }
+    },
+    [startClosing, typeJoshLines, sequence],
+  );
+
   // ── Trigger sequence ───────────────────────────────────────────────────
 
   useEffect(() => {
@@ -294,8 +416,16 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
     typeJoshLines(sequence.joshLines, 0, () => {
       setJoshDone(true);
       setShowCopilotPanel(true);
-      const t = setTimeout(() => playCopilotMessages(sequence.copilotMessages, 0), 450);
-      timersRef.current.push(t);
+
+      if (sequence.steps && sequence.steps.length > 0) {
+        // Multi-step mode: play through steps sequentially
+        const t = setTimeout(() => playSteps(sequence.steps!, 0), 450);
+        timersRef.current.push(t);
+      } else {
+        // Single sequence mode (legacy)
+        const t = setTimeout(() => playCopilotMessages(sequence.copilotMessages, 0), 450);
+        timersRef.current.push(t);
+      }
     });
     return () => {
       timersRef.current.forEach(clearTimeout);

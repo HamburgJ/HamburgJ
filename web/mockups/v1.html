@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Joshua Hamburger — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Lato', sans-serif;
+    color: #111;
+    background: #fff;
+  }
+
+  /* ── LAYOUT ── */
+  .wrapper {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .left {
+    width: 40%;
+    padding: 48px 40px 32px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid #e5e5e5;
+    overflow: hidden;
+  }
+
+  .right {
+    width: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 24px 40px;
+  }
+
+  /* ── LEFT: RESUME ── */
+  .name h1 {
+    font-weight: 900;
+    font-size: 44px;
+    line-height: 1.05;
+    letter-spacing: -0.5px;
+  }
+  .name-rule {
+    width: 100%;
+    height: 2.5px;
+    background: #111;
+    margin: 14px 0 28px;
+  }
+
+  .section-header {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    padding-bottom: 6px;
+    border-bottom: 1.5px solid #111;
+    margin-bottom: 14px;
+    margin-top: 24px;
+  }
+
+  .edu-block {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .edu-block img {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+  .edu-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .edu-detail {
+    font-size: 12px;
+    color: #555;
+  }
+
+  .exp-item {
+    margin-bottom: 8px;
+  }
+  .exp-company {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .exp-role {
+    font-size: 11.5px;
+    color: #555;
+  }
+
+  .contact {
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 0.5px;
+  }
+  .contact a {
+    color: #888;
+    text-decoration: none;
+  }
+  .contact a:hover { text-decoration: underline; }
+
+  /* ── RIGHT: TABLE ── */
+  .table-container {
+    text-align: center;
+    max-width: 580px;
+    width: 100%;
+  }
+
+  .choose-heading {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 18px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  /* Header row */
+  table thead th {
+    padding: 14px 12px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    border-bottom: 2px solid #ddd;
+  }
+  table thead th:first-child {
+    text-align: left;
+    width: 42%;
+    background: #fff;
+    font-weight: 400;
+    color: #999;
+    font-size: 12px;
+  }
+  th.col-other {
+    background: #f5f5f5;
+    color: #777;
+    font-size: 13px !important;
+    width: 26%;
+    position: relative;
+  }
+  th.col-this {
+    background: #dcfce7;
+    color: #15803d;
+    font-size: 14px !important;
+    width: 32%;
+    position: relative;
+  }
+
+  /* MOST POPULAR badge */
+  .badge-popular {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #16a34a;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 12px;
+    border-radius: 9999px;
+    white-space: nowrap;
+    animation: badgeBounce 2s ease-in-out infinite;
+  }
+
+  /* Feature rows */
+  table tbody td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+    text-align: center;
+  }
+  table tbody td:first-child {
+    text-align: left;
+    font-size: 15px;
+    font-weight: 700;
+    color: #222;
+  }
+  td.cell-other { background: #f9f9f9; }
+  td.cell-this  { background: #f0fdf4; }
+
+  .mark-yes {
+    color: #16a34a;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .mark-no {
+    color: #dc2626;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .sub {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    color: #777;
+    margin-top: 1px;
+  }
+  td .sub-green {
+    color: #16a34a;
+  }
+
+  /* Price row */
+  .price-row td {
+    padding: 14px 12px;
+    border-bottom: 2px solid #ddd;
+    font-size: 14px;
+  }
+  .price-row .price-old {
+    text-decoration: line-through;
+    color: #aaa;
+    font-size: 13px;
+  }
+  .price-row .price-free {
+    font-size: 22px;
+    font-weight: 900;
+    color: #16a34a;
+  }
+  .price-row .price-grey {
+    color: #aaa;
+    font-size: 12px;
+    font-style: italic;
+  }
+
+  /* CTA row */
+  .cta-row td {
+    padding: 16px 12px 14px;
+    border-bottom: none;
+  }
+
+  /* Add to Cart button */
+  .btn-cart {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #16a34a;
+    color: #fff;
+    font-family: 'Lato', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 12px rgba(22,163,74,0.35);
+    transition: box-shadow 0.25s;
+  }
+  .btn-cart:hover {
+    box-shadow: 0 0 28px rgba(22,163,74,0.6);
+  }
+  .btn-cart::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+    animation: shimmer 2.4s ease-in-out infinite;
+  }
+
+  /* Bounce arrow near button */
+  .bounce-arrow {
+    display: inline-block;
+    font-size: 20px;
+    animation: arrowBounce 1.2s ease-in-out infinite;
+    margin-left: 6px;
+  }
+
+  /* Fine print */
+  .fine-print {
+    font-size: 10px;
+    color: #bbb;
+    margin-top: 14px;
+    line-height: 1.5;
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 12px;
+  }
+  .bottom-nav a {
+    color: #888;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .bottom-nav a:hover { color: #111; }
+
+  /* ── FLOATING STARS ── */
+  .float-star {
+    position: absolute;
+    font-size: 18px;
+    opacity: 0.7;
+    pointer-events: none;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    z-index: 2;
+  }
+  .star-1 { top: 12%; right: 14%; animation: floatA 4.2s infinite; font-size: 20px; }
+  .star-2 { top: 30%; right: 5%;  animation: floatB 5.0s infinite 0.8s; font-size: 16px; }
+  .star-3 { bottom: 18%; right: 10%; animation: floatC 3.8s infinite 0.4s; font-size: 22px; }
+  .star-4 { top: 55%; right: 3%; animation: floatA 4.6s infinite 1.2s; font-size: 14px; }
+
+  /* ── STAGGER FADE-IN FOR ✓ ── */
+  .fade-check {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease forwards;
+  }
+  .fade-check.d1 { animation-delay: 0.3s; }
+  .fade-check.d2 { animation-delay: 0.4s; }
+  .fade-check.d3 { animation-delay: 0.5s; }
+  .fade-check.d4 { animation-delay: 0.6s; }
+  .fade-check.d5 { animation-delay: 0.7s; }
+  .fade-check.d6 { animation-delay: 0.8s; }
+  .fade-check.d7 { animation-delay: 0.9s; }
+
+  /* ── KEYFRAMES ── */
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.05); }
+  }
+
+  @keyframes shimmer {
+    0%   { left: -100%; }
+    50%  { left: 130%; }
+    100% { left: 130%; }
+  }
+
+  @keyframes badgeBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(-4px); }
+  }
+
+  @keyframes arrowBounce {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(6px); }
+  }
+
+  @keyframes floatA {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33%      { transform: translate(-6px, -10px) rotate(8deg); }
+    66%      { transform: translate(4px, 6px) rotate(-5deg); }
+  }
+  @keyframes floatB {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    40%      { transform: translate(8px, -8px) rotate(-10deg); }
+    70%      { transform: translate(-4px, 5px) rotate(6deg); }
+  }
+  @keyframes floatC {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50%      { transform: translate(-5px, -12px) scale(1.15); }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ════ LEFT COLUMN: RESUME ════ -->
+  <div class="left">
+    <div>
+      <div class="name">
+        <h1>Joshua<br>Hamburger</h1>
+      </div>
+      <div class="name-rule"></div>
+
+      <div class="section-header">Education</div>
+      <div class="edu-block">
+        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/6/6e/University_of_Waterloo_seal.svg/150px-University_of_Waterloo_seal.svg.png" alt="UWaterloo">
+        <div>
+          <div class="edu-name">University of Waterloo</div>
+          <div class="edu-detail">BASc Computer Engineering · Dean's Honours</div>
+        </div>
+      </div>
+
+      <div class="section-header">Experience</div>
+
+      <div class="exp-item">
+        <div class="exp-company">Expertise AI</div>
+        <div class="exp-role">Software Developer — 2025–Present</div>
+      </div>
+      <div class="exp-item">
+        <div class="exp-company">Descartes Systems</div>
+        <div class="exp-role">Software Developer Co-op — 2024</div>
+      </div>
+      <div class="exp-item">
+        <div class="exp-company">CharityCAN</div>
+        <div class="exp-role">Full Stack Developer Co-op — 2022–2023</div>
+      </div>
+      <div class="exp-item">
+        <div class="exp-company">CASI</div>
+        <div class="exp-role">Embedded Software Developer — 2021–2022</div>
+      </div>
+      <div class="exp-item">
+        <div class="exp-company">Quilt.AI</div>
+        <div class="exp-role">Software Engineering Intern — 2021</div>
+      </div>
+    </div>
+
+    <div class="contact">
+      <a href="https://github.com/HamburgJ" target="_blank">GitHub</a> ·
+      <a href="https://linkedin.com/in/joshuahamburger" target="_blank">LinkedIn</a> ·
+      <a href="mailto:joshua.hamburger@uwaterloo.ca">Email</a>
+    </div>
+  </div>
+
+  <!-- ════ RIGHT COLUMN: TABLE ════ -->
+  <div class="right">
+
+    <!-- floating stars -->
+    <span class="float-star star-1">✨</span>
+    <span class="float-star star-2">⭐</span>
+    <span class="float-star star-3">✨</span>
+    <span class="float-star star-4">🌟</span>
+
+    <div class="table-container">
+      <div class="choose-heading">Choose Your Plan</div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th class="col-other">The Other Guy</th>
+            <th class="col-this">
+              <span class="badge-popular">★ Most Popular</span>
+              This Portfolio
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 1 -->
+          <tr>
+            <td>Copies from Stack Overflow</td>
+            <td class="cell-other"><span class="mark-no">✗</span></td>
+            <td class="cell-this"><span class="mark-yes fade-check d1">✓</span><span class="sub sub-green">but understands it</span></td>
+          </tr>
+          <!-- 2 -->
+          <tr>
+            <td>Works on my machine</td>
+            <td class="cell-other"><span class="mark-no">✗</span></td>
+            <td class="cell-this"><span class="mark-yes fade-check d2">✓</span><span class="sub sub-green">works on yours too</span></td>
+          </tr>
+          <!-- 3 -->
+          <tr>
+            <td>Reads error messages</td>
+            <td class="cell-other"><span class="mark-no">✗</span><span class="sub">sometimes</span></td>
+            <td class="cell-this"><span class="mark-yes fade-check d3">✓</span><span class="sub sub-green">reads entire stack trace</span></td>
+          </tr>
+          <!-- 4 -->
+          <tr>
+            <td>Deploys on Fridays</td>
+            <td class="cell-other"><span class="mark-no">✗</span></td>
+            <td class="cell-this"><span class="mark-yes fade-check d4">✓</span><span class="sub sub-green">and survives</span></td>
+          </tr>
+          <!-- 5 -->
+          <tr>
+            <td>Cover letter quality</td>
+            <td class="cell-other"><span class="mark-no">✗</span><span class="sub">mass-produced</span></td>
+            <td class="cell-this"><span class="mark-yes fade-check d5">✓</span><span class="sub sub-green">makes recruiters weep</span></td>
+          </tr>
+          <!-- 6 -->
+          <tr>
+            <td>Code comments</td>
+            <td class="cell-other"><span class="mark-no">✗</span><span class="sub">eventually</span></td>
+            <td class="cell-this"><span class="mark-yes fade-check d6">✓</span><span class="sub sub-green">written in haiku</span></td>
+          </tr>
+          <!-- 7 -->
+          <tr>
+            <td>Endorsements</td>
+            <td class="cell-other"><span class="mark-no">✗</span><span class="sub">from relatives</span></td>
+            <td class="cell-this"><span class="mark-yes fade-check d7">✓</span><span class="sub sub-green">from people who exist</span></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <!-- Price row -->
+          <tr class="price-row">
+            <td style="font-weight:700;">Price</td>
+            <td class="cell-other"><span class="price-grey">Contact for pricing</span></td>
+            <td class="cell-this"><span class="price-old">$999/mo</span><br><span class="price-free">FREE</span></td>
+          </tr>
+          <!-- CTA row -->
+          <tr class="cta-row">
+            <td></td>
+            <td class="cell-other" style="color:#ccc;">—</td>
+            <td class="cell-this">
+              <button class="btn-cart">🛒 Add to Cart</button><span class="bounce-arrow">→</span>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="fine-print">
+        * No actual purchase required. Side effects may include mass employment.<br>
+        Terms &amp; conditions: must provide snacks during code review.
+      </div>
+
+      <div class="bottom-nav">
+        <a href="#">← Back to Lobby</a>
+        <a href="#">See what I've built →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

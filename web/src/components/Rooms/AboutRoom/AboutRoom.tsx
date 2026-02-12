@@ -6,6 +6,8 @@ import {
   ABOUT_ERROR_JOSH_LINES,
   ABOUT_ERROR_TERMINAL_LINES,
   ABOUT_TO_PROJECTS_COPILOT,
+  ABOUT_AUTO_JOSH_LINES,
+  ABOUT_AUTO_ERROR_LINES,
 } from '../../VibeCodingOverlay/sequences';
 import type { VibeCodingSequence, TerminalLine } from '../../VibeCodingOverlay/VibeCodingOverlay';
 
@@ -16,56 +18,41 @@ interface AboutRoomProps {
 }
 
 const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo, autoSequence = false, onSequenceComplete }) => {
-  const [viewerCount, setViewerCount] = useState(12);
-  const [countdown, setCountdown] = useState({ h: 23, m: 59, s: 12 });
   const [showReactError, setShowReactError] = useState(false);
   const [vibeActive, setVibeActive] = useState(false);
   const [hintVisible, setHintVisible] = useState(false);
   const autoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    const viewerInterval = setInterval(() => {
-      setViewerCount((prev) => prev + Math.floor(Math.random() * 3) - 1);
-    }, 3000);
-    const countdownInterval = setInterval(() => {
-      setCountdown((prev) => {
-        let { h, m, s } = prev;
-        s--;
-        if (s < 0) { s = 59; m--; }
-        if (m < 0) { m = 59; h--; }
-        if (h < 0) { h = 23; m = 59; s = 59; }
-        return { h, m, s };
-      });
-    }, 1000);
-    return () => {
-      clearInterval(viewerInterval);
-      clearInterval(countdownInterval);
-    };
-  }, []);
+  const [autoIntervention, setAutoIntervention] = useState(false);
 
-  // Auto-sequence: after delay, show hint terminal if user hasn't clicked
+  // Auto-sequence: show hint after 10s, then Josh auto-intervenes at 18s
   useEffect(() => {
     if (!autoSequence) return;
+    // Show hint first
     autoTimerRef.current = setTimeout(() => {
       setHintVisible(true);
-      // After hint is shown for a while, auto-trigger the bug
-      hintTimerRef.current = setTimeout(() => {
-        triggerBug();
-      }, 10000);
-    }, 12000);
+    }, 10000);
+    // If user still hasn't clicked, Josh intervenes himself
+    const autoTrigger = setTimeout(() => {
+      if (!showReactError && !vibeActive) {
+        setAutoIntervention(true);
+        setHintVisible(false);
+        if (autoTimerRef.current) { clearTimeout(autoTimerRef.current); autoTimerRef.current = null; }
+        setShowReactError(true);
+        setTimeout(() => setVibeActive(true), 2000);
+      }
+    }, 18000);
 
     return () => {
       if (autoTimerRef.current) clearTimeout(autoTimerRef.current);
-      if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
+      clearTimeout(autoTrigger);
     };
-  }, [autoSequence]);
+  }, [autoSequence, showReactError, vibeActive]);
 
   const triggerBug = useCallback(() => {
     if (showReactError || vibeActive) return;
-    // Cancel all pending auto timers
+    // Cancel pending auto timer
     if (autoTimerRef.current) { clearTimeout(autoTimerRef.current); autoTimerRef.current = null; }
-    if (hintTimerRef.current) { clearTimeout(hintTimerRef.current); hintTimerRef.current = null; }
     setHintVisible(false);
     setShowReactError(true);
     setTimeout(() => setVibeActive(true), 2000);
@@ -81,10 +68,9 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo, autoSequence = false,
     if (onSequenceComplete) onSequenceComplete();
   }, [onSequenceComplete]);
 
-  const allJoshLines: TerminalLine[] = [
-    ...ABOUT_ERROR_JOSH_LINES,
-    ...ABOUT_ERROR_TERMINAL_LINES,
-  ];
+  const allJoshLines: TerminalLine[] = autoIntervention
+    ? [...ABOUT_AUTO_JOSH_LINES, ...ABOUT_AUTO_ERROR_LINES]
+    : [...ABOUT_ERROR_JOSH_LINES, ...ABOUT_ERROR_TERMINAL_LINES];
 
   const vibeSequence: VibeCodingSequence = {
     joshLines: allJoshLines,
@@ -92,20 +78,21 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo, autoSequence = false,
     onComplete: handleVibeComplete,
   };
 
-  const pad = (n: number) => String(n).padStart(2, '0');
-
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&display=swap');
 
+        /* ═══════════════════════════════════════
+           ABOUT ROOM — v3 editorial table
+           ═══════════════════════════════════════ */
         .about-room *, .about-room *::before, .about-room *::after {
           margin: 0; padding: 0; box-sizing: border-box;
         }
         .about-room {
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-          background: #ffffff;
-          color: #111827;
+          font-family: 'Lato', sans-serif;
+          background: #fff;
+          color: #111;
           height: 100vh;
           overflow: hidden;
           -webkit-font-smoothing: antialiased;
@@ -113,554 +100,544 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo, autoSequence = false,
           flex-direction: column;
         }
 
-        /* NAV */
-        .about-nav {
-          flex-shrink: 0;
-          padding: 12px 32px;
+        /* ── TWO-COLUMN LAYOUT ── */
+        .about-layout {
           display: flex;
-          justify-content: space-between;
-          align-items: center;
-          background: rgba(255,255,255,0.95);
-          backdrop-filter: blur(12px);
-          border-bottom: 1px solid #f3f4f6;
-          z-index: 100;
-        }
-        .about-nav-link {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 13px;
-          font-weight: 500;
-          color: #6b7280;
-          text-decoration: none;
-          letter-spacing: 0.02em;
-          transition: color 0.2s;
-          cursor: pointer;
-          background: none;
-          border: none;
-        }
-        .about-nav-link:hover { color: #111827; }
-        .about-nav-right { display: flex; gap: 20px; }
-
-        /* MAIN LAYOUT */
-        .about-main {
           flex: 1;
           min-height: 0;
-          display: flex;
           overflow: hidden;
         }
 
-        /* BIO PANEL (Left) */
-        .about-bio {
-          width: 42%;
-          flex-shrink: 0;
-          padding: 32px 40px 24px;
+        /* ── LEFT COLUMN ── */
+        .about-left {
+          width: 40%;
+          background: #fafafa;
+          border-right: 1px solid #ddd;
+          padding: 48px 40px 80px;
           display: flex;
           flex-direction: column;
           justify-content: center;
-          overflow-y: auto;
-          opacity: 0;
-          transform: translateY(12px);
-          animation: aboutFadeUp 0.5s ease forwards 0.1s;
+          overflow: hidden;
         }
-        .about-bio-highlights {
-          list-style: none;
-          padding: 0;
-          margin: 16px 0 20px;
-        }
-        .about-bio-highlights li {
-          font-family: 'Inter', sans-serif;
-          font-size: 13px;
-          color: #4b5563;
-          padding: 7px 0;
-          border-bottom: 1px solid #f3f4f6;
-          line-height: 1.45;
-        }
-        .about-bio-highlights li:last-child { border-bottom: none; }
 
-        .about-work-summary {
-          margin-top: 16px;
-          padding-top: 12px;
-          border-top: 1px solid #e5e7eb;
+        .about-name h1 {
+          font-weight: 900;
+          font-size: 46px;
+          line-height: 1.05;
+          letter-spacing: -1px;
+          margin-bottom: 18px;
         }
-        .about-work-title {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 13px;
-          font-weight: 600;
-          color: #374151;
-          text-transform: uppercase;
-          letter-spacing: 0.04em;
-          margin: 0 0 8px;
+
+        .about-name-rule {
+          width: 100%;
+          height: 2.5px;
+          background: #111;
+          margin-bottom: 28px;
         }
-        .about-work-list {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-        }
-        .about-work-list li {
-          font-family: 'Inter', sans-serif;
-          font-size: 12px;
-          color: #4b5563;
-          padding: 4px 0;
-          line-height: 1.4;
-        }
-        .about-work-date {
-          color: #9ca3af;
+
+        .about-section-label {
           font-size: 11px;
-          margin-left: 4px;
-        }
-
-        .about-bio-name {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 28px;
           font-weight: 700;
-          letter-spacing: -0.02em;
-          color: #0a0a0a;
-          display: inline;
-        }
-        .about-bio-name-accent {
-          color: #0d9488;
-        }
-        .about-bio-role {
-          font-size: 14px;
-          color: #6b7280;
-          margin-top: 2px;
-        }
-        .about-bio-tagline {
-          font-family: 'Fraunces', serif;
-          font-style: italic;
-          font-size: 13px;
-          color: #9ca3af;
-          margin-top: 2px;
+          letter-spacing: 3px;
+          text-transform: uppercase;
+          color: #888;
+          margin-bottom: 10px;
+          margin-top: 22px;
         }
 
-        /* COMPARISON SECTION (Right) */
-        .about-comparison-section {
-          flex: 1;
-          min-height: 0;
+        /* Education */
+        .about-edu-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 6px;
+        }
+        .about-edu-row img {
+          width: 36px;
+          height: 36px;
+          object-fit: contain;
+        }
+        .about-edu-text {
+          font-size: 14px;
+          line-height: 1.35;
+        }
+        .about-edu-text strong { font-weight: 700; }
+        .about-edu-text span { color: #666; font-size: 12px; }
+
+        /* Experience list */
+        .about-exp-list { list-style: none; }
+        .about-exp-list li {
+          font-size: 13px;
+          line-height: 1.55;
+          padding: 3px 0;
+          display: flex;
+          justify-content: space-between;
+        }
+        .about-exp-list .role { font-weight: 700; }
+        .about-exp-list .dates { color: #888; font-size: 12px; white-space: nowrap; margin-left: 8px; }
+
+        /* Contact */
+        .about-contact {
+          margin-top: 22px;
+          font-size: 12px;
+          color: #666;
+          line-height: 1.7;
+        }
+        .about-contact a {
+          color: #111;
+          text-decoration: none;
+          border-bottom: 1px solid #ccc;
+        }
+        .about-contact a:hover { border-color: #111; }
+
+        /* ── RIGHT COLUMN ── */
+        .about-right {
+          width: 60%;
           display: flex;
           flex-direction: column;
-          padding: 16px 24px 0;
+          justify-content: center;
+          align-items: center;
+          padding: 40px 48px 80px;
+          position: relative;
           overflow: hidden;
-          border-left: 1px solid #f3f4f6;
         }
-        .about-comparison-header {
-          text-align: center;
-          padding: 4px 0 10px;
-          flex-shrink: 0;
-          opacity: 0;
-          transform: translateY(10px);
-          animation: aboutFadeUp 0.5s ease forwards 0.2s;
+
+        .about-table-wrapper {
+          width: 100%;
+          max-width: 600px;
         }
-        .about-comparison-title {
-          font-family: 'Space Grotesk', sans-serif;
+
+        /* Title area */
+        .about-table-title {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 4px;
+        }
+        .about-table-title h2 {
+          font-size: 26px;
+          font-weight: 900;
+          letter-spacing: -0.5px;
+        }
+        .about-quill {
           font-size: 22px;
+          display: inline-block;
+          animation: aboutQuillWrite 2s ease-in-out infinite;
+          transform-origin: bottom center;
+        }
+        @keyframes aboutQuillWrite {
+          0%, 100% { transform: rotate(-8deg); }
+          50% { transform: rotate(8deg); }
+        }
+
+        .about-table-subtitle {
+          font-size: 14px;
+          font-style: italic;
+          color: #999;
+          margin-bottom: 12px;
+        }
+        .about-title-rule {
+          width: 100%;
+          height: 1px;
+          background: #ccc;
+          margin-bottom: 22px;
+        }
+
+        /* ── TABLE ── */
+        .about-table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+
+        .about-table thead th {
+          padding: 14px 16px;
+          font-size: 14px;
           font-weight: 700;
-          letter-spacing: -0.02em;
-          color: #0a0a0a;
-          line-height: 1.1;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          text-align: center;
+          border: 2px solid #111;
         }
-        .about-comparison-subtitle {
-          font-size: 12px;
-          color: #9ca3af;
+        .about-table thead th:first-child {
+          text-align: left;
+          background: transparent;
+          border: none;
+          border-bottom: 2px solid #111;
+          width: 42%;
         }
-        .about-comparison-rating {
-          font-size: 12px;
-          color: #f59e0b;
+        .about-table thead th.about-th-other {
+          background: #333;
+          color: #fff;
+        }
+        .about-table thead th.about-th-portfolio {
+          background: #111;
+          color: #fff;
+          position: relative;
+          overflow: hidden;
+        }
+
+        /* ink-drop on portfolio header */
+        .about-table thead th.about-th-portfolio::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 10px;
+          height: 10px;
+          background: rgba(255,255,255,0.12);
+          border-radius: 50%;
+          transform: translate(-50%, -50%) scale(0);
+          animation: aboutInkDrop 1.2s ease-out 0.6s forwards;
+        }
+        @keyframes aboutInkDrop {
+          0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+          100% { transform: translate(-50%, -50%) scale(28); opacity: 0; }
+        }
+
+        .about-star {
+          display: inline-block;
+          color: #f59e42;
+          font-size: 16px;
+          margin-left: 6px;
+          animation: aboutRotateStar 8s linear infinite;
+        }
+        @keyframes aboutRotateStar {
+          to { transform: rotate(360deg); }
+        }
+
+        .about-table tbody tr {
+          opacity: 0;
+          transform: translateX(40px);
+          animation: aboutRowSlide 0.45s ease-out forwards;
+        }
+        @keyframes aboutRowSlide {
+          to { opacity: 1; transform: translateX(0); }
+        }
+        .about-table tbody tr:nth-child(1) { animation-delay: 0.15s; }
+        .about-table tbody tr:nth-child(2) { animation-delay: 0.20s; }
+        .about-table tbody tr:nth-child(3) { animation-delay: 0.25s; }
+        .about-table tbody tr:nth-child(4) { animation-delay: 0.30s; }
+        .about-table tbody tr:nth-child(5) { animation-delay: 0.35s; }
+        .about-table tbody tr:nth-child(6) { animation-delay: 0.40s; }
+        .about-table tbody tr:nth-child(7) { animation-delay: 0.45s; }
+        .about-table tbody tr:nth-child(8) { animation-delay: 0.50s; }
+
+        .about-table tbody td {
+          padding: 11px 16px;
+          border-bottom: 1px solid #ddd;
+          vertical-align: middle;
+        }
+        .about-table tbody td:first-child {
+          text-align: left;
+        }
+        .about-table tbody td:nth-child(2),
+        .about-table tbody td:nth-child(3) {
+          text-align: center;
+          border-left: 1px solid #ddd;
+        }
+
+        .about-feat-name {
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 1.25;
+        }
+        .about-feat-detail {
+          font-size: 13px;
+          font-style: italic;
+          color: #888;
           margin-top: 2px;
         }
 
-        /* TABLE */
-        .about-table-wrap {
-          flex: 1; min-height: 0;
-          overflow-y: auto; overflow-x: hidden;
-          max-width: 1100px; margin: 0 auto; width: 100%;
-          opacity: 0; transform: translateY(10px);
-          animation: aboutFadeUp 0.5s ease forwards 0.35s;
+        .about-mark {
+          font-size: 22px;
+          font-weight: 700;
         }
-        .about-table-wrap::-webkit-scrollbar { width: 4px; }
-        .about-table-wrap::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
+        .about-mark-yes { color: #1a9e3f; }
+        .about-mark-no  { color: #d32f2f; }
 
-        .about-comparison-table {
-          width: 100%;
-          border-collapse: separate;
-          border-spacing: 0;
-          border-radius: 12px;
-          overflow: hidden;
-          box-shadow: 0 0 0 1px #e5e7eb, 0 2px 12px rgba(0,0,0,0.04);
+        /* Price row */
+        .about-table tr.about-price-row td {
+          border-top: 4px double #111;
+          padding-top: 14px;
+          font-size: 16px;
+          font-weight: 700;
         }
-        .about-comparison-table thead {
-          position: sticky; top: 0; z-index: 10;
-        }
-        .about-comparison-table thead th {
-          padding: 14px 16px 12px;
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 11px; font-weight: 600;
-          text-transform: uppercase; letter-spacing: 0.08em;
-          text-align: left;
-          border-bottom: 1px solid #e5e7eb;
-        }
-        .about-comparison-table thead th:first-child {
-          background: #f9fafb; color: #6b7280; width: 22%;
-        }
-        .about-col-normal {
-          background: #f9fafb !important; color: #9ca3af !important;
-          width: 30%; text-align: center !important;
-        }
-        .about-col-this {
-          background: #111827 !important;
-          color: white !important;
-          width: 48%; text-align: center !important;
-          position: relative;
-        }
-        .about-most-popular {
-          position: absolute; top: -1px; left: 50%;
-          transform: translateX(-50%);
-          background: #0d9488; color: white;
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 9px; font-weight: 700;
-          text-transform: uppercase; letter-spacing: 0.1em;
-          padding: 2px 10px; border-radius: 0 0 6px 6px;
+        .about-table tr.about-price-row td:nth-child(2) { color: #888; }
+        .about-table tr.about-price-row td:nth-child(3) { color: #111; }
+
+        /* ── CTA AREA ── */
+        .about-cta-area {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-top: 22px;
+          justify-content: flex-end;
         }
 
-        .about-comparison-table tbody tr { transition: background 0.15s; }
-        .about-comparison-table tbody tr:hover { background: #fafaff; }
-        .about-comparison-table tbody td {
-          padding: 10px 16px; font-size: 13px; line-height: 1.4;
-          border-bottom: 1px solid #f3f4f6; vertical-align: middle;
-        }
-        .about-comparison-table tbody tr:last-child td { border-bottom: none; }
-        .about-comparison-table tbody td:first-child {
-          font-family: 'Space Grotesk', sans-serif;
-          font-weight: 600; color: #1f2937; font-size: 12px;
-        }
-        .about-comparison-table tbody td:nth-child(2) {
-          text-align: center; color: #9ca3af; font-size: 12px;
-        }
-        .about-comparison-table tbody td:nth-child(3) {
-          text-align: left; color: #374151; font-weight: 500;
-          border-left: 2px solid #0d9488;
-          background: rgba(13, 148, 136, 0.02);
-          font-size: 12px;
-        }
-
-        .about-cell-boring { color: #c0c0c0 !important; font-style: italic; }
-        .about-cell-fine-print {
-          display: block; font-size: 9px; color: #9ca3af;
-          font-style: italic; font-weight: 400; margin-top: 2px;
-        }
-        .about-cell-highlight {
-          background: linear-gradient(to right, rgba(13,148,136,0.08), transparent);
-          padding: 2px 4px; border-radius: 3px;
-        }
-
-        /* CTA ROW */
-        .about-cta-row {
-          flex-shrink: 0; text-align: left; padding: 4px 0;
-          opacity: 0; animation: aboutFadeUp 0.4s ease forwards 0.5s;
-        }
-        .about-cta-button {
+        .about-cta-btn {
           display: inline-block;
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 14px; font-weight: 700; letter-spacing: 0.02em;
-          color: white;
-          background: #111827;
-          padding: 10px 28px; border-radius: 8px;
-          text-decoration: none;
-          transition: transform 0.2s, box-shadow 0.2s;
-          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-          cursor: pointer; border: none; position: relative;
+          padding: 14px 34px;
+          background: #111;
+          color: #fff;
+          font-family: 'Lato', sans-serif;
+          font-size: 16px;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          border: none;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          animation: aboutBreathe 3s ease-in-out infinite;
+          transition: transform 0.3s ease;
         }
-        .about-cta-button:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-        }
-        .about-cta-fine-print { font-size: 10px; color: #9ca3af; margin-top: 4px; font-style: italic; }
-        .about-urgency {
-          display: inline-block; font-size: 11px; color: #dc2626;
-          font-weight: 600; margin-left: 12px;
-          animation: aboutPulse 1.5s ease infinite;
+        .about-cta-btn:hover {
+          transform: scale(1.04);
         }
 
-        /* FLOATING INDICATORS */
-        .about-viewers {
-          position: fixed; bottom: 52px; left: 16px;
-          background: #111827; color: white;
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 11px; font-weight: 500;
-          padding: 6px 12px; border-radius: 6px; z-index: 200;
-          display: flex; align-items: center; gap: 6px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-          opacity: 0; animation: aboutSlideIn 0.6s ease forwards 1.2s;
-        }
-        .about-viewers-dot {
-          width: 6px; height: 6px; border-radius: 50%;
-          background: #22c55e; animation: aboutPulse 1.5s ease infinite;
-        }
-        .about-countdown {
-          position: fixed; bottom: 52px; right: 16px;
-          background: #dc2626; color: white;
-          font-family: 'Space Grotesk', monospace;
-          font-size: 11px; font-weight: 600;
-          padding: 6px 12px; border-radius: 6px; z-index: 200;
-          box-shadow: 0 4px 12px rgba(220,38,38,0.3);
-          opacity: 0; animation: aboutSlideIn 0.6s ease forwards 1.5s;
+        /* Breathing box-shadow pulse */
+        @keyframes aboutBreathe {
+          0%, 100% { box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+          50% { box-shadow: 0 4px 24px rgba(0,0,0,0.35); }
         }
 
-        /* BOTTOM NAV */
+        /* Shimmer sweep */
+        .about-cta-btn::after {
+          content: '';
+          position: absolute;
+          top: 0; left: -100%;
+          width: 60%;
+          height: 100%;
+          background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+          animation: aboutShimmer 4s ease-in-out infinite;
+        }
+        @keyframes aboutShimmer {
+          0%   { left: -100%; }
+          50%  { left: 140%; }
+          100% { left: 140%; }
+        }
+
+        /* Best Value typewriter */
+        .about-best-value {
+          font-size: 13px;
+          font-weight: 900;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          color: #f59e42;
+          white-space: nowrap;
+          overflow: hidden;
+          border-right: 2px solid #f59e42;
+          width: 0;
+          animation: aboutTypewriter 2s steps(10) 1.2s forwards, aboutBlink 0.6s step-end infinite;
+        }
+        @keyframes aboutTypewriter {
+          to { width: 10ch; }
+        }
+        @keyframes aboutBlink {
+          50% { border-color: transparent; }
+        }
+
+        /* ── FINE PRINT ── */
+        .about-fine-print {
+          margin-top: 14px;
+          font-size: 11px;
+          font-style: italic;
+          color: #bbb;
+          line-height: 1.5;
+          text-align: center;
+        }
+
+        /* ── BOTTOM NAV ── */
         .about-bottom-nav {
-          flex-shrink: 0; padding: 6px 32px;
-          display: flex; justify-content: space-between; align-items: center;
-          border-top: 1px solid #e5e7eb; background: #fff; z-index: 100;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 48px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 40px;
+          background: #111;
+          z-index: 100;
         }
-        .about-bottom-nav-link {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 12px; font-weight: 500; color: #6b7280;
-          text-decoration: none; transition: color 0.2s;
-          cursor: pointer; background: none; border: none;
+        .about-bottom-nav button {
+          color: #999;
+          font-family: 'Lato', sans-serif;
+          font-size: 12px;
+          font-weight: 700;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          text-decoration: none;
+          background: none;
+          border: none;
+          cursor: pointer;
+          transition: color 0.2s;
         }
-        .about-bottom-nav-link:hover { color: #111827; }
-        .about-next-link {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 13px; font-weight: 600; color: #111827;
-          display: flex; align-items: center; gap: 6px;
-          text-decoration: none; transition: color 0.2s;
-          cursor: pointer; background: none; border: none;
-        }
-        .about-next-link:hover { color: #0d9488; }
-        .about-next-arrow {
-          font-size: 16px; transition: transform 0.2s; display: inline-block;
-        }
-        .about-next-link:hover .about-next-arrow { transform: translateX(4px); }
+        .about-bottom-nav button:hover { color: #fff; }
 
-        @keyframes aboutFadeUp { to { opacity: 1; transform: translateY(0); } }
-        @keyframes aboutPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        @keyframes aboutSlideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        @media (max-width: 860px) {
-          .about-main { flex-direction: column; }
-          .about-bio { width: 100%; padding: 12px 16px; }
-          .about-comparison-section { border-left: none; border-top: 1px solid #f3f4f6; padding: 8px 8px 0; }
-          .about-nav { padding: 10px 16px; }
-          .about-comparison-table thead th,
-          .about-comparison-table tbody td { padding: 8px 8px; font-size: 11px; }
-          .about-bottom-nav { padding: 6px 16px; }
-        }
-        @media (max-width: 600px) {
-          .about-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-          .about-comparison-table { min-width: 580px; }
+        @media (max-width: 768px) {
+          .about-layout { flex-direction: column; }
+          .about-left { width: 100%; padding: 24px 20px 20px; }
+          .about-right { width: 100%; padding: 20px; }
+          .about-name h1 { font-size: 32px; }
+          .about-table-title h2 { font-size: 20px; }
+          .about-feat-name { font-size: 14px; }
+          .about-mark { font-size: 18px; }
         }
       `}</style>
 
       <div className="about-room">
-        {/* NAV — hidden during auto-sequence */}
-        {!autoSequence && (
-        <nav className="about-nav">
-          <button className="about-nav-link" onClick={() => navigateTo('lobby')}>
-            &larr; Back to Lobby
-          </button>
-          <div className="about-nav-right">
-            <span className="about-nav-link" style={{ color: '#111827', fontWeight: 600, cursor: 'default' }}>About</span>
-            <button className="about-nav-link" onClick={() => navigateTo('projects')}>Projects</button>
-          </div>
-        </nav>
-        )}
 
-        <div className="about-main">
-        {/* BIO PANEL (Left) */}
-        <section className="about-bio">
-          <div>
-            <span className="about-bio-name">Joshua </span>
-            <span className="about-bio-name about-bio-name-accent">Hamburger</span>
-          </div>
-          <div className="about-bio-role">
-            Full-stack dev · Prompt engineer · Robot whisperer
-          </div>
-          <div className="about-bio-tagline">
-            &ldquo;Injecting the human condition into unwitting robots.&rdquo;
-          </div>
+        {/* ── TWO-COLUMN LAYOUT ── */}
+        <div className="about-layout">
 
-          <ul className="about-bio-highlights">
-            <li><strong>Currently:</strong> Building AI sales agents at Expertise AI</li>
-            <li><strong>Education:</strong> BASc Computer Engineering, University of Waterloo (Dean&apos;s Honours)</li>
-            <li><strong>Side quests:</strong> Games about math, infinity, and five-letter words</li>
-            <li><strong>This site:</strong> Built by a human and a very confident AI</li>
-          </ul>
+          {/* ── LEFT: Resume ── */}
+          <div className="about-left">
+            <div className="about-name">
+              <h1>Joshua<br/>Hamburger</h1>
+            </div>
+            <div className="about-name-rule"></div>
 
-          {/* Condensed work history */}
-          <div className="about-work-summary">
-            <h3 className="about-work-title">Work History</h3>
-            <ul className="about-work-list">
-              <li><strong>Expertise AI</strong> — Software Developer <span className="about-work-date">2025–Present</span></li>
-              <li><strong>Descartes Systems</strong> — Software Developer Co-op <span className="about-work-date">2024</span></li>
-              <li><strong>CharityCAN</strong> — Full Stack Developer Co-op <span className="about-work-date">2022–2023</span></li>
-              <li><strong>CASI</strong> — Embedded Software Developer <span className="about-work-date">2021–2022</span></li>
-              <li><strong>Quilt.AI</strong> — Software Engineering Intern <span className="about-work-date">2021</span></li>
+            {/* Education */}
+            <div className="about-section-label">Education</div>
+            <div className="about-edu-row">
+              <img src="https://upload.wikimedia.org/wikipedia/en/thumb/6/6e/University_of_Waterloo_seal.svg/150px-University_of_Waterloo_seal.svg.png" alt="UWaterloo" />
+              <div className="about-edu-text">
+                <strong>University of Waterloo</strong><br/>
+                <span>BASc Computer Engineering · Dean&apos;s Honours</span>
+              </div>
+            </div>
+
+            {/* Experience */}
+            <div className="about-section-label">Experience</div>
+            <ul className="about-exp-list">
+              <li><span className="role">Expertise AI — Software Developer</span><span className="dates">2025–Present</span></li>
+              <li><span className="role">Descartes Systems — Software Developer Co-op</span><span className="dates">2024</span></li>
+              <li><span className="role">CharityCAN — Full Stack Developer Co-op</span><span className="dates">2022–2023</span></li>
+              <li><span className="role">CASI — Embedded Software Developer</span><span className="dates">2021–2022</span></li>
+              <li><span className="role">Quilt.AI — Software Engineering Intern</span><span className="dates">2021</span></li>
             </ul>
+
+            {/* Contact */}
+            <div className="about-contact">
+              <div className="about-section-label" style={{ marginTop: 22 }}>Contact</div>
+              <a href="https://github.com/HamburgJ" target="_blank" rel="noopener noreferrer">github.com/HamburgJ</a><br/>
+              <a href="https://linkedin.com/in/joshuahamburger" target="_blank" rel="noopener noreferrer">linkedin.com/in/joshuahamburger</a><br/>
+              <a href="mailto:josh@hamburger.dev">josh@hamburger.dev</a>
+            </div>
           </div>
 
-          <div className="about-cta-row">
-            <button
-              className="about-cta-button"
-              onClick={handleAddToCart}
-            >
-              🛒 Add to Cart — FREE
-            </button>
-            <div>
-              <span className="about-urgency">🔴 Only 1 left in stock!</span>
-              <p className="about-cta-fine-print">
-                No credit card required. No features included.
+          {/* ── RIGHT: Comparison Table ── */}
+          <div className="about-right">
+            <div className="about-table-wrapper">
+
+              <div className="about-table-title">
+                <h2>Select Your Developer</h2>
+                <span className="about-quill">✒</span>
+              </div>
+              <p className="about-table-subtitle">A side-by-side comparison</p>
+              <div className="about-title-rule"></div>
+
+              <table className="about-table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th className="about-th-other">The Other Guy</th>
+                    <th className="about-th-portfolio">This Portfolio<span className="about-star">★</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div className="about-feat-name">Clean Code</div>
+                      <div className="about-feat-detail">Readable, maintainable code</div>
+                    </td>
+                    <td><span className="about-mark about-mark-no">✗</span></td>
+                    <td><span className="about-mark about-mark-yes">✓</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div className="about-feat-name">Full-Stack Skills</div>
+                      <div className="about-feat-detail">Front-end to back-end</div>
+                    </td>
+                    <td><span className="about-mark about-mark-no">✗</span></td>
+                    <td><span className="about-mark about-mark-yes">✓</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div className="about-feat-name">Reads Error Messages</div>
+                      <div className="about-feat-detail">The entire stack trace, even</div>
+                    </td>
+                    <td><span className="about-mark about-mark-no">✗</span></td>
+                    <td><span className="about-mark about-mark-yes">✓</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div className="about-feat-name">Deploys on Fridays</div>
+                      <div className="about-feat-detail">And survives</div>
+                    </td>
+                    <td><span className="about-mark about-mark-no">✗</span></td>
+                    <td><span className="about-mark about-mark-yes">✓</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div className="about-feat-name">Cover Letter Quality</div>
+                      <div className="about-feat-detail">Makes recruiters weep</div>
+                    </td>
+                    <td><span className="about-mark about-mark-no">✗</span></td>
+                    <td><span className="about-mark about-mark-yes">✓</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div className="about-feat-name">Code Comments</div>
+                      <div className="about-feat-detail">Written in haiku form</div>
+                    </td>
+                    <td><span className="about-mark about-mark-no">✗</span></td>
+                    <td><span className="about-mark about-mark-yes">✓</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div className="about-feat-name">Fun Portfolio Site</div>
+                      <div className="about-feat-detail">You&apos;re looking at it</div>
+                    </td>
+                    <td><span className="about-mark about-mark-no">✗</span></td>
+                    <td><span className="about-mark about-mark-yes">✓</span></td>
+                  </tr>
+                  <tr className="about-price-row">
+                    <td>Price</td>
+                    <td>$$$</td>
+                    <td style={{ color: '#1a9e3f' }}>Free</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div className="about-cta-area">
+                <span className="about-best-value">BEST VALUE</span>
+                <button className="about-cta-btn" onClick={handleAddToCart}>🛒 Add to Cart</button>
+              </div>
+
+              <p className="about-fine-print">
+                * This is not a real product. No developers were harmed in the making of this comparison table.
+                Side effects may include mass hiring, mass confusion, or mass compliments. Results not guaranteed.
               </p>
+
             </div>
           </div>
-        </section>
 
-        {/* COMPARISON TABLE */}
-        <section className="about-comparison-section">
-          <div className="about-comparison-header">
-            <h2 className="about-comparison-title">An Honest Comparison</h2>
-            <p className="about-comparison-subtitle">
-              Completely unbiased. I wrote both columns.
-            </p>
-          </div>
+        </div>
 
-          <div className="about-table-wrap">
-            <table className="about-comparison-table">
-              <thead>
-                <tr>
-                  <th>Feature</th>
-                  <th className="about-col-normal">Normal Portfolio</th>
-                  <th className="about-col-this">
-                    <span className="about-most-popular">RECOMMENDED</span>
-                    This Website
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Hero Section</td>
-                  <td className="about-cell-boring">"Hi, I'm a developer"</td>
-                  <td>
-                    <span className="about-cell-highlight">Cinematic loading sequence</span>
-                    <span className="about-cell-fine-print">Complete with fake progress bar</span>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Skills</td>
-                  <td className="about-cell-boring">Progress bars (90%)</td>
-                  <td>
-                    No skill bars. If I were 90% at something I'd finish the other 10%
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Dark Mode</td>
-                  <td className="about-cell-boring">Toggle switch</td>
-                  <td>
-                    Just keep scrolling, you'll find it
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>AI-Powered</td>
-                  <td>❌</td>
-                  <td>
-                    ✅ The AI already broke this page 30 seconds ago
-                    <span className="about-cell-fine-print">That's a feature</span>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Contact</td>
-                  <td className="about-cell-boring">Contact form</td>
-                  <td>
-                    A chatbot that may or may not be napping
-                    <span className="about-cell-fine-print">Response time: ¯\_(ツ)_/¯</span>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Testimonials</td>
-                  <td className="about-cell-boring"><em>"Great work" — Some Guy</em></td>
-                  <td>
-                    The chatbot said something nice once
-                    <span className="about-cell-fine-print">Possibly hallucinating</span>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Price</td>
-                  <td className="about-cell-boring">$0</td>
-                  <td>
-                    <span style={{ textDecoration: 'line-through', color: '#9ca3af' }}>$999/mo</span>{' '}
-                    → <strong style={{ color: '#0d9488' }}>FREE</strong>
-                    <span className="about-cell-fine-print">Was never $999</span>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Performance</td>
-                  <td className="about-cell-boring">Lighthouse: 100</td>
-                  <td>
-                    It loads. Usually
-                    <span className="about-cell-fine-print">Sometimes even on the first try</span>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Design</td>
-                  <td className="about-cell-boring">Figma → Code</td>
-                  <td>
-                    No Figma was harmed in the making of this site
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Mobile</td>
-                  <td className="about-cell-boring">✓ Responsive</td>
-                  <td>
-                    Probably. I haven't checked on your phone specifically
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Guarantee</td>
-                  <td className="about-cell-boring">N/A</td>
-                  <td>
-                    30-day money-back guarantee
-                    <span className="about-cell-fine-print">There is no money</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-        </section>
-        </div>{/* close about-main */}
-
-        {/* BOTTOM NAV — only show when not in auto-sequence */}
+        {/* BOTTOM NAV */}
         {!autoSequence && (
-          <div className="about-bottom-nav">
-            <button className="about-bottom-nav-link" onClick={() => navigateTo('lobby')}>
-              &larr; Lobby
+          <nav className="about-bottom-nav">
+            <button onClick={() => navigateTo('lobby')}>
+              &larr; Back to Lobby
             </button>
-            <button className="about-next-link" onClick={() => navigateTo('projects')}>
-              Next: Projects <span className="about-next-arrow">&rarr;</span>
+            <button onClick={() => navigateTo('projects')}>
+              See what I&apos;ve built &rarr;
             </button>
-          </div>
+          </nav>
         )}
 
-        {/* FLOATING INDICATORS */}
-        {!vibeActive && !showReactError && (
-          <>
-            <div className="about-viewers">
-              <div className="about-viewers-dot" />
-              👀 {Math.max(1, viewerCount)} people viewing this developer right now
-            </div>
-            <div className="about-countdown">
-              ⏰ Offer expires in {pad(countdown.h)}:{pad(countdown.m)}:{pad(countdown.s)}
-            </div>
-          </>
-        )}
       </div>
 
       {/* Fake React Error Boundary */}
@@ -703,7 +680,7 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo, autoSequence = false,
             </p>
           </div>
           <p style={{ color: '#888', fontSize: '0.9rem' }}>
-            There is no cart. There was never a cart.
+            There is no CartProvider wrapping this component.
           </p>
         </div>
       )}
