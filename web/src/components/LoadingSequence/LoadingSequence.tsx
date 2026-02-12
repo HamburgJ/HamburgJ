@@ -561,8 +561,7 @@ const JOSH_LINES_2: TermLine[] = [
   { type: 'comment', text: 'oh no.' },
   { type: 'comment', text: "that's worse" },
   { type: 'blank', text: '' },
-  { type: 'comment', text: 'ok you know what...' },
-  { type: 'prompt-cmd', text: '@copilot my portfolio is completely broken, the whole config folder just disappeared?? can you just fix it' },
+  { type: 'comment', text: 'ok you know what, let me just ask copilot...' },
 ];
 
 interface CopilotMsg {

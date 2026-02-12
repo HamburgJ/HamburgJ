@@ -28,13 +28,12 @@ const JOSH_LINES = [
   'what did you do',
   "that's absolutely terrible",
   'ok let me try this again...',
-  '@copilot scrap everything. build me an about page that actually stands out.',
 ];
 
 const COPILOT_MSGS_TT: TTCopilotMsg[] = [
   {
     role: 'user',
-    text: '@copilot scrap everything. build me an about page that actually stands out.',
+    text: 'scrap everything. build me an about page that actually stands out.',
   },
   {
     role: 'assistant',
@@ -561,12 +560,10 @@ const TerribleTemplate: React.FC<TerribleTemplateProps> = ({ onComplete }) => {
             lineHeight: 1.5,
           }}>
             {JOSH_LINES.slice(0, Math.min(joshLineIndex + 1, JOSH_LINES.length)).map((line, i) => {
-              const isCommand = line.startsWith('@copilot');
               const displayText = i < joshLineIndex ? line : line.substring(0, joshCharIndex);
               return (
                 <p key={i} style={{ margin: 0, whiteSpace: 'pre-wrap' as const, lineHeight: 1.5, minHeight: '20px' }}>
-                  {isCommand && <span style={{ color: '#4ec9b0' }}>~/portfolio $ </span>}
-                  <span style={{ color: isCommand ? '#cccccc' : '#a0a0a0' }}>{displayText}</span>
+                  <span style={{ color: '#a0a0a0' }}>{displayText}</span>
                   {i === joshLineIndex && phase === 'josh-typing' && (
                     <span style={{
                       display: 'inline-block',
