@@ -29,11 +29,9 @@
     "vite": "^7.3.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "set DISABLE_ESLINT_PLUGIN=true && react-scripts build",
-    "postbuild": "react-snap",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
   },
   "eslintConfig": {
     "extends": [
