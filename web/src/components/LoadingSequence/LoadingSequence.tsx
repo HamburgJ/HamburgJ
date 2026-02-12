@@ -178,31 +178,88 @@ const styles: Record<string, React.CSSProperties> = {
     left: 0,
     right: 0,
     bottom: 0,
-    background: 'rgba(255,255,255,0.95)',
+    background: '#fff',
     display: 'flex',
     flexDirection: 'column' as const,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    borderRadius: '4px',
+    padding: '30px 36px',
+  },
+  errorStatusRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    marginBottom: '16px',
+    width: '100%',
+  },
+  errorStatusIcon: {
+    width: '20px',
+    height: '20px',
+    borderRadius: '50%',
+    background: '#cb2431',
+    display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: '4px',
-    padding: '30px',
+    color: '#fff',
+    fontSize: '12px',
+    fontWeight: 700 as const,
+    flexShrink: 0,
   },
-  errorText: {
-    fontFamily: 'monospace',
-    fontSize: '13px',
-    color: '#dc2626',
-    background: '#fef2f2',
-    border: '1px solid #fecaca',
-    borderRadius: '4px',
-    padding: '12px 16px',
-    textAlign: 'left' as const,
-    wordBreak: 'break-all' as const,
+  errorStatusText: {
+    fontSize: '14px',
+    fontWeight: 600 as const,
+    color: '#24292e',
+  },
+  errorStatusTime: {
+    fontSize: '12px',
+    color: '#586069',
+    marginLeft: 'auto' as const,
+  },
+  errorLogBox: {
     width: '100%',
-    maxWidth: '400px',
+    background: '#24292e',
+    borderRadius: '6px',
+    overflow: 'hidden' as const,
+    marginBottom: '14px',
+    border: '1px solid #1b1f23',
+  },
+  errorLogHeader: {
+    padding: '8px 12px',
+    background: '#1b1f23',
+    fontSize: '12px',
+    fontWeight: 600 as const,
+    color: '#e1e4e8',
+    fontFamily: MONO_STACK,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+  },
+  errorLogBody: {
+    padding: '12px 16px',
+    fontFamily: MONO_STACK,
+    fontSize: '12px',
+    lineHeight: 1.6,
+    color: '#e1e4e8',
+    whiteSpace: 'pre-wrap' as const,
+  },
+  errorLogLine: {
+    margin: '0',
+    padding: '1px 0',
+  },
+  errorLogError: {
+    color: '#f97583',
+  },
+  errorLogDim: {
+    color: '#6a737d',
   },
   notifyText: {
     fontSize: '12px',
-    color: '#777',
-    marginTop: '14px',
+    color: '#586069',
+    marginTop: '4px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
   },
 
   // ── VS Code Terminal ─────────────────────────────────────────────────────
@@ -294,7 +351,7 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#f44747',
   },
   dimColor: {
-    color: '#808080',
+    color: '#a0a0a0',
   },
   textColor: {
     color: '#cccccc',
@@ -417,7 +474,7 @@ const styles: Record<string, React.CSSProperties> = {
     opacity: 0.7,
   },
   fileEditLineNeutral: {
-    color: '#808080',
+    color: '#999999',
   },
   typingIndicator: {
     display: 'flex',
@@ -483,17 +540,19 @@ const JOSH_LINES: TermLine[] = [
   { type: 'prompt-cmd', text: 'npm run build' },
   { type: 'blank', text: '' },
   { type: 'error', text: 'ERROR in src/components/Portfolio.jsx' },
-  { type: 'error', text: '  Module not found: ./config/portfolio-data' },
+  { type: 'error', text: "  Module not found: Can't resolve './config/portfolio-data'" },
   { type: 'blank', text: '' },
   { type: 'output', text: 'Build failed with 1 error.' },
   { type: 'blank', text: '' },
-  { type: 'comment', text: 'hmm ok let me check...' },
-  { type: 'prompt-cmd', text: 'cat src/config/portfolio-data.js' },
-  { type: 'error', text: 'cat: src/config/portfolio-data.js: No such file or directory' },
+  { type: 'comment', text: 'wait what? it was working yesterday...' },
+  { type: 'prompt-cmd', text: 'ls src/config/' },
+  { type: 'error', text: 'ls: src/config/: No such file or directory' },
   { type: 'blank', text: '' },
-  { type: 'comment', text: 'wait what' },
-  { type: 'comment', text: 'ok let me just restart the dev server...' },
+  { type: 'comment', text: 'the whole folder is gone??' },
+  { type: 'comment', text: 'ok let me just start the dev server and see what happens...' },
   { type: 'prompt-cmd', text: 'npm start' },
+  { type: 'output', text: 'Starting development server...' },
+  { type: 'output', text: 'Compiled with errors.' },
 ];
 
 const JOSH_LINES_2: TermLine[] = [
@@ -501,8 +560,7 @@ const JOSH_LINES_2: TermLine[] = [
   { type: 'comment', text: 'oh no.' },
   { type: 'comment', text: "that's worse" },
   { type: 'blank', text: '' },
-  { type: 'comment', text: 'ok fine.' },
-  { type: 'prompt-cmd', text: 'copilot' },
+  { type: 'comment', text: 'ok you know what, let me just ask copilot...' },
 ];
 
 interface CopilotMsg {
@@ -517,15 +575,15 @@ interface CopilotMsg {
 const COPILOT_MESSAGES: CopilotMsg[] = [
   {
     role: 'user',
-    text: 'can you fix the portfolio renderer? it keeps crashing',
+    text: 'my portfolio is completely broken, the whole config folder just disappeared?? can you just fix it',
   },
   {
     role: 'assistant',
-    text: "Looking at the error... your portfolio is importing from a config file that doesn't exist. Let me fix it.",
+    text: "I see the issue — your portfolio is importing from a config file that doesn't exist anymore. Let me fix that.",
   },
   {
     role: 'assistant',
-    text: "Found the issue. I'll scaffold a complete portfolio with inline data.",
+    text: "I'll scaffold a complete portfolio with inline data so you don't need that config file.",
     fileEdit: {
       fileName: 'src/components/Portfolio.jsx',
       lines: [
@@ -542,11 +600,11 @@ const COPILOT_MESSAGES: CopilotMsg[] = [
   },
   {
     role: 'assistant',
-    text: 'Adding hero section, animated skill bars, and testimonials carousel...',
+    text: 'Adding a hero section, animated skill bars, and a testimonials carousel...',
   },
   {
     role: 'assistant',
-    text: '\u2705 Done! Deployed to GitHub Pages.',
+    text: '\u2705 Done! Try running the build again.',
   },
 ];
 
@@ -876,7 +934,7 @@ const LoadingSequence: React.FC<LoadingSequenceProps> = ({
     phase === 'josh2' || phase === 'copilot' || phase === 'done';
 
   const renderPrompt = () => (
-    <span style={styles.prompt}>PS C:\Users\josh\portfolio{'>'} </span>
+    <span style={styles.prompt}>~/portfolio $ </span>
   );
 
   const renderTerminalLine = (line: TermLine, i: number) => {
@@ -929,37 +987,55 @@ const LoadingSequence: React.FC<LoadingSequenceProps> = ({
       <div style={styles.main}>
         <div style={styles.card}>
           <p style={styles.siteUrl}>hamburgj.github.io</p>
-          <h1 style={styles.heading}>
-            Preparing site assets
+          <h1 style={{ ...styles.heading, ...(showError ? { color: '#dc2626' } : {}) }}>
+            {showError ? 'Deploy failed' : 'Deploying to GitHub Pages'}
           </h1>
 
           <div style={styles.progressTrack}>
             <div
-              style={{ ...styles.progressBar, width: `${progress}%` }}
+              style={{ ...styles.progressBar, width: `${progress}%`, ...(showError ? { background: '#dc2626' } : {}) }}
             />
           </div>
 
           <p style={styles.subtext}>
-            hamburgj.github.io is loading resources and preparing
-            the experience.
+            Building from branch <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>main</span> &middot; commit <span style={{ fontFamily: 'monospace' }}>8f2a3c1</span>
           </p>
           <p style={styles.autoText}>
-            This process is automatic. The site will be ready shortly.
+            Deployment is running. The site will be available shortly.
           </p>
           <p style={styles.rayId}>
-            Powered by GitHub Pages &middot; Build ID:
-            8f2a3c1d9e6b4a07
+            github.com/HamburgJ &middot; GitHub Actions
           </p>
 
-          {/* Error overlay */}
+          {/* Error overlay — GitHub Actions style */}
           {showError && (
             <div style={styles.errorOverlay}>
-              <div style={styles.errorText}>
-                ERR_PORTFOLIO_RENDER_FAILED: Cannot read property
-                'personality' of undefined
+              <div style={styles.errorStatusRow}>
+                <div style={styles.errorStatusIcon}>✕</div>
+                <span style={styles.errorStatusText}>build and deploy</span>
+                <span style={styles.errorStatusTime}>failed in 47s</span>
+              </div>
+              <div style={styles.errorLogBox}>
+                <div style={styles.errorLogHeader}>
+                  <span>▸</span>
+                  <span>Build with Node.js</span>
+                </div>
+                <div style={styles.errorLogBody}>
+                  <p style={{ ...styles.errorLogLine, ...styles.errorLogDim }}>Run npm run build</p>
+                  <p style={styles.errorLogLine}>&gt; portfolio@1.0.0 build</p>
+                  <p style={styles.errorLogLine}>&gt; react-scripts build</p>
+                  <p style={styles.errorLogLine}>&nbsp;</p>
+                  <p style={{ ...styles.errorLogLine, ...styles.errorLogError }}>ERROR in src/components/Portfolio.jsx</p>
+                  <p style={{ ...styles.errorLogLine, ...styles.errorLogError }}>  Module not found: Can't resolve './config/portfolio-data'</p>
+                  <p style={styles.errorLogLine}>&nbsp;</p>
+                  <p style={{ ...styles.errorLogLine, ...styles.errorLogError }}>Process completed with exit code 1.</p>
+                </div>
               </div>
               {showNotify && (
-                <p style={styles.notifyText}>Notifying site owner...</p>
+                <p style={styles.notifyText}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f9826c', display: 'inline-block' }} />
+                  Notifying site owner…
+                </p>
               )}
             </div>
           )}

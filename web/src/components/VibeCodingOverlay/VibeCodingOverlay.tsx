@@ -437,7 +437,7 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
   // ── Render helpers ─────────────────────────────────────────────────────
 
   const renderPrompt = () => (
-    <span style={{ color: '#4ec9b0' }}>PS C:\Users\josh\portfolio{'>'} </span>
+    <span style={{ color: '#4ec9b0' }}>~/portfolio $ </span>
   );
 
   const renderTerminalLine = (line: TerminalLine, i: number) => {
@@ -452,7 +452,7 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
     if (line.type === 'output') {
       return <p key={i} style={lineStyle}><span style={{ color: '#cccccc' }}>{line.text}</span></p>;
     }
-    return <p key={i} style={lineStyle}><span style={{ color: '#808080' }}>{line.text}</span></p>;
+    return <p key={i} style={lineStyle}><span style={{ color: '#a0a0a0' }}>{line.text}</span></p>;
   };
 
   const renderFileEdit = (fileEdit: FileEdit) => (
@@ -595,7 +595,7 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
             {typingLineType === 'prompt-cmd' && renderPrompt()}
             <span style={{
               color: typingLineType === 'prompt-cmd' ? '#cccccc'
-                : typingLineType === 'error' ? '#f44747' : '#808080',
+                : typingLineType === 'error' ? '#f44747' : '#a0a0a0',
             }}>
               {typingBuffer}
             </span>

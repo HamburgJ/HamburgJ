@@ -93,7 +93,7 @@ const Underworld: React.FC<UnderworldProps> = ({ navigateTo, collectClue }) => {
           margin: '0 auto',
           cursor: 'default',
         }}
-        onClick={() => collectClue(4)}
+        onClick={() => collectClue(8)}
       >
         Okay, fine. You found it. There's nothing here. But you looked, and that's something.
       </div>

@@ -5,7 +5,7 @@ import {
   ABOUT_HINT_LINES,
   ABOUT_ERROR_JOSH_LINES,
   ABOUT_ERROR_TERMINAL_LINES,
-  ABOUT_TO_PROJECTS_COPILOT,
+  ABOUT_TO_LOBBY_COPILOT,
   ABOUT_AUTO_JOSH_LINES,
   ABOUT_AUTO_ERROR_LINES,
 } from '../../VibeCodingOverlay/sequences';
@@ -74,7 +74,7 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo, autoSequence = false,
 
   const vibeSequence: VibeCodingSequence = {
     joshLines: allJoshLines,
-    copilotMessages: ABOUT_TO_PROJECTS_COPILOT,
+    copilotMessages: ABOUT_TO_LOBBY_COPILOT,
     onComplete: handleVibeComplete,
   };
 
@@ -641,7 +641,7 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo, autoSequence = false,
       </div>
 
       {/* Fake React Error Boundary */}
-      {showReactError && !vibeActive && (
+      {showReactError && (
         <div style={{
           position: 'fixed',
           top: 0,

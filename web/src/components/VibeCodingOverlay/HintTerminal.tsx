@@ -138,7 +138,7 @@ const HintTerminal: React.FC<HintTerminalProps> = ({ lines, visible }) => {
         <div style={{
           flex: 1,
           background: '#1e1e1e',
-          color: '#808080',
+          color: '#a0a0a0',
           fontFamily: MONO_STACK,
           fontSize: '13px',
           padding: '8px 16px',
@@ -147,12 +147,12 @@ const HintTerminal: React.FC<HintTerminalProps> = ({ lines, visible }) => {
         }}>
           {typedLines.map((line, i) => (
             <p key={i} style={{ margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: '20px' }}>
-              <span style={{ color: '#808080' }}>{line}</span>
+              <span style={{ color: '#a0a0a0' }}>{line}</span>
             </p>
           ))}
           {started && lineIndex < lines.length && currentTyping && (
             <p style={{ margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: '20px' }}>
-              <span style={{ color: '#808080' }}>{currentTyping}</span>
+              <span style={{ color: '#a0a0a0' }}>{currentTyping}</span>
               <span style={{
                 display: 'inline-block', width: '7px', height: '14px',
                 background: '#cccccc', marginLeft: '2px', verticalAlign: 'text-bottom',

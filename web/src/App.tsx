@@ -12,7 +12,7 @@ import HamburgerPage from './components/HiddenPages/HamburgerPage';
 import './index.css';
 
 // Phases that are part of the first-visit auto-sequence (vibecoding gag)
-const AUTO_SEQUENCE_PHASES: SitePhase[] = ['about', 'projects'];
+const AUTO_SEQUENCE_PHASES: SitePhase[] = ['about'];
 
 const App: React.FC = () => {
   const {
@@ -171,7 +171,11 @@ const App: React.FC = () => {
           <AboutRoom
             navigateTo={navigateTo}
             autoSequence={isAutoSequenceActive}
-            onSequenceComplete={isAutoSequenceActive ? () => autoNavigateTo('projects') : undefined}
+            onSequenceComplete={isAutoSequenceActive ? () => {
+              setLobbyFirstArrival(true);
+              setInAutoSequence(false);
+              autoNavigateTo('lobby');
+            } : undefined}
           />
         );
 
@@ -179,12 +183,6 @@ const App: React.FC = () => {
         return (
           <ProjectsRoom
             navigateTo={navigateTo}
-            autoSequence={isAutoSequenceActive}
-            onSequenceComplete={() => {
-              setLobbyFirstArrival(true);
-              setInAutoSequence(false);
-              autoNavigateTo('lobby');
-            }}
           />
         );
 

@@ -58,7 +58,7 @@ const COPILOT_MSGS_TT: TTCopilotMsg[] = [
   },
   {
     role: 'assistant',
-    text: '\u2705 Done. Deploying now...',
+    text: '\u2705 Done. Building now...',
   },
 ];
 
@@ -559,8 +559,8 @@ const TerribleTemplate: React.FC<TerribleTemplateProps> = ({ onComplete }) => {
               const displayText = i < joshLineIndex ? line : line.substring(0, joshCharIndex);
               return (
                 <p key={i} style={{ margin: 0, whiteSpace: 'pre-wrap' as const, lineHeight: 1.5, minHeight: '20px' }}>
-                  {isCommand && <span style={{ color: '#4ec9b0' }}>PS C:\Users\josh\portfolio{'>'} </span>}
-                  <span style={{ color: isCommand ? '#cccccc' : '#808080' }}>{displayText}</span>
+                  {isCommand && <span style={{ color: '#4ec9b0' }}>~/portfolio $ </span>}
+                  <span style={{ color: isCommand ? '#cccccc' : '#a0a0a0' }}>{displayText}</span>
                   {i === joshLineIndex && phase === 'josh-typing' && (
                     <span style={{
                       display: 'inline-block',
