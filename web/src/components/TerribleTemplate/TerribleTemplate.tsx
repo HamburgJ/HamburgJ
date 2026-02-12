@@ -879,335 +879,348 @@ const TerribleTemplate: React.FC<TerribleTemplateProps> = ({ onComplete }) => {
 
         <FireDivider />
 
-        {/* Hero section */}
-        <div
-          style={{
-            ...getCrumbleStyle(2),
-            background: 'linear-gradient(135deg, #ff69b4, #ff00ff, #ff1493)',
-            padding: '60px 20px',
-            textAlign: 'center',
-          }}
-        >
-          <h1
-            style={{
-              fontSize: 64,
-              fontWeight: 'bold',
-              background: 'linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              animation: 'tt-glow-pulse 2s ease-in-out infinite',
-              margin: 0,
-              textTransform: 'uppercase',
-              letterSpacing: 6,
-              filter: 'drop-shadow(0 0 10px rgba(255,255,0,0.8))',
-            }}
-          >
-            PASSIONATE DEVELOPER
-          </h1>
-          <h2
-            style={{
-              fontSize: 42,
-              color: '#00ff00',
-              textShadow: '3px 3px 0 #ff0000, -1px -1px 0 #0000ff',
-              fontFamily: '"Comic Sans MS", cursive',
-              marginTop: 16,
-            }}
-          >
-            Hi! I'm Joshua 👋🤓💻
-          </h2>
-          <p
-            style={{
-              color: '#ffff00',
-              fontSize: 18,
-              textShadow: '1px 1px 0 #000',
-              fontStyle: 'italic',
-            }}
-          >
-            "Code is my passion. Coffee is my fuel. Synergy is my middle name."
-          </p>
-        </div>
-
-        <FireDivider />
-
-        {/* About section */}
-        <div
-          style={{
-            ...getCrumbleStyle(3),
-            background: 'linear-gradient(180deg, #00cc00, #009900, #006600)',
-            padding: '40px 30px',
-            textAlign: 'center',
-          }}
-        >
-          <h2
-            style={{
-              fontSize: 40,
-              color: '#ff0000',
-              textShadow: '3px 3px 6px rgba(0,0,0,0.5)',
-              fontFamily: '"Georgia", "Times New Roman", serif',
-              textDecoration: 'underline wavy #ffff00',
-            }}
-          >
-            ✨ About Me ✨
-          </h2>
-          <p
-            style={{
-              color: '#ffffff',
-              fontSize: 18,
-              maxWidth: 700,
-              margin: '16px auto',
-              textShadow: '2px 2px 4px #ff0000',
-              lineHeight: 1.8,
-            }}
-          >
-            I started coding at age 3 by hacking into NASA's mainframe. By 5, I
-            had rebuilt Facebook from scratch (but better). I am a full-stack,
-            cloud-native, AI-powered, blockchain-enabled, quantum-ready 10x
-            developer who thrives in fast-paced environments and is passionate
-            about leveraging cutting-edge synergies to deliver world-class
-            solutions that move the needle and disrupt paradigms.
-          </p>
-          <p
-            style={{
-              color: '#ffff00',
-              fontSize: 16,
-              fontStyle: 'italic',
-              textShadow: '1px 1px 2px #000',
-            }}
-          >
-            Fun fact: I once debugged a production issue in my sleep. Literally.
-          </p>
-        </div>
-
-        <FireDivider />
-
-        {/* Skills section */}
-        <div
-          style={{
-            ...getCrumbleStyle(4),
-            background: 'linear-gradient(180deg, #1a0033, #000066, #330066)',
-            padding: '40px 30px',
-          }}
-        >
-          <h2
-            style={{
-              fontSize: 36,
-              color: '#0ff',
-              textAlign: 'center',
-              textShadow: '0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0ff',
-              animation: 'tt-neon-flicker 3s infinite',
-              fontFamily: '"Impact", sans-serif',
-              letterSpacing: 6,
-              textTransform: 'uppercase',
-            }}
-          >
-            ⚡ My Epic Skills ⚡
-          </h2>
-          {[
-            { name: 'React', pct: 90, color: '#00ff88' },
-            { name: 'CSS', pct: 85, color: '#ff00ff' },
-            { name: 'Teamwork', pct: 95, color: '#ffff00' },
-            { name: 'Passion', pct: 110, color: '#ff4444' },
-          ].map((skill, i) => (
-            <div
-              key={skill.name}
-              style={{
-                maxWidth: 500,
-                margin: '16px auto',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  color: '#fff',
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                  marginBottom: 4,
-                  textShadow: '0 0 5px ' + skill.color,
-                }}
-              >
-                <span>{skill.name}</span>
-                <span>{skill.pct}%</span>
-              </div>
-              <div
-                style={{
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                  borderRadius: 4,
-                  height: 22,
-                  border: '1px solid ' + skill.color,
-                  overflow: skill.pct <= 100 ? 'hidden' : 'visible',
-                  position: 'relative',
-                }}
-              >
-                <div
-                  style={{
-                    width: `${skill.pct}%`,
-                    height: '100%',
-                    background: `linear-gradient(90deg, ${skill.color}, ${skill.color}88)`,
-                    borderRadius: skill.pct <= 100 ? 4 : '4px 0 0 4px',
-                    animation: 'tt-skill-fill 1.5s ease-out forwards',
-                    animationDelay: `${i * 0.3}s`,
-                    boxShadow: `0 0 10px ${skill.color}, 0 0 20px ${skill.color}88`,
-                    position: skill.pct > 100 ? 'absolute' : 'relative',
-                    top: 0,
-                    left: 0,
-                  }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <FireDivider />
-
-        {/* Testimonial */}
-        <div
-          style={{
-            ...getCrumbleStyle(5),
-            background: 'linear-gradient(135deg, #ff6699, #cc3366)',
-            padding: '40px 20px',
-            textAlign: 'center',
-          }}
-        >
-          <h2
-            style={{
-              color: '#fff',
-              fontSize: 32,
-              fontFamily: '"Georgia", serif',
-              textShadow: '2px 2px 0 #000',
-            }}
-          >
-            💬 What People Say
-          </h2>
+        {/* 2-column grid layout */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+        }}>
+          {/* Hero section — spans full width */}
           <div
             style={{
-              maxWidth: 500,
-              margin: '20px auto',
-              backgroundColor: 'rgba(255,255,255,0.15)',
-              borderRadius: 12,
-              padding: 24,
-              border: '3px dashed #ffff00',
+              ...getCrumbleStyle(2),
+              gridColumn: '1 / -1',
+              background: 'linear-gradient(135deg, #ff69b4, #ff00ff, #ff1493)',
+              padding: '40px 20px',
+              textAlign: 'center',
+              borderBottom: '3px solid #ff4500',
             }}
           >
-            <div style={{ fontSize: 36, marginBottom: 8 }}>⭐⭐⭐⭐⭐</div>
-            <p
+            <h1
               style={{
-                color: '#fff',
-                fontSize: 22,
-                fontStyle: 'italic',
-                margin: '8px 0',
-                textShadow: '1px 1px 0 #000',
+                fontSize: 54,
+                fontWeight: 'bold',
+                background: 'linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                animation: 'tt-glow-pulse 2s ease-in-out infinite',
+                margin: 0,
+                textTransform: 'uppercase',
+                letterSpacing: 6,
+                filter: 'drop-shadow(0 0 10px rgba(255,255,0,0.8))',
               }}
             >
-              "Very proud"
-            </p>
+              PASSIONATE DEVELOPER
+            </h1>
+            <h2
+              style={{
+                fontSize: 36,
+                color: '#00ff00',
+                textShadow: '3px 3px 0 #ff0000, -1px -1px 0 #0000ff',
+                fontFamily: '"Comic Sans MS", cursive',
+                marginTop: 12,
+              }}
+            >
+              Hi! I'm Joshua 👋🤓💻
+            </h2>
             <p
               style={{
                 color: '#ffff00',
                 fontSize: 16,
-                fontWeight: 'bold',
+                textShadow: '1px 1px 0 #000',
+                fontStyle: 'italic',
+                margin: 0,
               }}
             >
-              — Mom
+              "Code is my passion. Coffee is my fuel. Synergy is my middle name."
             </p>
           </div>
-        </div>
 
-        <FireDivider />
-
-        {/* CTA */}
-        <div
-          style={{
-            ...getCrumbleStyle(6),
-            background: 'linear-gradient(180deg, #0000cc, #0000ff, #0033ff)',
-            padding: '50px 20px',
-            textAlign: 'center',
-          }}
-        >
-          <h2
-            style={{
-              color: '#ffff00',
-              fontSize: 56,
-              fontWeight: 'bold',
-              animation: 'tt-pulse 1.5s ease-in-out infinite',
-              textShadow:
-                '3px 3px 0 #ff0000, 0 0 20px #ffff00, 0 0 40px #ffff00',
-              fontFamily: '"Impact", sans-serif',
-              textTransform: 'uppercase',
-            }}
-          >
-            Let's Connect! 🤝
-          </h2>
-          <p
-            style={{
-              color: '#fff',
-              fontSize: 18,
-              textShadow: '1px 1px 0 #000',
-            }}
-          >
-            I reply to all emails within 0.3 seconds*
-          </p>
-          <p
-            style={{
-              color: '#888',
-              fontSize: 10,
-              marginTop: 4,
-            }}
-          >
-            *response time not guaranteed
-          </p>
-
-          {/* Resume button */}
-          <button
-            style={{
-              marginTop: 24,
-              padding: '18px 50px',
-              fontSize: 24,
-              fontWeight: 'bold',
-              color: '#fff',
-              background:
-                'linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff, #ff0000)',
-              backgroundSize: '300% 100%',
-              border: '3px solid #fff',
-              borderRadius: 12,
-              cursor: 'pointer',
-              animation: 'tt-rotate-pulse 2s ease-in-out infinite',
-              boxShadow:
-                '0 0 15px #ff0, 0 0 30px #f0f, 0 0 45px #0ff',
-              textTransform: 'uppercase',
-              letterSpacing: 3,
-              fontFamily: '"Impact", sans-serif',
-            }}
-          >
-            📄 Download My Resume 📄
-          </button>
-        </div>
-
-        <FireDivider />
-
-        {/* Visitor counter */}
-        <div
-          style={{
-            ...getCrumbleStyle(7),
-            backgroundColor: '#000',
-            padding: '20px',
-            textAlign: 'center',
-          }}
-        >
+          {/* About section — left column */}
           <div
             style={{
-              display: 'inline-block',
-              border: '2px solid #00ff00',
-              padding: '10px 24px',
-              fontFamily: '"Courier New", Courier, monospace',
-              color: '#00ff00',
-              fontSize: 18,
-              backgroundColor: '#001100',
-              boxShadow: '0 0 10px rgba(0,255,0,0.3)',
+              ...getCrumbleStyle(3),
+              background: 'linear-gradient(180deg, #00cc00, #009900, #006600)',
+              padding: '30px 24px',
+              textAlign: 'center',
+              borderRight: '3px solid #ff4500',
+              borderBottom: '3px solid #ff4500',
             }}
           >
-            You are visitor #000,427
+            <h2
+              style={{
+                fontSize: 32,
+                color: '#ff0000',
+                textShadow: '3px 3px 6px rgba(0,0,0,0.5)',
+                fontFamily: '"Georgia", "Times New Roman", serif',
+                textDecoration: 'underline wavy #ffff00',
+                marginTop: 0,
+              }}
+            >
+              ✨ About Me ✨
+            </h2>
+            <p
+              style={{
+                color: '#ffffff',
+                fontSize: 15,
+                margin: '12px auto',
+                textShadow: '2px 2px 4px #ff0000',
+                lineHeight: 1.7,
+              }}
+            >
+              I started coding at age 3 by hacking into NASA's mainframe. By 5, I
+              had rebuilt Facebook from scratch (but better). I am a full-stack,
+              cloud-native, AI-powered, blockchain-enabled, quantum-ready 10x
+              developer who thrives in fast-paced environments and is passionate
+              about leveraging cutting-edge synergies to deliver world-class
+              solutions that move the needle and disrupt paradigms.
+            </p>
+            <p
+              style={{
+                color: '#ffff00',
+                fontSize: 14,
+                fontStyle: 'italic',
+                textShadow: '1px 1px 2px #000',
+              }}
+            >
+              Fun fact: I once debugged a production issue in my sleep. Literally.
+            </p>
+          </div>
+
+          {/* Skills section — right column */}
+          <div
+            style={{
+              ...getCrumbleStyle(4),
+              background: 'linear-gradient(180deg, #1a0033, #000066, #330066)',
+              padding: '30px 24px',
+              borderBottom: '3px solid #ff4500',
+            }}
+          >
+            <h2
+              style={{
+                fontSize: 30,
+                color: '#0ff',
+                textAlign: 'center',
+                textShadow: '0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0ff',
+                animation: 'tt-neon-flicker 3s infinite',
+                fontFamily: '"Impact", sans-serif',
+                letterSpacing: 6,
+                textTransform: 'uppercase',
+                marginTop: 0,
+              }}
+            >
+              ⚡ My Epic Skills ⚡
+            </h2>
+            {[
+              { name: 'React', pct: 90, color: '#00ff88' },
+              { name: 'CSS', pct: 85, color: '#ff00ff' },
+              { name: 'Teamwork', pct: 95, color: '#ffff00' },
+              { name: 'Passion', pct: 110, color: '#ff4444' },
+            ].map((skill, i) => (
+              <div
+                key={skill.name}
+                style={{
+                  margin: '14px auto',
+                  maxWidth: 400,
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    color: '#fff',
+                    fontSize: 14,
+                    fontWeight: 'bold',
+                    marginBottom: 4,
+                    textShadow: '0 0 5px ' + skill.color,
+                  }}
+                >
+                  <span>{skill.name}</span>
+                  <span>{skill.pct}%</span>
+                </div>
+                <div
+                  style={{
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 4,
+                    height: 20,
+                    border: '1px solid ' + skill.color,
+                    overflow: skill.pct <= 100 ? 'hidden' : 'visible',
+                    position: 'relative',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: `${skill.pct}%`,
+                      height: '100%',
+                      background: `linear-gradient(90deg, ${skill.color}, ${skill.color}88)`,
+                      borderRadius: skill.pct <= 100 ? 4 : '4px 0 0 4px',
+                      animation: 'tt-skill-fill 1.5s ease-out forwards',
+                      animationDelay: `${i * 0.3}s`,
+                      boxShadow: `0 0 10px ${skill.color}, 0 0 20px ${skill.color}88`,
+                      position: skill.pct > 100 ? 'absolute' : 'relative',
+                      top: 0,
+                      left: 0,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Testimonial — left column */}
+          <div
+            style={{
+              ...getCrumbleStyle(5),
+              background: 'linear-gradient(135deg, #ff6699, #cc3366)',
+              padding: '30px 20px',
+              textAlign: 'center',
+              borderRight: '3px solid #ff4500',
+              borderBottom: '3px solid #ff4500',
+            }}
+          >
+            <h2
+              style={{
+                color: '#fff',
+                fontSize: 28,
+                fontFamily: '"Georgia", serif',
+                textShadow: '2px 2px 0 #000',
+                marginTop: 0,
+              }}
+            >
+              💬 What People Say
+            </h2>
+            <div
+              style={{
+                margin: '16px auto',
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                borderRadius: 12,
+                padding: 20,
+                border: '3px dashed #ffff00',
+              }}
+            >
+              <div style={{ fontSize: 32, marginBottom: 6 }}>⭐⭐⭐⭐⭐</div>
+              <p
+                style={{
+                  color: '#fff',
+                  fontSize: 20,
+                  fontStyle: 'italic',
+                  margin: '8px 0',
+                  textShadow: '1px 1px 0 #000',
+                }}
+              >
+                "Very proud"
+              </p>
+              <p
+                style={{
+                  color: '#ffff00',
+                  fontSize: 15,
+                  fontWeight: 'bold',
+                }}
+              >
+                — Mom
+              </p>
+            </div>
+          </div>
+
+          {/* CTA — right column */}
+          <div
+            style={{
+              ...getCrumbleStyle(6),
+              background: 'linear-gradient(180deg, #0000cc, #0000ff, #0033ff)',
+              padding: '30px 20px',
+              textAlign: 'center',
+              borderBottom: '3px solid #ff4500',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <h2
+              style={{
+                color: '#ffff00',
+                fontSize: 42,
+                fontWeight: 'bold',
+                animation: 'tt-pulse 1.5s ease-in-out infinite',
+                textShadow:
+                  '3px 3px 0 #ff0000, 0 0 20px #ffff00, 0 0 40px #ffff00',
+                fontFamily: '"Impact", sans-serif',
+                textTransform: 'uppercase',
+                marginTop: 0,
+              }}
+            >
+              Let's Connect! 🤝
+            </h2>
+            <p
+              style={{
+                color: '#fff',
+                fontSize: 16,
+                textShadow: '1px 1px 0 #000',
+              }}
+            >
+              I reply to all emails within 0.3 seconds*
+            </p>
+            <p
+              style={{
+                color: '#888',
+                fontSize: 10,
+                marginTop: 4,
+              }}
+            >
+              *response time not guaranteed
+            </p>
+
+            {/* Resume button */}
+            <button
+              style={{
+                marginTop: 16,
+                padding: '14px 36px',
+                fontSize: 20,
+                fontWeight: 'bold',
+                color: '#fff',
+                background:
+                  'linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff, #ff0000)',
+                backgroundSize: '300% 100%',
+                border: '3px solid #fff',
+                borderRadius: 12,
+                cursor: 'pointer',
+                animation: 'tt-rotate-pulse 2s ease-in-out infinite',
+                boxShadow:
+                  '0 0 15px #ff0, 0 0 30px #f0f, 0 0 45px #0ff',
+                textTransform: 'uppercase',
+                letterSpacing: 3,
+                fontFamily: '"Impact", sans-serif',
+              }}
+            >
+              📄 Download My Resume 📄
+            </button>
+          </div>
+
+          {/* Visitor counter — spans full width */}
+          <div
+            style={{
+              ...getCrumbleStyle(7),
+              gridColumn: '1 / -1',
+              backgroundColor: '#000',
+              padding: '16px',
+              textAlign: 'center',
+              borderBottom: '3px solid #ff4500',
+            }}
+          >
+            <div
+              style={{
+                display: 'inline-block',
+                border: '2px solid #00ff00',
+                padding: '8px 20px',
+                fontFamily: '"Courier New", Courier, monospace',
+                color: '#00ff00',
+                fontSize: 16,
+                backgroundColor: '#001100',
+                boxShadow: '0 0 10px rgba(0,255,0,0.3)',
+              }}
+            >
+              You are visitor #000,427
+            </div>
           </div>
         </div>
 
@@ -1216,7 +1229,7 @@ const TerribleTemplate: React.FC<TerribleTemplateProps> = ({ onComplete }) => {
           style={{
             ...getCrumbleStyle(8),
             background: 'linear-gradient(180deg, #333, #111)',
-            padding: '24px 20px',
+            padding: '20px 20px',
             textAlign: 'center',
             color: '#aaa',
             fontSize: 14,
