@@ -1,0 +1,8 @@
+node_modules/
+web/node_modules/
+web/build/
+.env
+.env.local
+*.log
+.DS_Store
+Thumbs.db
