@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import RebuildDeploy from '../LoadingSequence/RebuildDeploy';
 
 interface TerribleTemplateProps {
   onComplete: () => void;
@@ -10,6 +11,7 @@ type Phase =
   | 'copilot-reprompt'
   | 'crumbling'
   | 'fade-out'
+  | 'rebuild'
   | 'done';
 
 interface TTCopilotMsg {
@@ -416,8 +418,7 @@ const TerribleTemplate: React.FC<TerribleTemplateProps> = ({ onComplete }) => {
     }, 2000);
 
     const t2 = setTimeout(() => {
-      setPhase('done');
-      onComplete();
+      setPhase('rebuild');
     }, 3200);
 
     timersRef.current.push(t1, t2);
@@ -436,6 +437,11 @@ const TerribleTemplate: React.FC<TerribleTemplateProps> = ({ onComplete }) => {
   };
 
   const showJosh = phase === 'josh-typing' || phase === 'copilot-reprompt' || phase === 'crumbling';
+
+  // Rebuild phase: show the quick successful deploy screen
+  if (phase === 'rebuild') {
+    return <RebuildDeploy onComplete={onComplete} />;
+  }
 
   return (
     <>

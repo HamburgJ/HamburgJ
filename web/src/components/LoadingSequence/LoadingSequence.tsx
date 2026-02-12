@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import RebuildDeploy from './RebuildDeploy';
 
 interface LoadingSequenceProps {
   isFirstVisit: boolean;
@@ -560,7 +561,8 @@ const JOSH_LINES_2: TermLine[] = [
   { type: 'comment', text: 'oh no.' },
   { type: 'comment', text: "that's worse" },
   { type: 'blank', text: '' },
-  { type: 'comment', text: 'ok you know what, let me just ask copilot...' },
+  { type: 'comment', text: 'ok you know what...' },
+  { type: 'prompt-cmd', text: '@copilot my portfolio is completely broken, the whole config folder just disappeared?? can you just fix it' },
 ];
 
 interface CopilotMsg {
@@ -620,6 +622,7 @@ type Phase =
   | 'errorBoundary'   // Fake React error boundary appears
   | 'josh2'           // Josh lines 2 in terminal
   | 'copilot'         // Copilot Chat panel
+  | 'rebuild'         // Quick successful GitHub Pages deploy
   | 'done';
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -739,12 +742,11 @@ const LoadingSequence: React.FC<LoadingSequenceProps> = ({
   const playCopilotMessages = useCallback(
     (index: number) => {
       if (index >= COPILOT_MESSAGES.length) {
-        // All messages done — wait then fire onComplete
+        // All messages done — transition to rebuild deploy screen
         setTimeout(() => {
           if (!completedRef.current) {
             completedRef.current = true;
-            setPhase('done');
-            onComplete();
+            setPhase('rebuild');
           }
         }, 1800);
         return;
@@ -972,6 +974,11 @@ const LoadingSequence: React.FC<LoadingSequenceProps> = ({
   };
 
   // ── Render ───────────────────────────────────────────────────────────────
+
+  // Rebuild phase: show the quick successful deploy screen
+  if (phase === 'rebuild') {
+    return <RebuildDeploy onComplete={onComplete} />;
+  }
 
   return (
     <div style={styles.root}>
