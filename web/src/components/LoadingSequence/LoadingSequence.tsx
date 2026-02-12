@@ -502,7 +502,7 @@ const JOSH_LINES_2: TermLine[] = [
   { type: 'comment', text: "that's worse" },
   { type: 'blank', text: '' },
   { type: 'comment', text: 'ok fine.' },
-  { type: 'prompt-cmd', text: '@copilot can you fix the portfolio renderer?' },
+  { type: 'prompt-cmd', text: 'copilot' },
 ];
 
 interface CopilotMsg {
@@ -517,7 +517,7 @@ interface CopilotMsg {
 const COPILOT_MESSAGES: CopilotMsg[] = [
   {
     role: 'user',
-    text: '@copilot can you fix the portfolio renderer?',
+    text: 'can you fix the portfolio renderer? it keeps crashing',
   },
   {
     role: 'assistant',
@@ -928,9 +928,6 @@ const LoadingSequence: React.FC<LoadingSequenceProps> = ({
       {/* Main card area */}
       <div style={styles.main}>
         <div style={styles.card}>
-          <div style={styles.shieldWrap}>
-            <LoadingGearSVG />
-          </div>
           <p style={styles.siteUrl}>hamburgj.github.io</p>
           <h1 style={styles.heading}>
             Preparing site assets
@@ -983,183 +980,45 @@ const LoadingSequence: React.FC<LoadingSequenceProps> = ({
         <div
           style={{
             position: 'fixed',
-            inset: 0,
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: '#1e1e1e',
+            color: '#f44747',
+            fontFamily: 'monospace',
+            padding: '40px',
             zIndex: 10000,
-            background: 'rgba(0, 0, 0, 0.75)',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontFamily:
-              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            overflow: 'auto',
           }}
         >
-          <button
-            type="button"
-            style={{
-              position: 'absolute',
-              top: '16px',
-              right: '16px',
-              background: 'none',
-              border: 'none',
-              color: '#fff',
-              fontSize: '28px',
-              cursor: 'default',
-              padding: '4px 8px',
-              opacity: 0.7,
-              lineHeight: 1,
-            }}
-          >
-            &times;
-          </button>
-
-          <div
-            style={{
-              background: '#fff',
-              borderRadius: '4px',
-              maxWidth: '860px',
-              width: '90%',
-              maxHeight: '75vh',
-              overflow: 'auto',
-              boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
-            }}
-          >
-            <div
-              style={{
-                background: '#e83b46',
-                color: '#fff',
-                padding: '12px 20px',
-                fontSize: '14px',
-                fontWeight: 700,
-                borderRadius: '4px 4px 0 0',
-                letterSpacing: '0.01em',
-              }}
-            >
-              Unhandled Runtime Error
-            </div>
-
-            <div style={{ padding: '24px 20px' }}>
-              <p
-                style={{
-                  fontSize: '18px',
-                  fontWeight: 700,
-                  color: '#1a1a1a',
-                  margin: '0 0 6px',
-                  lineHeight: 1.4,
-                }}
-              >
-                TypeError: Cannot read properties of undefined (reading
-                &apos;map&apos;)
-              </p>
-
-              <p
-                style={{
-                  fontSize: '13px',
-                  color: '#666',
-                  margin: '0 0 20px',
-                }}
-              >
-                This error occurred during rendering and was not recovered.
-              </p>
-
-              <details open style={{ marginBottom: '16px' }}>
-                <summary
-                  style={{
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    color: '#333',
-                    cursor: 'default',
-                    marginBottom: '8px',
-                  }}
-                >
-                  Call Stack
-                </summary>
-                <div
-                  style={{
-                    fontFamily:
-                      '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace',
-                    fontSize: '12px',
-                    lineHeight: 2,
-                    color: '#333',
-                    background: '#f6f8fa',
-                    border: '1px solid #e1e4e8',
-                    borderRadius: '4px',
-                    padding: '16px',
-                    overflowX: 'auto',
-                  }}
-                >
-                  <div style={{ color: '#e83b46', fontWeight: 600 }}>
-                    TypeError: Cannot read properties of undefined (reading
-                    &apos;map&apos;)
-                  </div>
-                  <div style={{ marginTop: '8px' }}>
-                    <div>
-                      at Portfolio (
-                      <span style={{ color: '#0969da', textDecoration: 'underline' }}>
-                        ./src/components/Portfolio.jsx:42:15
-                      </span>
-                      )
-                    </div>
-                    <div>
-                      at PortfolioGrid (
-                      <span style={{ color: '#0969da', textDecoration: 'underline' }}>
-                        ./src/components/PortfolioGrid.tsx:18:9
-                      </span>
-                      )
-                    </div>
-                    <div>at div</div>
-                    <div>
-                      at MainContent (
-                      <span style={{ color: '#0969da', textDecoration: 'underline' }}>
-                        ./src/components/MainContent.tsx:27:5
-                      </span>
-                      )
-                    </div>
-                    <div>
-                      at ErrorBoundary (
-                      <span style={{ color: '#0969da', textDecoration: 'underline' }}>
-                        ./src/components/ErrorBoundary.tsx:8:3
-                      </span>
-                      )
-                    </div>
-                    <div>
-                      at App (
-                      <span style={{ color: '#0969da', textDecoration: 'underline' }}>
-                        ./src/App.tsx:18:5
-                      </span>
-                      )
-                    </div>
-                    <div>
-                      at ThemeProvider (
-                      <span style={{ color: '#0969da', textDecoration: 'underline' }}>
-                        ./node_modules/styled-components/dist/styled-components.js:31:12
-                      </span>
-                      )
-                    </div>
-                    <div>
-                      at Router (
-                      <span style={{ color: '#0969da', textDecoration: 'underline' }}>
-                        ./node_modules/react-router-dom/index.js:5:3
-                      </span>
-                      )
-                    </div>
-                  </div>
-                </div>
-              </details>
-
-              <p
-                style={{
-                  fontSize: '12px',
-                  color: '#999',
-                  margin: 0,
-                  borderTop: '1px solid #e1e4e8',
-                  paddingTop: '12px',
-                }}
-              >
-                This screen is visible only in development. It will not appear
-                if the app crashes in production.
-              </p>
-            </div>
+          <h1 style={{ color: '#f44747', fontSize: '2rem', marginBottom: '1rem' }}>
+            Unhandled Runtime Error
+          </h1>
+          <div style={{
+            backgroundColor: '#2d2020',
+            border: '1px solid #f44747',
+            borderRadius: '4px',
+            padding: '16px',
+            marginBottom: '1rem',
+          }}>
+            <p style={{ color: '#f44747', fontSize: '1.1rem', margin: '0 0 12px 0' }}>
+              TypeError: Cannot read properties of undefined (reading &apos;map&apos;)
+            </p>
+            <p style={{ color: '#888', fontSize: '0.85rem', margin: 0, lineHeight: 1.7 }}>
+              at Portfolio (Portfolio.jsx:42:15)<br/>
+              at PortfolioGrid (PortfolioGrid.tsx:18:9)<br/>
+              at MainContent (MainContent.tsx:27:5)<br/>
+              at ErrorBoundary (ErrorBoundary.tsx:8:3)<br/>
+              at App (App.tsx:18:5)
+            </p>
           </div>
+          <p style={{ color: '#888', fontSize: '0.9rem' }}>
+            This error occurred during rendering and was not recovered.
+          </p>
         </div>
       )}
 
