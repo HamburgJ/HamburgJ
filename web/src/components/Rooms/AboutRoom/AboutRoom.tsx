@@ -294,6 +294,10 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo }) => {
           text-align: center;
           border-left: 1px solid #ddd;
         }
+        .about-table tbody td:nth-child(2) {
+          color: #999;
+          font-weight: 400;
+        }
 
         .about-feat-name {
           font-size: 16px;
@@ -395,6 +399,36 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo }) => {
           50% { border-color: transparent; }
         }
 
+        /* ── BROKEN HTML GAG ── */
+        .about-broken-html {
+          font-family: 'Courier New', monospace;
+          font-size: 13px;
+          line-height: 1.4;
+          display: inline-block;
+          text-align: left;
+        }
+        .about-broken-tag {
+          color: #d32f2f;
+          font-size: 11px;
+          opacity: 0.7;
+        }
+        .about-broken-text {
+          display: inline;
+        }
+        .about-broken-text .glitch-1 {
+          display: inline-block;
+          transform: rotate(2deg) translateY(-1px);
+        }
+        .about-broken-text .glitch-2 {
+          opacity: 0.5;
+          letter-spacing: 3px;
+        }
+        .about-broken-text .glitch-3 {
+          display: inline-block;
+          transform: skewX(-4deg);
+          border-bottom: 1px dashed #d32f2f;
+        }
+
         /* ── FINE PRINT ── */
         .about-fine-print {
           margin-top: 14px;
@@ -494,10 +528,9 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo }) => {
             <div className="about-table-wrapper">
 
               <div className="about-table-title" onClick={() => setShowShop(true)} style={{ cursor: 'pointer' }} title="Click to browse the full shop...">
-                <h2>Select Your Developer</h2>
+                <h2>Me vs. The Other Dev</h2>
                 <span className="about-quill">✒</span>
               </div>
-              <p className="about-table-subtitle">A side-by-side comparison</p>
               <div className="about-title-rule"></div>
 
               <table className="about-table">
@@ -505,62 +538,59 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo }) => {
                   <tr>
                     <th></th>
                     <th className="about-th-other">The Other Guy</th>
-                    <th className="about-th-portfolio">This Portfolio<span className="about-star">★</span></th>
+                    <th className="about-th-portfolio">Josh</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td>
-                      <div className="about-feat-name">Clean Code</div>
-                      <div className="about-feat-detail">Readable, maintainable</div>
+                      <div className="about-feat-name">Portfolio intro convinced you it was broken</div>
                     </td>
                     <td><span className="about-mark about-mark-no">✗</span></td>
                     <td><span className="about-mark about-mark-yes">✓</span></td>
                   </tr>
                   <tr>
                     <td>
-                      <div className="about-feat-name">Full-Stack</div>
-                      <div className="about-feat-detail">Front-end to back-end</div>
+                      <div className="about-feat-name">Ships broken code</div>
                     </td>
-                    <td><span className="about-mark about-mark-no">✗</span></td>
+                    <td style={{ fontSize: '14px' }}>Yes</td>
+                    <td>
+                      <span className="about-broken-html">
+                        <span className="about-broken-tag">&lt;div&gt;</span>
+                        <span className="about-broken-text">
+                          <span className="glitch-1">str</span><span className="glitch-2">ate</span><span className="glitch-3">gic</span>ally
+                        </span>
+                        <span className="about-broken-tag">&lt;/div</span>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div className="about-feat-name">Has never caused a global security breach</div>
+                    </td>
+                    <td style={{ fontStyle: 'italic', fontSize: '13px' }}>No comment</td>
                     <td><span className="about-mark about-mark-yes">✓</span></td>
                   </tr>
                   <tr>
                     <td>
-                      <div className="about-feat-name">Reads Error Messages</div>
-                      <div className="about-feat-detail">The whole stack trace</div>
+                      <div className="about-feat-name">Code works on the first try</div>
                     </td>
-                    <td><span className="about-mark about-mark-no">✗</span></td>
-                    <td><span className="about-mark about-mark-yes">✓</span></td>
+                    <td style={{ fontStyle: 'italic', fontSize: '13px' }}>&ldquo;Works on my machine&rdquo;</td>
+                    <td style={{ fontSize: '14px', fontWeight: 600 }}>&hellip;okay, second try</td>
                   </tr>
                   <tr>
                     <td>
-                      <div className="about-feat-name">Deploys on Fridays</div>
-                      <div className="about-feat-detail">And doesn&apos;t get fired</div>
+                      <div className="about-feat-name">Made with</div>
                     </td>
-                    <td><span className="about-mark about-mark-no">✗</span></td>
-                    <td><span className="about-mark about-mark-yes">✓</span></td>
+                    <td style={{ fontSize: '14px' }}>AI</td>
+                    <td style={{ fontSize: '14px', fontWeight: 600 }}>AI + ❤️</td>
                   </tr>
                   <tr>
                     <td>
-                      <div className="about-feat-name">Code Comments</div>
-                      <div className="about-feat-detail">Mostly apologies</div>
+                      <div className="about-feat-name">Has a website you&apos;re on right now</div>
                     </td>
                     <td><span className="about-mark about-mark-no">✗</span></td>
                     <td><span className="about-mark about-mark-yes">✓</span></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div className="about-feat-name">Has a Portfolio Site</div>
-                      <div className="about-feat-detail">You&apos;re on it right now</div>
-                    </td>
-                    <td><span className="about-mark about-mark-no">✗</span></td>
-                    <td><span className="about-mark about-mark-yes">✓</span></td>
-                  </tr>
-                  <tr className="about-price-row">
-                    <td>Price</td>
-                    <td>$$$</td>
-                    <td style={{ color: '#1a9e3f' }}>Free</td>
                   </tr>
                 </tbody>
               </table>
@@ -571,7 +601,7 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo }) => {
               </div>
 
               <p className="about-fine-print">
-                * No developers were harmed in the making of this comparison table. Results not guaranteed.
+                * &ldquo;The Other Guy&rdquo; is fictional. Any resemblance to actual developers, living or mass-deployed, is purely coincidental.
               </p>
 
             </div>
