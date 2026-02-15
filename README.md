@@ -1,4 +1,8 @@
-<div align="center">
+<h1 align="center">
+  <a href="#" style="text-decoration: none; font-size: 60px; font-weight: 700;">
+    Joshua Hamburger
+  </a>
+</h1>
 
 ![header](https://capsule-render.vercel.app/api?type=venom&color=0:0d1117,100:161b22&height=220&text=Josh%20Hamburger&fontSize=46&fontColor=58a6ff&animation=fadeIn&fontAlignY=32&desc=you%20found%20my%20github%20page.%20congratulations.&descSize=16&descAlignY=55&descColor=8b949e)
 
