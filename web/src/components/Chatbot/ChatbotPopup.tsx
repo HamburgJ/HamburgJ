@@ -20,22 +20,31 @@ const ChatbotPopup: React.FC<ChatbotPopupProps> = ({ activity, onMessageShown, s
   const [exiting, setExiting] = useState(false);
   const cooldownRef = useRef(false);
   const lastCheckRef = useRef(0);
+  // Track the page where a message was dismissed — suppress further popups on that page
+  const dismissedOnPageRef = useRef<string | null>(null);
 
   const dismiss = useCallback(() => {
+    dismissedOnPageRef.current = activity.currentPage;
     setExiting(true);
     setTimeout(() => {
       setVisible(false);
       setExiting(false);
       setCurrentMessage(null);
-      // Cooldown: don't show another message for 15s
       cooldownRef.current = true;
       setTimeout(() => { cooldownRef.current = false; }, 15000);
     }, 400);
-  }, []);
+  }, [activity.currentPage]);
+
+  // Reset dismissed-on-page when the user navigates to a new page
+  useEffect(() => {
+    dismissedOnPageRef.current = null;
+  }, [activity.currentPage]);
 
   // Check for new messages every 2 seconds
   useEffect(() => {
     if (visible || cooldownRef.current) return;
+    // Don't show another popup if the user dismissed one on this page
+    if (dismissedOnPageRef.current === activity.currentPage) return;
 
     const now = Date.now();
     if (now - lastCheckRef.current < 2000) return;

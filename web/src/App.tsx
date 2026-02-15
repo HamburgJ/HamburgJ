@@ -9,7 +9,6 @@ import ProjectsRoom from './components/Rooms/ProjectsRoom/ProjectsRoom';
 import Chatbot from './components/Chatbot/Chatbot';
 import SiriChatbot from './components/Chatbot/SiriChatbot';
 import ChatbotPopup from './components/Chatbot/ChatbotPopup';
-import JoshToast from './components/JoshToast/JoshToast';
 import VoidPage from './components/HiddenPages/VoidPage';
 import DebugPage from './components/HiddenPages/DebugPage';
 import HamburgerPage from './components/HiddenPages/HamburgerPage';
@@ -26,8 +25,6 @@ const App: React.FC = () => {
   } = useSiteState();
 
   const { activity, trackPageVisit, trackAction, markMessageShown, toggleSiriMode } = useSiteActivity();
-  // toggleSiriMode is available for future Siri mode activation (e.g., konami code, hidden UI element)
-  void toggleSiriMode;
 
   const [transitioning, setTransitioning] = useState(false);
   const [transitionType, setTransitionType] = useState('');
@@ -213,6 +210,7 @@ const App: React.FC = () => {
             onClose={() => setChatbotOpen(false)}
             collectClue={collectClue}
             navigateTo={navigateTo as (phase: string) => void}
+            onSiriMode={toggleSiriMode}
           />
         ) : (
           <Chatbot
@@ -221,6 +219,7 @@ const App: React.FC = () => {
             onClose={() => setChatbotOpen(false)}
             collectClue={collectClue}
             navigateTo={navigateTo as (phase: string) => void}
+            onSiriMode={toggleSiriMode}
           />
         )
       )}
@@ -231,14 +230,6 @@ const App: React.FC = () => {
           activity={activity}
           onMessageShown={markMessageShown}
           siriMode={activity.siriMode}
-        />
-      )}
-
-      {/* Josh terminal toasts — developer messages */}
-      {showChatbot && (
-        <JoshToast
-          activity={activity}
-          onMessageShown={markMessageShown}
         />
       )}
 

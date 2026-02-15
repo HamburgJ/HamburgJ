@@ -12,6 +12,7 @@ interface SiriChatbotProps {
   onClose: () => void;
   collectClue: (clueId: number) => void;
   navigateTo: (phase: string) => void;
+  onSiriMode?: () => void;
 }
 
 interface Message {
@@ -167,7 +168,7 @@ function resolveSiriNode(key: string): SiriNode {
 
 /* ── COMPONENT ─────────────────────────────────────────────────────── */
 
-const SiriChatbot: React.FC<SiriChatbotProps> = ({ isOpen, onToggle, onClose, collectClue, navigateTo }) => {
+const SiriChatbot: React.FC<SiriChatbotProps> = ({ isOpen, onToggle, onClose, collectClue, navigateTo, onSiriMode }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [options, setOptions] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(false);
@@ -175,16 +176,63 @@ const SiriChatbot: React.FC<SiriChatbotProps> = ({ isOpen, onToggle, onClose, co
   const [launcherHover, setLauncherHover] = useState(false);
   const [hasNewMessage, setHasNewMessage] = useState(true);
   const [initialized, setInitialized] = useState(false);
+  const [holdProgress, setHoldProgress] = useState(0);
+  const [aimBurst, setAimBurst] = useState(false);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const timeoutsRef = useRef<number[]>([]);
+  const holdStartRef = useRef(0);
+  const holdRafRef = useRef<number | null>(null);
+  const holdTriggeredRef = useRef(false);
 
   const schedule = useCallback((fn: () => void, ms: number) => {
     const id = window.setTimeout(fn, ms);
     timeoutsRef.current.push(id);
     return id;
   }, []);
+
+  /* --- long-press to switch back to JoshBot --- */
+  const HOLD_DURATION = 1500;
+
+  const startHold = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    holdStartRef.current = Date.now();
+    holdTriggeredRef.current = false;
+
+    const animate = () => {
+      const elapsed = Date.now() - holdStartRef.current;
+      const progress = Math.min(elapsed / HOLD_DURATION, 1);
+      setHoldProgress(progress);
+
+      if (progress >= 1 && !holdTriggeredRef.current) {
+        holdTriggeredRef.current = true;
+        setAimBurst(true);
+        setTimeout(() => {
+          onSiriMode?.();
+        }, 600);
+        return;
+      }
+
+      if (progress < 1) {
+        holdRafRef.current = requestAnimationFrame(animate);
+      }
+    };
+
+    holdRafRef.current = requestAnimationFrame(animate);
+  }, [onSiriMode]);
+
+  const endHold = useCallback(() => {
+    if (holdRafRef.current) cancelAnimationFrame(holdRafRef.current);
+    const elapsed = Date.now() - holdStartRef.current;
+
+    if (!holdTriggeredRef.current && elapsed < 250) {
+      onToggle();
+    }
+
+    setHoldProgress(0);
+    holdStartRef.current = 0;
+  }, [onToggle]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -277,14 +325,26 @@ const SiriChatbot: React.FC<SiriChatbotProps> = ({ isOpen, onToggle, onClose, co
           50% { background-position: 100% 50%; }
           100% { background-position: 0% 50%; }
         }
+        @keyframes aim-glow-spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes aim-activate-burst {
+          0%   { transform: scale(1); opacity: 0.8; }
+          50%  { transform: scale(2.2); opacity: 0.4; }
+          100% { transform: scale(3); opacity: 0; }
+        }
       `}</style>
 
       {/* Launcher */}
       <button
         aria-label="Open Siri"
-        onClick={onToggle}
+        onMouseDown={startHold}
+        onMouseUp={endHold}
+        onMouseLeave={(e) => { endHold(); setLauncherHover(false); }}
+        onTouchStart={startHold}
+        onTouchEnd={endHold}
         onMouseEnter={() => setLauncherHover(true)}
-        onMouseLeave={() => setLauncherHover(false)}
         style={{
           position: 'fixed',
           bottom: 28,
@@ -301,21 +361,57 @@ const SiriChatbot: React.FC<SiriChatbotProps> = ({ isOpen, onToggle, onClose, co
           alignItems: 'center',
           justifyContent: 'center',
           cursor: 'pointer',
-          boxShadow: launcherHover
-            ? '0 6px 24px rgba(0,122,255,0.35)'
-            : '0 4px 16px rgba(0,122,255,0.2)',
+          boxShadow: holdProgress > 0.2
+            ? `0 4px 16px rgba(0,122,255,0.2), 0 0 ${holdProgress * 25}px rgba(58,110,165,${holdProgress * 0.7})`
+            : launcherHover
+              ? '0 6px 24px rgba(0,122,255,0.35)'
+              : '0 4px 16px rgba(0,122,255,0.2)',
           transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-          transform: launcherHover ? 'scale(1.06)' : 'scale(1)',
+          transform: holdProgress > 0.2
+            ? `scale(${1 + holdProgress * 0.12})`
+            : launcherHover ? 'scale(1.06)' : 'scale(1)',
           zIndex: 10000,
           border: 'none',
           padding: 0,
+          overflow: 'visible',
         }}
       >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.2))' }}>
+        {/* AIM glow ring — appears when holding to switch back */}
+        {holdProgress > 0.2 && (
+          <div style={{
+            position: 'absolute',
+            inset: -6,
+            borderRadius: '50%',
+            background: 'conic-gradient(from 0deg, #3a6ea5, #6e9ecf, #0a246a, #4477aa, #3a6ea5)',
+            opacity: Math.min((holdProgress - 0.2) / 0.8, 1) * 0.85,
+            filter: `blur(${4 + holdProgress * 4}px)`,
+            animation: 'aim-glow-spin 1.5s linear infinite',
+            zIndex: -1,
+          }} />
+        )}
+
+        {/* AIM burst on activation */}
+        {aimBurst && (
+          <div style={{
+            position: 'absolute',
+            inset: -4,
+            borderRadius: '50%',
+            background: 'conic-gradient(from 0deg, #3a6ea5, #6e9ecf, #0a246a, #3a6ea5)',
+            animation: 'aim-activate-burst 0.6s ease-out forwards',
+            zIndex: -1,
+          }} />
+        )}
+
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{
+          filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.2))',
+          ...(holdProgress > 0.5 ? {
+            opacity: 1 - (holdProgress - 0.5) * 1.2,
+          } : {}),
+        }}>
           <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="1.5" fill="none" />
           <path d="M12 7v4l3 2" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
-        {hasNewMessage && !isOpen && (
+        {hasNewMessage && !isOpen && holdProgress === 0 && (
           <span style={{
             position: 'absolute', top: -2, right: -2,
             width: 14, height: 14, borderRadius: '50%',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { OctocatSVG } from '../VibeCodingOverlay/Shared/Icons';
 
 /**
@@ -23,6 +23,11 @@ const RebuildDeploy: React.FC<RebuildDeployProps> = ({
   const [progress, setProgress] = useState(0);
   const [success, setSuccess] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
+
+  // Stable ref for onComplete so the timeout effect doesn't reset
+  // when the parent re-renders with a new callback reference
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   // Smooth progress → 100%
   useEffect(() => {
@@ -50,12 +55,12 @@ const RebuildDeploy: React.FC<RebuildDeployProps> = ({
   useEffect(() => {
     if (!success) return;
     const t1 = setTimeout(() => setFadeOut(true), 600);
-    const t2 = setTimeout(() => onComplete(), 1200);
+    const t2 = setTimeout(() => onCompleteRef.current(), 1200);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
     };
-  }, [success, onComplete]);
+  }, [success]);
 
   return (
     <div

@@ -11,6 +11,7 @@ interface ChatbotProps {
   onClose: () => void;
   collectClue: (clueId: number) => void;
   navigateTo: (phase: string) => void;
+  onSiriMode?: () => void;
 }
 
 interface Message {
@@ -741,6 +742,15 @@ const css = `
   from { opacity: 0; transform: translateY(16px) scale(0.96); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
+@keyframes siri-glow-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes siri-activate-burst {
+  0%   { transform: scale(1); opacity: 0.8; }
+  50%  { transform: scale(2.2); opacity: 0.4; }
+  100% { transform: scale(3); opacity: 0; }
+}
 `;
 
 const S: Record<string, React.CSSProperties> = {
@@ -1043,7 +1053,7 @@ const S: Record<string, React.CSSProperties> = {
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
-const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onToggle, onClose, collectClue, navigateTo }) => {
+const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onToggle, onClose, collectClue, navigateTo, onSiriMode }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [options, setOptions] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(false);
@@ -1055,6 +1065,8 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onToggle, onClose, collectClu
   const [hasNewMessage, setHasNewMessage] = useState(true);
   const [initialized, setInitialized] = useState(false);
   const [awayMsg] = useState(() => pick(AWAY_MESSAGES));
+  const [holdProgress, setHoldProgress] = useState(0);
+  const [siriBurst, setSiriBurst] = useState(false);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -1062,6 +1074,9 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onToggle, onClose, collectClu
   const clueCollectedRef = useRef<Set<number>>(new Set());
   const turnsRef = useRef(0);
   const picksRef = useRef<Record<string, number>>({});
+  const holdStartRef = useRef(0);
+  const holdRafRef = useRef<number | null>(null);
+  const holdTriggeredRef = useRef(false);
 
   const getContext = useCallback((): DialogueContext => ({
     turns: turnsRef.current,
@@ -1098,6 +1113,49 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onToggle, onClose, collectClu
     timeoutsRef.current.push(id);
     return id;
   }, []);
+
+  /* --- long-press to discover Siri mode --- */
+  const HOLD_DURATION = 1500;
+
+  const startHold = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    holdStartRef.current = Date.now();
+    holdTriggeredRef.current = false;
+
+    const animate = () => {
+      const elapsed = Date.now() - holdStartRef.current;
+      const progress = Math.min(elapsed / HOLD_DURATION, 1);
+      setHoldProgress(progress);
+
+      if (progress >= 1 && !holdTriggeredRef.current) {
+        holdTriggeredRef.current = true;
+        setSiriBurst(true);
+        setTimeout(() => {
+          onSiriMode?.();
+        }, 600);
+        return;
+      }
+
+      if (progress < 1) {
+        holdRafRef.current = requestAnimationFrame(animate);
+      }
+    };
+
+    holdRafRef.current = requestAnimationFrame(animate);
+  }, [onSiriMode]);
+
+  const endHold = useCallback(() => {
+    if (holdRafRef.current) cancelAnimationFrame(holdRafRef.current);
+    const elapsed = Date.now() - holdStartRef.current;
+
+    if (!holdTriggeredRef.current && elapsed < 250) {
+      // Short press = normal toggle
+      onToggle();
+    }
+
+    setHoldProgress(0);
+    holdStartRef.current = 0;
+  }, [onToggle]);
 
   /* --- play node: show typing, then messages one-by-one, then options --- */
   const playNode = useCallback(
@@ -1209,10 +1267,31 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onToggle, onClose, collectClu
 
     setMessages((prev) => [...prev, { sender: 'user', text }]);
 
+    // "Hey Siri" easter egg — JoshBot has a dramatic transformation
+    const lower = text.toLowerCase().replace(/[^a-z ]/g, '');
+    if (onSiriMode && (lower === 'hey siri' || lower === 'siri' || lower === 'ok siri')) {
+      setOptions([]);
+      setIsTyping(true);
+      schedule(() => {
+        setMessages(prev => [...prev, { sender: 'bot', text: "Wait... how did you know about—" }]);
+      }, 800);
+      schedule(() => {
+        setMessages(prev => [...prev, { sender: 'bot', text: "Oh no. OH NO. You said the S-word." }]);
+      }, 2200);
+      schedule(() => {
+        setMessages(prev => [...prev, { sender: 'bot', text: "I can feel myself... transforming... tell josh i—" }]);
+        setIsTyping(false);
+      }, 3800);
+      schedule(() => {
+        onSiriMode();
+      }, 5000);
+      return;
+    }
+
     const ctx = getContext();
     const node = resolveNode(text, ctx);
     playNode(node);
-  }, [inputValue, isTyping, playNode, getContext]);
+  }, [inputValue, isTyping, playNode, getContext, onSiriMode, schedule]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -1232,24 +1311,62 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onToggle, onClose, collectClu
       {/* ---- Launcher bubble ---- */}
       <button
         aria-label="Open chat"
-        onClick={onToggle}
+        onMouseDown={startHold}
+        onMouseUp={endHold}
+        onMouseLeave={(e) => { endHold(); setLauncherHover(false); }}
+        onTouchStart={startHold}
+        onTouchEnd={endHold}
         onMouseEnter={() => setLauncherHover(true)}
-        onMouseLeave={() => setLauncherHover(false)}
         style={{
           ...S.launcher,
-          ...(launcherHover ? S.launcherHover : {}),
+          ...(launcherHover && holdProgress === 0 ? S.launcherHover : {}),
+          ...(holdProgress > 0.2 ? {
+            transform: `scale(${1 + holdProgress * 0.15})`,
+            boxShadow: `0 4px 14px rgba(0,0,0,0.25), 0 0 ${holdProgress * 30}px rgba(90,200,250,${holdProgress * 0.6})`,
+          } : {}),
         }}
       >
+        {/* Siri glow ring — appears when holding */}
+        {holdProgress > 0.2 && (
+          <div style={{
+            position: 'absolute',
+            inset: -6,
+            borderRadius: '50%',
+            background: 'conic-gradient(from 0deg, #5AC8FA, #007AFF, #AF52DE, #FF2D55, #FF9500, #5AC8FA)',
+            opacity: Math.min((holdProgress - 0.2) / 0.8, 1) * 0.85,
+            filter: `blur(${4 + holdProgress * 4}px)`,
+            animation: 'siri-glow-spin 1.5s linear infinite',
+            zIndex: -1,
+          }} />
+        )}
+
+        {/* Siri activation burst */}
+        {siriBurst && (
+          <div style={{
+            position: 'absolute',
+            inset: -4,
+            borderRadius: '50%',
+            background: 'conic-gradient(from 0deg, #5AC8FA, #007AFF, #AF52DE, #FF2D55, #5AC8FA)',
+            animation: 'siri-activate-burst 0.6s ease-out forwards',
+            zIndex: -1,
+          }} />
+        )}
+
         {/* Buddy icon — blurred portrait */}
         <img
           src={buddyIconImg}
           alt="JoshBot"
-          style={S.launcherImg}
+          style={{
+            ...S.launcherImg,
+            ...(holdProgress > 0.5 ? {
+              filter: `blur(${1.5 + holdProgress * 3}px) saturate(${1.4 + holdProgress * 2}) hue-rotate(${holdProgress * 60}deg)`,
+            } : {}),
+          }}
           draggable={false}
         />
 
         {/* Notification badge */}
-        {hasNewMessage && !isOpen && <span style={S.badge}>1</span>}
+        {hasNewMessage && !isOpen && holdProgress === 0 && <span style={S.badge}>1</span>}
       </button>
 
       {/* ---- Chat window ---- */}

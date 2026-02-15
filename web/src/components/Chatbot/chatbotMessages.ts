@@ -198,6 +198,13 @@ export const CHATBOT_POPUP_MESSAGES: ChatbotPopupMessage[] = [
 
   // ── ROTATING IDLE MESSAGES (can repeat) ───────────────────────────
   {
+    id: 'siri-hint',
+    text: "psst. try holding down the chat button for a sec. trust me.",
+    priority: 35,
+    once: true,
+    condition: (a) => !a.siriMode && a.totalTime > 120 && a.chatbotOpened && a.navCount >= 3,
+  },
+  {
     id: 'idle-tip-1',
     text: "pro tip: try scrolling allll the way down on the lobby page. you won't regret it. (you might.)",
     priority: 15,

@@ -80,18 +80,19 @@ const ProjectsRoom: React.FC<ProjectsRoomProps> = ({ navigateTo }) => {
 };
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CARD 1: INFINITE LEVELS — Subtle mathematical infinity motif
+// CARD 1: INFINITE LEVELS — Dark green puzzle-game aesthetic
 // ══════════════════════════════════════════════════════════════════════════════
 
 function renderInfiniteLevelsCard() {
   return (
     <a href="https://hamburgj.github.io/Infinite-Levels/" target="_blank" rel="noopener noreferrer" className="card-link">
       <div className="proj-card proj-card-infinite">
-        <div className="proj-card-accent" style={{ background: 'linear-gradient(135deg, #2d4a3e, #1e3a2f)' }} />
+        <div className="infinite-stripes" />
+        <div className="infinite-level-badge">Level ∞</div>
         <div className="proj-card-body">
           <div className="proj-card-meta">
-            <span className="proj-card-tag" style={{ color: '#4a8c6f', borderColor: 'rgba(74,140,111,0.3)' }}>puzzle</span>
-            <span className="proj-card-tag" style={{ color: '#4a8c6f', borderColor: 'rgba(74,140,111,0.3)' }}>math</span>
+            <span className="proj-card-tag infinite-tag">puzzle</span>
+            <span className="proj-card-tag infinite-tag">math</span>
           </div>
           <h2 className="proj-card-title">Infinite Levels!</h2>
           <p className="proj-card-desc">
@@ -100,7 +101,7 @@ function renderInfiniteLevelsCard() {
           </p>
           <div className="proj-card-footer">
             <span className="proj-card-detail">∞ levels · procedural generation</span>
-            <span className="proj-card-cta" style={{ color: '#4a8c6f' }}>Play →</span>
+            <span className="proj-card-cta">Play →</span>
           </div>
         </div>
       </div>
@@ -109,18 +110,18 @@ function renderInfiniteLevelsCard() {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CARD 2: FOUR NINES — Clean daily puzzle card
+// CARD 2: FOUR NINES — Dark navy code-style mathematical puzzle
 // ══════════════════════════════════════════════════════════════════════════════
 
 function renderFourNinesCard() {
   return (
     <a href="https://hamburgj.github.io/four-nines-game/" target="_blank" rel="noopener noreferrer" className="card-link">
       <div className="proj-card proj-card-nines">
-        <div className="proj-card-accent" style={{ background: 'linear-gradient(135deg, #1a1a2e, #16213e)' }} />
+        <div className="nines-equation">9 · 9 − 9 + 9</div>
         <div className="proj-card-body">
           <div className="proj-card-meta">
-            <span className="proj-card-tag" style={{ color: '#ff5722', borderColor: 'rgba(255,87,34,0.3)' }}>daily</span>
-            <span className="proj-card-tag" style={{ color: '#ff5722', borderColor: 'rgba(255,87,34,0.3)' }}>math</span>
+            <span className="proj-card-tag nines-tag">daily</span>
+            <span className="proj-card-tag nines-tag">math</span>
           </div>
           <h2 className="proj-card-title">Four Nines</h2>
           <p className="proj-card-desc">
@@ -129,7 +130,7 @@ function renderFourNinesCard() {
           </p>
           <div className="proj-card-footer">
             <span className="proj-card-detail">daily puzzle · 9 9 9 9</span>
-            <span className="proj-card-cta" style={{ color: '#ff5722' }}>Play Today →</span>
+            <span className="proj-card-cta">Play Today →</span>
           </div>
         </div>
       </div>
@@ -138,18 +139,18 @@ function renderFourNinesCard() {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CARD 3: MATCH FIVE — Minimal word puzzle
+// CARD 3: MATCH FIVE — Colorful emoji word puzzle
 // ══════════════════════════════════════════════════════════════════════════════
 
 function renderMatchFiveCard() {
   return (
     <a href="https://hamburgj.github.io/match-five/" target="_blank" rel="noopener noreferrer" className="card-link">
       <div className="proj-card proj-card-match">
-        <div className="proj-card-accent" style={{ background: '#111' }} />
+        <div className="match-emoji-strip">🟣 ⛄ 🧠 🍫 🌳 🔵 🎯</div>
         <div className="proj-card-body">
           <div className="proj-card-meta">
-            <span className="proj-card-tag" style={{ color: '#555', borderColor: '#ddd' }}>word</span>
-            <span className="proj-card-tag" style={{ color: '#555', borderColor: '#ddd' }}>daily</span>
+            <span className="proj-card-tag match-tag">word</span>
+            <span className="proj-card-tag match-tag">daily</span>
           </div>
           <h2 className="proj-card-title">Match Five</h2>
           <p className="proj-card-desc">
@@ -158,7 +159,7 @@ function renderMatchFiveCard() {
           </p>
           <div className="proj-card-footer">
             <span className="proj-card-detail">vocabulary · lateral thinking</span>
-            <span className="proj-card-cta" style={{ color: '#111' }}>Play →</span>
+            <span className="proj-card-cta">Play →</span>
           </div>
         </div>
       </div>
@@ -167,18 +168,25 @@ function renderMatchFiveCard() {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CARD 4: SURVIVOR STATS — Warm data-driven card
+// CARD 4: SURVIVOR STATS — Dark 3D network visualization aesthetic
 // ══════════════════════════════════════════════════════════════════════════════
 
 function renderSurvivorStatsCard() {
   return (
     <a href="https://hamburgj.github.io/survivor-stats/" target="_blank" rel="noopener noreferrer" className="card-link">
       <div className="proj-card proj-card-survivor">
-        <div className="proj-card-accent" style={{ background: 'linear-gradient(135deg, #E65100, #ff8f00)' }} />
+        <div className="survivor-nodes">
+          <div className="survivor-node" style={{ top: '15%', right: '12%', background: '#ff6b35', width: 10, height: 10 }} />
+          <div className="survivor-node" style={{ top: '30%', right: '22%', background: '#4fc3f7', width: 7, height: 7 }} />
+          <div className="survivor-node" style={{ top: '60%', right: '8%', background: '#66bb6a', width: 8, height: 8 }} />
+          <div className="survivor-node" style={{ top: '45%', right: '28%', background: '#ffd54f', width: 6, height: 6 }} />
+          <div className="survivor-node" style={{ top: '75%', right: '18%', background: '#ef5350', width: 9, height: 9 }} />
+          <div className="survivor-node" style={{ top: '20%', right: '35%', background: '#ba68c8', width: 5, height: 5 }} />
+        </div>
         <div className="proj-card-body">
           <div className="proj-card-meta">
-            <span className="proj-card-tag" style={{ color: '#E65100', borderColor: 'rgba(230,81,0,0.3)' }}>data viz</span>
-            <span className="proj-card-tag" style={{ color: '#E65100', borderColor: 'rgba(230,81,0,0.3)' }}>analytics</span>
+            <span className="proj-card-tag survivor-tag">data viz</span>
+            <span className="proj-card-tag survivor-tag">analytics</span>
           </div>
           <h2 className="proj-card-title">Survivor Stats</h2>
           <p className="proj-card-desc">
@@ -187,7 +195,7 @@ function renderSurvivorStatsCard() {
           </p>
           <div className="proj-card-footer">
             <span className="proj-card-detail">47+ seasons · 800+ castaways</span>
-            <span className="proj-card-cta" style={{ color: '#E65100' }}>Explore →</span>
+            <span className="proj-card-cta">Explore →</span>
           </div>
         </div>
       </div>
@@ -196,18 +204,18 @@ function renderSurvivorStatsCard() {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CARD 5: PLANTGURU — Green IoT card
+// CARD 5: PLANTGURU — Green gradient botanical theme
 // ══════════════════════════════════════════════════════════════════════════════
 
 function renderPlantGuruCard() {
   return (
     <a href="https://plantguru-fydp.github.io/PlantGuru/" target="_blank" rel="noopener noreferrer" className="card-link">
       <div className="proj-card proj-card-plant">
-        <div className="proj-card-accent" style={{ background: 'linear-gradient(135deg, #1b5e20, #4caf50)' }} />
+        <div className="plant-leaf">🌿</div>
         <div className="proj-card-body">
           <div className="proj-card-meta">
-            <span className="proj-card-tag" style={{ color: '#2e7d32', borderColor: 'rgba(46,125,50,0.3)' }}>IoT</span>
-            <span className="proj-card-tag" style={{ color: '#2e7d32', borderColor: 'rgba(46,125,50,0.3)' }}>capstone</span>
+            <span className="proj-card-tag plant-tag">IoT</span>
+            <span className="proj-card-tag plant-tag">capstone</span>
           </div>
           <h2 className="proj-card-title">PlantGuru</h2>
           <p className="proj-card-desc">
@@ -217,7 +225,7 @@ function renderPlantGuruCard() {
           </p>
           <div className="proj-card-footer">
             <span className="proj-card-detail">IoT sensors · cloud ML · mobile app</span>
-            <span className="proj-card-cta" style={{ color: '#2e7d32' }}>View →</span>
+            <span className="proj-card-cta">View →</span>
           </div>
         </div>
       </div>
@@ -230,7 +238,7 @@ function renderPlantGuruCard() {
 // ══════════════════════════════════════════════════════════════════════════════
 
 const mainStyles = `
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Caveat:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Caveat:wght@400;700&family=Edu+AU+VIC+WA+NT+Pre:wght@400;700&display=swap');
 
   .projects-room *, .projects-room *::before, .projects-room *::after {
     margin: 0; padding: 0; box-sizing: border-box;
@@ -319,7 +327,7 @@ const mainStyles = `
 `;
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CARD STYLES — Unified cohesive card system
+// CARD STYLES — Custom per-project aesthetics
 // ══════════════════════════════════════════════════════════════════════════════
 
 const cardStyles = `
@@ -327,11 +335,8 @@ const cardStyles = `
   .proj-card {
     position: relative;
     display: flex;
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.03);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     opacity: 0;
     animation: projFadeUp 0.6s ease forwards;
@@ -342,25 +347,15 @@ const cardStyles = `
   .proj-card-survivor  { animation-delay: 0.5s; }
   .proj-card-plant     { animation-delay: 0.6s; }
 
-  .proj-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
-  }
-
-  /* ── Accent Bar (left edge) ── */
-  .proj-card-accent {
-    width: 6px;
-    flex-shrink: 0;
-    border-radius: 12px 0 0 12px;
-  }
-
   /* ── Body ── */
   .proj-card-body {
     flex: 1;
-    padding: 28px 32px;
+    padding: 32px 36px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    position: relative;
+    z-index: 1;
   }
 
   /* ── Meta / Tags ── */
@@ -370,12 +365,11 @@ const cardStyles = `
     flex-wrap: wrap;
   }
   .proj-card-tag {
-    font-family: 'Space Grotesk', sans-serif;
     font-size: 11px;
     font-weight: 600;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    padding: 3px 10px;
+    padding: 4px 12px;
     border-radius: 100px;
     border: 1px solid;
     background: transparent;
@@ -384,9 +378,8 @@ const cardStyles = `
   /* ── Title ── */
   .proj-card-title {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 700;
-    color: #111827;
     letter-spacing: -0.02em;
     line-height: 1.2;
     margin: 0;
@@ -397,7 +390,6 @@ const cardStyles = `
     font-family: 'Inter', sans-serif;
     font-size: 15px;
     line-height: 1.65;
-    color: #6b7280;
     margin: 0;
     max-width: 540px;
   }
@@ -411,9 +403,7 @@ const cardStyles = `
     padding-top: 8px;
   }
   .proj-card-detail {
-    font-family: 'Space Grotesk', sans-serif;
     font-size: 12px;
-    color: #9ca3af;
     letter-spacing: 0.02em;
   }
   .proj-card-cta {
@@ -424,14 +414,279 @@ const cardStyles = `
     transition: opacity 0.2s;
   }
   .proj-card:hover .proj-card-cta {
-    opacity: 0.75;
+    opacity: 0.8;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     CARD 1: INFINITE LEVELS — Light frosted-glass with diagonal stripes
+     (matches the actual game's Level 0 aesthetic)
+     ═══════════════════════════════════════════════════════════════ */
+  .proj-card-infinite {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+  .proj-card-infinite:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+  }
+  .infinite-stripes {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 16px;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      #f8f9fa,
+      #f8f9fa 2rem,
+      #e9ecef 2rem,
+      #e9ecef 4rem
+    );
+    background-size: 200% 200%;
+    opacity: 0.45;
+    animation: infiniteStripeScroll 20s ease-in-out infinite;
+  }
+  @keyframes infiniteStripeScroll {
+    0%, 100% { background-position: 50% 100%; }
+    50% { background-position: 0 0; }
+  }
+  .proj-card-infinite .proj-card-title {
+    font-family: 'Edu AU VIC WA NT Pre', cursive;
+    font-weight: 700;
+    font-size: 34px;
+    color: #333;
+    letter-spacing: 1px;
+  }
+  .proj-card-infinite .proj-card-desc {
+    color: #555;
+  }
+  .proj-card-infinite .proj-card-detail {
+    font-family: 'Inter', sans-serif;
+    color: rgba(0, 0, 0, 0.35);
+  }
+  .proj-card-infinite .proj-card-cta {
+    color: #007bff;
+  }
+  .infinite-tag {
+    color: rgba(0, 0, 0, 0.5) !important;
+    border-color: rgba(0, 0, 0, 0.12) !important;
+    background: rgba(0, 0, 0, 0.03) !important;
+    font-family: 'Inter', sans-serif;
+  }
+  .infinite-level-badge {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.04);
+    padding: 4px 12px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    z-index: 1;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     CARD 2: FOUR NINES — Dark navy code-style
+     ═══════════════════════════════════════════════════════════════ */
+  .proj-card-nines {
+    background: linear-gradient(160deg, #0d1117 0%, #161b22 40%, #1a1a2e 100%);
+    border: 1px solid rgba(255, 87, 34, 0.15);
+    box-shadow: 0 4px 24px rgba(13, 17, 23, 0.5);
+  }
+  .proj-card-nines:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(13, 17, 23, 0.7), 0 0 20px rgba(255, 87, 34, 0.08);
+  }
+  .proj-card-nines .proj-card-title {
+    font-family: 'Space Grotesk', sans-serif;
+    color: #e6edf3;
+  }
+  .proj-card-nines .proj-card-desc {
+    color: rgba(230, 237, 243, 0.55);
+  }
+  .proj-card-nines .proj-card-detail {
+    font-family: 'Share Tech Mono', monospace;
+    color: rgba(230, 237, 243, 0.3);
+  }
+  .proj-card-nines .proj-card-cta {
+    color: #ff5722;
+  }
+  .nines-tag {
+    color: #ff7043 !important;
+    border-color: rgba(255, 87, 34, 0.3) !important;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .nines-equation {
+    position: absolute;
+    right: 32px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 44px;
+    color: rgba(255, 87, 34, 0.07);
+    pointer-events: none;
+    z-index: 0;
+    letter-spacing: 4px;
+    white-space: nowrap;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     CARD 3: MATCH FIVE — Colorful emoji playful
+     ═══════════════════════════════════════════════════════════════ */
+  .proj-card-match {
+    background: #ffffff;
+    border: 2px solid #e8e0f0;
+    box-shadow: 0 4px 20px rgba(123, 31, 162, 0.08);
+  }
+  .proj-card-match:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 36px rgba(123, 31, 162, 0.15);
+    border-color: #ce93d8;
+  }
+  .proj-card-match .proj-card-title {
+    font-family: 'Space Grotesk', sans-serif;
+    color: #4a148c;
+  }
+  .proj-card-match .proj-card-desc {
+    color: #5e5174;
+  }
+  .proj-card-match .proj-card-detail {
+    font-family: 'Space Grotesk', sans-serif;
+    color: #9e8fb5;
+  }
+  .proj-card-match .proj-card-cta {
+    color: #7b1fa2;
+  }
+  .match-tag {
+    color: #7b1fa2 !important;
+    border-color: rgba(123, 31, 162, 0.25) !important;
+    background: rgba(123, 31, 162, 0.05) !important;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .match-emoji-strip {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 26px;
+    letter-spacing: 4px;
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 0;
+    writing-mode: vertical-rl;
+    line-height: 1.8;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     CARD 4: SURVIVOR STATS — Dark data viz with network nodes
+     ═══════════════════════════════════════════════════════════════ */
+  .proj-card-survivor {
+    background: linear-gradient(135deg, #0a0a0a 0%, #121212 50%, #1a1a1a 100%);
+    border: 1px solid rgba(230, 81, 0, 0.2);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  }
+  .proj-card-survivor:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(230, 81, 0, 0.15), 0 4px 20px rgba(0, 0, 0, 0.6);
+  }
+  .proj-card-survivor .proj-card-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    color: #ff8f00;
+    letter-spacing: 0.05em;
+  }
+  .proj-card-survivor .proj-card-desc {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .proj-card-survivor .proj-card-detail {
+    font-family: 'Share Tech Mono', monospace;
+    color: rgba(255, 143, 0, 0.4);
+  }
+  .proj-card-survivor .proj-card-cta {
+    color: #E65100;
+  }
+  .survivor-tag {
+    color: #ff8f00 !important;
+    border-color: rgba(255, 143, 0, 0.25) !important;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px !important;
+    letter-spacing: 0.12em !important;
+  }
+  .survivor-nodes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .survivor-node {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.4;
+    box-shadow: 0 0 12px currentColor;
+    animation: nodeGlow 3s ease-in-out infinite alternate;
+  }
+  @keyframes nodeGlow {
+    from { opacity: 0.25; transform: scale(1); }
+    to { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     CARD 5: PLANTGURU — Green gradient botanical
+     ═══════════════════════════════════════════════════════════════ */
+  .proj-card-plant {
+    background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 60%, #388e3c 100%);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    box-shadow: 0 4px 24px rgba(27, 94, 32, 0.3);
+  }
+  .proj-card-plant:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(27, 94, 32, 0.45);
+  }
+  .proj-card-plant .proj-card-title {
+    font-family: 'Space Grotesk', sans-serif;
+    color: #ffffff;
+  }
+  .proj-card-plant .proj-card-desc {
+    color: rgba(255, 255, 255, 0.75);
+  }
+  .proj-card-plant .proj-card-detail {
+    font-family: 'Space Grotesk', sans-serif;
+    color: rgba(255, 255, 255, 0.4);
+  }
+  .proj-card-plant .proj-card-cta {
+    color: #c8e6c9;
+  }
+  .plant-tag {
+    color: #c8e6c9 !important;
+    border-color: rgba(200, 230, 201, 0.3) !important;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .plant-leaf {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 80px;
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
   }
 
   /* ── Responsive ── */
   @media (max-width: 700px) {
-    .proj-card-body { padding: 20px 20px; }
-    .proj-card-title { font-size: 20px; }
+    .proj-card-body { padding: 24px 20px; }
+    .proj-card-title { font-size: 22px; }
+    .proj-card-infinite .proj-card-title { font-size: 28px; }
     .proj-card-desc { font-size: 14px; }
+    .infinite-level-badge { font-size: 10px; padding: 3px 10px; }
+    .nines-equation { font-size: 30px; right: 16px; }
+    .match-emoji-strip { font-size: 20px; right: 8px; }
+    .plant-leaf { font-size: 56px; right: 12px; }
   }
 `;
 
