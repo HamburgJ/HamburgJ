@@ -4,7 +4,8 @@ import { useTerminalTyper, TerminalLine } from '../VibeCodingOverlay/Shared/useT
 import { useAgentSequencer, AgentMessage } from '../VibeCodingOverlay/Shared/useAgentSequencer';
 import { TerminalPanel } from '../VibeCodingOverlay/Shared/TerminalPanel';
 import { CopilotAgentPanel } from '../VibeCodingOverlay/Shared/CopilotAgentPanel';
-import { TerminalIcon, CopilotSparkle, OctocatSVG, SHARED_KEYFRAMES } from '../VibeCodingOverlay/Shared/Icons';
+import { OctocatSVG, SHARED_KEYFRAMES } from '../VibeCodingOverlay/Shared/Icons';
+import { ErrorBoundaryOverlay } from '../VibeCodingOverlay/Shared/ErrorBoundaryOverlay';
 
 interface LoadingSequenceProps {
   isFirstVisit: boolean;
@@ -485,76 +486,69 @@ const LoadingSequence: React.FC<LoadingSequenceProps> = ({
     <div style={styles.root}>
       {/* Header */}
       <div style={styles.header}>
-        <OctocatSVG size={28} />
-        <span style={styles.headerText}>GitHub Pages</span>
+        <OctocatSVG size={24} />
+        <span style={styles.headerText}>
+          GitHub Pages / hamburgj.github.io
+        </span>
       </div>
 
       {/* Main Content */}
       <div style={styles.main}>
         <div style={styles.card}>
-          <div style={styles.shieldWrap}>
-            <LoadingGearSVG />
-          </div>
-
-          <h2 style={styles.heading}>Checking your browser before accessing joshua.dev</h2>
+          <p style={styles.siteUrl}>hamburgj.github.io</p>
+          <h1 style={{ ...styles.heading, ...(showError ? { color: '#dc2626' } : {}) }}>
+            {showError ? 'Deploy failed' : 'Deploying to GitHub Pages'}
+          </h1>
 
           <div style={styles.progressTrack}>
             <div
               style={{
                 ...styles.progressBar,
                 width: `${progress}%`,
-                transition: phase === 'slow' ? 'width 4s linear' : 'width 0.3s ease',
+                ...(showError ? { background: '#dc2626' } : {}),
               }}
             />
           </div>
 
           <p style={styles.subtext}>
-            This process is automatic. Your browser will redirect to your requested
-            content shortly.
+            Building from branch <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>main</span> &middot; commit <span style={{ fontFamily: 'monospace' }}>8f2a3c1</span>
           </p>
-          <p style={styles.subtext}>Please allow up to 5 seconds...</p>
-
           <p style={styles.autoText}>
-            DDoS protection by <span style={{ color: '#3b82f6' }}>Cloudflare</span>
+            Deployment is running. The site will be available shortly.
+          </p>
+          <p style={styles.rayId}>
+            github.com/HamburgJ &middot; GitHub Actions
           </p>
 
-          <p style={styles.rayId}> Ray ID: 8c1d3f9e2a5b0001 </p>
-
-          {/* Error & Notify Overlay in Card */}
-          {(showError || showNotify) && (
+          {/* Error overlay — GitHub Actions style */}
+          {showError && (
             <div style={styles.errorOverlay}>
               <div style={styles.errorStatusRow}>
-                <div style={styles.errorStatusIcon}>!</div>
-                <div style={styles.errorStatusText}>Connection Error</div>
-                <div style={styles.errorStatusTime}>Just now</div>
+                <div style={styles.errorStatusIcon}>✕</div>
+                <span style={styles.errorStatusText}>build and deploy</span>
+                <span style={styles.errorStatusTime}>failed in 47s</span>
               </div>
-
               <div style={styles.errorLogBox}>
                 <div style={styles.errorLogHeader}>
-                  <TerminalIcon />
-                  <span>Build Log</span>
+                  <span>▸</span>
+                  <span>Build with Node.js</span>
                 </div>
                 <div style={styles.errorLogBody}>
-                  <p style={styles.errorLogLine}>
-                    <span style={{ color: '#6a737d' }}>[14:02:33]</span> Starting build...
-                  </p>
-                  <p style={styles.errorLogLine}>
-                    <span style={{ color: '#6a737d' }}>[14:02:34]</span> Building entry points...
-                  </p>
-                  <p style={styles.errorLogLine}>
-                    <span style={{ color: '#f97583' }}>Error:</span> Module build failed
-                  </p>
-                  <p style={styles.errorLogLine}>
-                    <span style={{ color: '#f97583' }}>Error:</span> Unexpected token in src/App.tsx
-                  </p>
+                  <p style={{ ...styles.errorLogLine, ...styles.errorLogDim }}>Run npm run build</p>
+                  <p style={styles.errorLogLine}>&gt; portfolio@1.0.0 build</p>
+                  <p style={styles.errorLogLine}>&gt; react-scripts build</p>
+                  <p style={styles.errorLogLine}>&nbsp;</p>
+                  <p style={{ ...styles.errorLogLine, ...styles.errorLogError }}>ERROR in src/components/Portfolio.jsx</p>
+                  <p style={{ ...styles.errorLogLine, ...styles.errorLogError }}>  Module not found: Can't resolve './config/portfolio-data'</p>
+                  <p style={styles.errorLogLine}>&nbsp;</p>
+                  <p style={{ ...styles.errorLogLine, ...styles.errorLogError }}>Process completed with exit code 1.</p>
                 </div>
               </div>
-
               {showNotify && (
-                <div style={styles.notifyText}>
-                  <CopilotSparkle size={14} />
-                  <span>System alerting administrator...</span>
-                </div>
+                <p style={styles.notifyText}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f9826c', display: 'inline-block' }} />
+                  Notifying site owner…
+                </p>
               )}
             </div>
           )}
@@ -563,48 +557,15 @@ const LoadingSequence: React.FC<LoadingSequenceProps> = ({
 
       {/* Footer */}
       <div style={styles.footer}>
-        <span>Performance & security by</span>
-        <span style={{ fontWeight: 600 }}>Cloudflare</span>
+        <OctocatSVG size={16} color="#586069" />
+        <span>
+          This site is deployed via GitHub Pages &middot; &copy; 2026 GitHub,
+          Inc.
+        </span>
       </div>
 
-      {/* Fake Error Boundary */}
-      {showErrorBoundary && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: '#fff1f0',
-          color: '#c00',
-          zIndex: 10005,
-          padding: '40px',
-          fontFamily: '-apple-system, sans-serif',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          animation: 'vcFadeIn 0.3s ease-out',
-        }}>
-           <h2 style={{ fontSize: '24px', marginBottom: '16px' }}>
-             Something went wrong.
-           </h2>
-           <p style={{ fontSize: '16px', color: '#333', maxWidth: '500px', lineHeight: 1.5, textAlign: 'center' }}>
-             React Error Boundary caught an error in Component <strong>&lt;Portfolio /&gt;</strong>:
-             <br/>
-             <br/>
-             <code style={{ background: '#ffe', padding: '4px', border: '1px solid #ecc' }}>
-               TypeError: Cannot read properties of undefined (reading 'config')
-             </code>
-           </p>
-           <button style={{
-             marginTop: '24px',
-             padding: '8px 16px',
-             background: '#c00',
-             color: '#fff',
-             border: 'none',
-             borderRadius: '4px',
-             cursor: 'pointer',
-           }}>Reload Page</button>
-        </div>
-      )}
+      {/* Fake React Error Boundary overlay */}
+      <ErrorBoundaryOverlay visible={showErrorBoundary} />
 
       {/* Terminal Overlay */}
       <TerminalPanel
@@ -613,18 +574,66 @@ const LoadingSequence: React.FC<LoadingSequenceProps> = ({
             position: 'fixed',
             bottom: showTerminal ? 0 : -400,
             left: 0,
-            right: showCopilotPanel ? '380px' : 0,
+            right: showCopilotPanel ? '360px' : 0,
             height: '40vh',
-            zIndex: 10010, // above error boundary? No, error boundary is 10005. Terminal is 10010.
+            zIndex: 10010,
             transition: 'right 0.35s cubic-bezier(0.22, 1, 0.36, 1), bottom 0.5s ease',
         }}
-        lines={terminalLines}
-        typingBuffer={typingBuffer}
-        isTyping={isTyping}
-        typingLineType={typingLineType}
-      />
+      >
+        <div style={{
+          flex: 1,
+          padding: '8px 16px',
+          overflowY: 'auto' as const,
+          fontFamily: MONO_STACK,
+          fontSize: '13px',
+          lineHeight: 1.5,
+          color: '#cccccc',
+        }}>
+          {terminalLines.map((line, i) => {
+            const lineStyle: React.CSSProperties = { margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: '20px' };
+            if (line.type === 'blank') return <p key={i} style={lineStyle}>&nbsp;</p>;
+            if (line.type === 'prompt-cmd') {
+              return (
+                <p key={i} style={lineStyle}>
+                  <span style={{ color: '#4ec9b0' }}>PS C:\Users\josh\portfolio{'>'} </span>
+                  <span style={{ color: '#cccccc' }}>{line.text}</span>
+                </p>
+              );
+            }
+            if (line.type === 'error') {
+              return <p key={i} style={lineStyle}><span style={{ color: '#f44747' }}>{line.text}</span></p>;
+            }
+            if (line.type === 'output') {
+              return <p key={i} style={lineStyle}><span style={{ color: '#cccccc' }}>{line.text}</span></p>;
+            }
+            return <p key={i} style={lineStyle}><span style={{ color: '#a0a0a0' }}>{line.text}</span></p>;
+          })}
 
-      {/* Copilot Agent Panel */}
+          {/* Currently typing line */}
+          {isTyping && typingBuffer && (
+            <p style={{ margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: '20px' }}>
+              {typingLineType === 'prompt-cmd' && (
+                <span style={{ color: '#4ec9b0' }}>PS C:\Users\josh\portfolio{'>'} </span>
+              )}
+              <span style={{
+                color: typingLineType === 'prompt-cmd' ? '#cccccc'
+                  : typingLineType === 'error' ? '#f44747'
+                  : typingLineType === 'output' ? '#cccccc'
+                  : '#a0a0a0'
+              }}>
+                {typingBuffer}
+              </span>
+              <span style={{
+                display: 'inline-block', width: '7px', height: '14px',
+                background: '#cccccc', marginLeft: '2px', verticalAlign: 'text-bottom',
+                animation: 'vcBlink 1s step-end infinite',
+              }} />
+            </p>
+          )}
+        </div>
+      </TerminalPanel>
+
+      {/* Copilot Chat Panel */}
       <CopilotAgentPanel
         visible={showCopilotPanel}
         messages={copilotMessages}
@@ -635,17 +644,22 @@ const LoadingSequence: React.FC<LoadingSequenceProps> = ({
         inputBuffer={inputTypingBuffer}
       />
 
-      {/* Skip Button */}
-      <button
-        style={{
-            ...styles.skipButton,
-            opacity: phase === 'done' ? 0 : 1,
-            pointerEvents: phase === 'done' ? 'none' : 'auto',
-        }}
-        onClick={onSkip}
-      >
-        Skip Intro
-      </button>
+      {/* Skip button for return visitors */}
+      {!isFirstVisit && phase !== 'done' && (
+        <button
+          type="button"
+          style={styles.skipButton}
+          onClick={onSkip}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.opacity = '1';
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.opacity = '0.7';
+          }}
+        >
+          Skip Intro
+        </button>
+      )}
 
       {/* Shared keyframes (slide, blink, fade, etc.) */}
       <style>{SHARED_KEYFRAMES}</style>

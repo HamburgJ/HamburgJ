@@ -202,7 +202,7 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
           position: embedded ? 'relative' : 'fixed',
           bottom: embedded ? undefined : 0,
           left: 0,
-          right: showCopilotPanel ? '380px' : 0,
+          right: showCopilotPanel ? '360px' : 0,
           height: embedded ? '40vh' : '40vh',
           zIndex: 10000,
           transition: 'right 0.35s cubic-bezier(0.22, 1, 0.36, 1)',

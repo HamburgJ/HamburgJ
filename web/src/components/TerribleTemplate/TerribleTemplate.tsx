@@ -19,10 +19,10 @@ type Phase =
   | 'done';
 
 const TERMINAL_LINES: TerminalLine[] = [
-  { type: 'prompt-cmd', text: 'no no no no no' },
-  { type: 'prompt-cmd', text: 'what did you do' },
-  { type: 'prompt-cmd', text: "that's absolutely terrible" },
-  { type: 'prompt-cmd', text: 'ok let me try this again' },
+  { type: 'comment', text: 'no no no no no' },
+  { type: 'comment', text: 'what did you do' },
+  { type: 'comment', text: "that's absolutely terrible" },
+  { type: 'comment', text: 'ok let me try this again' },
 ];
 
 const COPILOT_MSGS: AgentMessage[] = [
@@ -394,7 +394,7 @@ const TerribleTemplate: React.FC<TerribleTemplateProps> = ({ onComplete }) => {
             position: 'fixed',
             bottom: showJosh ? 0 : -400,
             left: 0,
-            right: showCopilotPanel ? '380px' : 0,
+            right: showCopilotPanel ? '360px' : 0,
             height: '40vh',
             zIndex: 10000,
             transition: 'right 0.35s cubic-bezier(0.22, 1, 0.36, 1), bottom 0.5s ease',

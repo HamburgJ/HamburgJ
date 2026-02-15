@@ -31,7 +31,7 @@ export const CopilotAgentPanel: React.FC<CopilotAgentPanelProps> = ({
   showStreamingFileEdit,
   isThinking,
   inputBuffer,
-  width = '380px',
+  width = '360px',
   style,
   onClose
 }) => {
@@ -66,33 +66,21 @@ export const CopilotAgentPanel: React.FC<CopilotAgentPanelProps> = ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '8px 14px',
+        padding: '10px 14px',
         borderBottom: '1px solid #333',
         flexShrink: 0,
         background: '#252526',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <CopilotSparkle size={16} />
-          <span style={{ color: '#cccccc', fontSize: '12px', fontWeight: 600, letterSpacing: '0.3px' }}>
+          <span style={{ color: '#cccccc', fontSize: '13px', fontWeight: 600 }}>
             Copilot
           </span>
-          <span style={{
-            fontSize: '9px',
-            color: '#888',
-            background: '#333',
-            padding: '1px 6px',
-            borderRadius: '3px',
-            fontWeight: 500,
-            letterSpacing: '0.5px',
-            textTransform: 'uppercase',
-          }}>Agent</span>
         </div>
-        {onClose && (
-          <button type="button" onClick={onClose} style={{
-            background: 'none', border: 'none', color: '#666',
-            fontSize: '16px', cursor: 'pointer', padding: '2px 6px',
-          }}>&times;</button>
-        )}
+        <button type="button" onClick={onClose} style={{
+          background: 'none', border: 'none', color: '#999',
+          fontSize: '16px', cursor: 'default', padding: '2px 6px',
+        }}>&times;</button>
       </div>
 
       {/* Agent activity log */}
@@ -112,14 +100,6 @@ export const CopilotAgentPanel: React.FC<CopilotAgentPanelProps> = ({
                 marginBottom: '10px',
                 animation: 'vcFadeIn 0.25s ease-out',
               }}>
-                <div style={{
-                  fontSize: '10px',
-                  color: '#666',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
-                  marginBottom: '4px',
-                  fontWeight: 600,
-                }}>Prompt</div>
                 <div style={{
                   color: '#ccc',
                   fontSize: '13px',

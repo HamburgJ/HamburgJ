@@ -44,7 +44,7 @@ export const TerminalPanel: React.FC<TerminalPanelProps> = ({
     );
 
     return (
-      <div style={{ padding: '8px 4px 8px 16px' }}>
+      <div style={{ padding: '8px 16px' }}>
         {lines.map((line, i) => {
           const lineStyle: React.CSSProperties = { margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: '20px', fontFamily: MONO_STACK, fontSize: '13px' };
           if (line.type === 'blank') return <p key={i} style={lineStyle}>&nbsp;</p>;
@@ -57,10 +57,8 @@ export const TerminalPanel: React.FC<TerminalPanelProps> = ({
           if (line.type === 'output') {
             return <p key={i} style={lineStyle}><span style={{ color: '#cccccc' }}>{line.text}</span></p>;
           }
-          // comment or default
-          // If text already starts with //, don't add it again (optional safety)
-          const isComment = line.text.trim().startsWith('//');
-          return <p key={i} style={lineStyle}><span style={{ color: '#6a9955' }}>{isComment ? line.text : `// ${line.text}`}</span></p>;
+          // comment
+          return <p key={i} style={lineStyle}><span style={{ color: '#a0a0a0' }}>{line.text}</span></p>;
         })}
 
         {/* Current Typing Buffer */}
@@ -73,9 +71,9 @@ export const TerminalPanel: React.FC<TerminalPanelProps> = ({
                color: typingLineType === 'prompt-cmd' ? '#cccccc'
                  : typingLineType === 'error' ? '#f44747'
                  : typingLineType === 'output' ? '#cccccc' 
-                 : '#6a9955' // comment
+                 : '#a0a0a0'
              }}>
-               {typingLineType === 'comment' && !typingBuffer.startsWith('//') ? `// ${typingBuffer}` : typingBuffer}
+               {typingBuffer}
              </span>
              
              {showCursor && (
@@ -98,7 +96,6 @@ export const TerminalPanel: React.FC<TerminalPanelProps> = ({
       overflow: 'hidden',
       background: '#1e1e1e', 
       height: height,
-      minHeight: height ? undefined : '300px', // Default min height if not specified
       ...style
     }}>
       {/* Blue accent separator */}
@@ -139,7 +136,7 @@ export const TerminalPanel: React.FC<TerminalPanelProps> = ({
               color: '#999', fontSize: '16px', padding: '0 8px',
               height: '35px', display: 'flex', alignItems: 'center',
               justifyContent: 'center', fontFamily: FONT_STACK,
-              cursor: 'pointer'
+              cursor: 'default'
             }}>{ch}</span>
           ))}
         </div>
