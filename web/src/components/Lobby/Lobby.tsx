@@ -1,22 +1,13 @@
-import React, { useRef, useCallback, useState, useEffect } from 'react';
+import React, { useRef, useCallback, useState } from 'react';
 import DocumentsDrawer from './DocumentsDrawer';
 
 interface LobbyProps {
   navigateTo: (phase: 'about' | 'projects') => void;
-  firstArrival?: boolean;
 }
 
-const Lobby: React.FC<LobbyProps> = ({ navigateTo, firstArrival = false }) => {
+const Lobby: React.FC<LobbyProps> = ({ navigateTo }) => {
   const lobbyTopRef = useRef<HTMLDivElement>(null);
   const [explorerOpen, setExplorerOpen] = useState(false);
-  const [showWelcome, setShowWelcome] = useState(firstArrival);
-
-  useEffect(() => {
-    if (showWelcome) {
-      const timer = setTimeout(() => setShowWelcome(false), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [showWelcome]);
 
   const scrollToTop = useCallback(() => {
     lobbyTopRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -527,30 +518,6 @@ const Lobby: React.FC<LobbyProps> = ({ navigateTo, firstArrival = false }) => {
 
         {/* Hero / Main Lobby */}
         <div className="lobby-hero">
-          {/* Welcome banner — only on first arrival from auto-sequence */}
-          {showWelcome && (
-            <div style={{
-              position: 'fixed',
-              bottom: 28,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              fontFamily: '"SF Mono", "Fira Code", "Consolas", monospace',
-              fontSize: '0.82rem',
-              color: '#888',
-              background: 'rgba(30,30,30,0.92)',
-              border: '1px solid #333',
-              borderRadius: '8px',
-              padding: '10px 20px',
-              zIndex: 9000,
-              backdropFilter: 'blur(8px)',
-              animation: 'lobbyWelcomeFade 5s ease forwards',
-              whiteSpace: 'nowrap',
-            }}>
-              <span style={{ color: '#666' }}>$</span>{' '}
-              <span style={{ color: '#aaa' }}>ok, I think it's working now. take a look around.</span>
-            </div>
-          )}
-
           <h1 className="lobby-name">Joshua Hamburger</h1>
           <p className="lobby-tagline">Injecting the human condition into unwitting robots.</p>
           <p className="lobby-bio">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { TerminalIcon, SHARED_KEYFRAMES } from './Icons';
 import { TerminalLine } from './useTerminalTyper';
 
@@ -33,6 +33,14 @@ export const TerminalPanel: React.FC<TerminalPanelProps> = ({
   typingLineType
 }) => {
   const showCursor = showTypingCursor ?? isTyping;
+  const bodyRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom when content changes
+  useEffect(() => {
+    if (bodyRef.current) {
+      bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
+    }
+  }, [lines, typingBuffer, children]);
 
   const renderContent = () => {
     if (children) return children;
@@ -44,7 +52,7 @@ export const TerminalPanel: React.FC<TerminalPanelProps> = ({
     );
 
     return (
-      <div style={{ padding: '8px 16px' }}>
+      <div style={{ padding: '8px 16px 24px' }}>
         {lines.map((line, i) => {
           const lineStyle: React.CSSProperties = { margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: '20px', fontFamily: MONO_STACK, fontSize: '13px' };
           if (line.type === 'blank') return <p key={i} style={lineStyle}>&nbsp;</p>;
@@ -143,7 +151,7 @@ export const TerminalPanel: React.FC<TerminalPanelProps> = ({
       </div>
 
       {/* Terminal body */}
-      <div style={{
+      <div ref={bodyRef} style={{
         flex: 1,
         background: '#1e1e1e',
         color: '#cccccc',

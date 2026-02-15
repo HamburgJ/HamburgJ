@@ -1,18 +1,19 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { useSiteState, SitePhase } from './hooks/useSiteState';
+import { useSiteActivity } from './hooks/useSiteActivity';
 import LoadingSequence from './components/LoadingSequence/LoadingSequence';
 import TerribleTemplate from './components/TerribleTemplate/TerribleTemplate';
 import Lobby from './components/Lobby/Lobby';
 import AboutRoom from './components/Rooms/AboutRoom/AboutRoom';
 import ProjectsRoom from './components/Rooms/ProjectsRoom/ProjectsRoom';
 import Chatbot from './components/Chatbot/Chatbot';
+import SiriChatbot from './components/Chatbot/SiriChatbot';
+import ChatbotPopup from './components/Chatbot/ChatbotPopup';
+import JoshToast from './components/JoshToast/JoshToast';
 import VoidPage from './components/HiddenPages/VoidPage';
 import DebugPage from './components/HiddenPages/DebugPage';
 import HamburgerPage from './components/HiddenPages/HamburgerPage';
 import './index.css';
-
-// Phases that are part of the first-visit auto-sequence (vibecoding gag)
-const AUTO_SEQUENCE_PHASES: SitePhase[] = ['about'];
 
 const App: React.FC = () => {
   const {
@@ -24,17 +25,26 @@ const App: React.FC = () => {
     skipToLobby,
   } = useSiteState();
 
+  const { activity, trackPageVisit, trackAction, markMessageShown, toggleSiriMode } = useSiteActivity();
+  // toggleSiriMode is available for future Siri mode activation (e.g., konami code, hidden UI element)
+  void toggleSiriMode;
+
   const [transitioning, setTransitioning] = useState(false);
   const [transitionType, setTransitionType] = useState('');
-  // Track whether we're in the first-visit auto-sequence
-  const [inAutoSequence, setInAutoSequence] = useState(true);
-  // Track if lobby is being reached for the first time from auto-sequence
-  const [lobbyFirstArrival, setLobbyFirstArrival] = useState(false);
+
+  // Track page visits when phase changes
+  useEffect(() => {
+    trackPageVisit(state.phase);
+  }, [state.phase, trackPageVisit]);
+
+  // Track chatbot opens
+  useEffect(() => {
+    if (state.chatbotOpen) {
+      trackAction('chatbot_opened');
+    }
+  }, [state.chatbotOpen, trackAction]);
 
   const navigateTo = useCallback((phase: SitePhase) => {
-    // If user manually navigates, break out of auto-sequence
-    setInAutoSequence(false);
-
     const type = phase === 'about' ? 'saas'
       : phase === 'terrible' ? 'glitch'
       : phase === 'projects' ? 'fade'
@@ -49,25 +59,6 @@ const App: React.FC = () => {
       setTimeout(() => setTransitioning(false), 400);
     }, 400);
   }, [setPhase]);
-
-  // Auto-sequence navigation (doesn't break the sequence)
-  const autoNavigateTo = useCallback((phase: SitePhase) => {
-    const type = phase === 'about' ? 'saas'
-      : phase === 'projects' ? 'fade'
-      : 'fade';
-
-    setTransitionType(type);
-    setTransitioning(true);
-
-    setTimeout(() => {
-      setPhase(phase);
-      window.scrollTo(0, 0);
-      setTimeout(() => setTransitioning(false), 400);
-    }, 400);
-  }, [setPhase]);
-
-  // Whether auto-sequence is active for the current phase
-  const isAutoSequenceActive = inAutoSequence && AUTO_SEQUENCE_PHASES.includes(state.phase);
 
   const renderPhase = () => {
     switch (state.phase) {
@@ -162,7 +153,6 @@ const App: React.FC = () => {
         return (
           <Lobby
             navigateTo={navigateTo}
-            firstArrival={lobbyFirstArrival}
           />
         );
 
@@ -170,12 +160,6 @@ const App: React.FC = () => {
         return (
           <AboutRoom
             navigateTo={navigateTo}
-            autoSequence={isAutoSequenceActive}
-            onSequenceComplete={isAutoSequenceActive ? () => {
-              setLobbyFirstArrival(true);
-              setInAutoSequence(false);
-              autoNavigateTo('lobby');
-            } : undefined}
           />
         );
 
@@ -212,18 +196,49 @@ const App: React.FC = () => {
     }
   };
 
+  // Phases where chatbot & popups should be available
+  const chatbotPhases: SitePhase[] = ['lobby', 'about', 'projects', 'void', 'debug', 'hamburger'];
+  const showChatbot = chatbotPhases.includes(state.phase);
+
   return (
     <>
       {renderPhase()}
       
-      {/* Chatbot is only available on the lobby page */}
-      {state.phase === 'lobby' && (
-        <Chatbot
-          isOpen={state.chatbotOpen}
-          onToggle={toggleChatbot}
-          onClose={() => setChatbotOpen(false)}
-          collectClue={collectClue}
-          navigateTo={navigateTo as (phase: string) => void}
+      {/* Chatbot — available on main pages, switches between JoshBot and Siri */}
+      {showChatbot && (
+        activity.siriMode ? (
+          <SiriChatbot
+            isOpen={state.chatbotOpen}
+            onToggle={toggleChatbot}
+            onClose={() => setChatbotOpen(false)}
+            collectClue={collectClue}
+            navigateTo={navigateTo as (phase: string) => void}
+          />
+        ) : (
+          <Chatbot
+            isOpen={state.chatbotOpen}
+            onToggle={toggleChatbot}
+            onClose={() => setChatbotOpen(false)}
+            collectClue={collectClue}
+            navigateTo={navigateTo as (phase: string) => void}
+          />
+        )
+      )}
+
+      {/* Chatbot popup notifications — context-aware messages */}
+      {showChatbot && (
+        <ChatbotPopup
+          activity={activity}
+          onMessageShown={markMessageShown}
+          siriMode={activity.siriMode}
+        />
+      )}
+
+      {/* Josh terminal toasts — developer messages */}
+      {showChatbot && (
+        <JoshToast
+          activity={activity}
+          onMessageShown={markMessageShown}
         />
       )}
 

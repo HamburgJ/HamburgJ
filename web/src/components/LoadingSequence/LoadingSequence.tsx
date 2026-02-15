@@ -582,7 +582,7 @@ const LoadingSequence: React.FC<LoadingSequenceProps> = ({
       >
         <div style={{
           flex: 1,
-          padding: '8px 16px',
+          padding: '8px 16px 24px',
           overflowY: 'auto' as const,
           fontFamily: MONO_STACK,
           fontSize: '13px',

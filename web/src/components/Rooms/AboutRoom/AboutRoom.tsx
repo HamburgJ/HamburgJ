@@ -1,76 +1,35 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import VibeCodingOverlay from '../../VibeCodingOverlay/VibeCodingOverlay';
-import HintTerminal from '../../VibeCodingOverlay/HintTerminal';
+import DeveloperShop from './DeveloperShop';
 import {
-  ABOUT_HINT_LINES,
   ABOUT_ERROR_JOSH_LINES,
   ABOUT_ERROR_TERMINAL_LINES,
   ABOUT_TO_LOBBY_COPILOT,
-  ABOUT_AUTO_JOSH_LINES,
-  ABOUT_AUTO_ERROR_LINES,
 } from '../../VibeCodingOverlay/sequences';
 import type { VibeCodingSequence, TerminalLine } from '../../VibeCodingOverlay/VibeCodingOverlay';
 
 interface AboutRoomProps {
   navigateTo: (phase: 'lobby' | 'projects') => void;
-  autoSequence?: boolean;
-  onSequenceComplete?: () => void;
 }
 
-const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo, autoSequence = false, onSequenceComplete }) => {
+const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo }) => {
   const [showReactError, setShowReactError] = useState(false);
   const [vibeActive, setVibeActive] = useState(false);
-  const [hintVisible, setHintVisible] = useState(false);
-  const autoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [showShop, setShowShop] = useState(false);
 
-  const [autoIntervention, setAutoIntervention] = useState(false);
-
-  // Auto-sequence: show hint after 10s, then Josh auto-intervenes at 18s
-  useEffect(() => {
-    if (!autoSequence) return;
-    // Show hint first
-    autoTimerRef.current = setTimeout(() => {
-      setHintVisible(true);
-    }, 10000);
-    // If user still hasn't clicked, Josh intervenes himself
-    const autoTrigger = setTimeout(() => {
-      if (!showReactError && !vibeActive) {
-        setAutoIntervention(true);
-        setHintVisible(false);
-        if (autoTimerRef.current) { clearTimeout(autoTimerRef.current); autoTimerRef.current = null; }
-        setShowReactError(true);
-        setTimeout(() => setVibeActive(true), 2000);
-      }
-    }, 18000);
-
-    return () => {
-      if (autoTimerRef.current) clearTimeout(autoTimerRef.current);
-      clearTimeout(autoTrigger);
-    };
-  }, [autoSequence, showReactError, vibeActive]);
-
-  const triggerBug = useCallback(() => {
+  // "Add to Cart" easter egg — triggers fake React error → VibeCoding overlay
+  const handleAddToCart = useCallback(() => {
     if (showReactError || vibeActive) return;
-    // Cancel pending auto timer
-    if (autoTimerRef.current) { clearTimeout(autoTimerRef.current); autoTimerRef.current = null; }
-    setHintVisible(false);
     setShowReactError(true);
     setTimeout(() => setVibeActive(true), 2000);
   }, [showReactError, vibeActive]);
 
-  const handleAddToCart = useCallback(() => {
-    triggerBug();
-  }, [triggerBug]);
-
   const handleVibeComplete = useCallback(() => {
     setVibeActive(false);
     setShowReactError(false);
-    if (onSequenceComplete) onSequenceComplete();
-  }, [onSequenceComplete]);
+  }, []);
 
-  const allJoshLines: TerminalLine[] = autoIntervention
-    ? [...ABOUT_AUTO_JOSH_LINES, ...ABOUT_AUTO_ERROR_LINES]
-    : [...ABOUT_ERROR_JOSH_LINES, ...ABOUT_ERROR_TERMINAL_LINES];
+  const allJoshLines: TerminalLine[] = [...ABOUT_ERROR_JOSH_LINES, ...ABOUT_ERROR_TERMINAL_LINES];
 
   const vibeSequence: VibeCodingSequence = {
     joshLines: allJoshLines,
@@ -527,11 +486,14 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo, autoSequence = false,
             </div>
           </div>
 
-          {/* ── RIGHT: Comparison Table ── */}
+          {/* ── RIGHT: Comparison Table / Shop ── */}
           <div className="about-right">
+            {showShop ? (
+              <DeveloperShop onClose={() => setShowShop(false)} />
+            ) : (
             <div className="about-table-wrapper">
 
-              <div className="about-table-title">
+              <div className="about-table-title" onClick={() => setShowShop(true)} style={{ cursor: 'pointer' }} title="Click to browse the full shop...">
                 <h2>Select Your Developer</h2>
                 <span className="about-quill">✒</span>
               </div>
@@ -613,21 +575,20 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo, autoSequence = false,
               </p>
 
             </div>
+            )}
           </div>
 
         </div>
 
         {/* BOTTOM NAV */}
-        {!autoSequence && (
           <nav className="about-bottom-nav">
             <button onClick={() => navigateTo('lobby')}>
-              &larr; Back to Lobby
+              &larr; Lobby
             </button>
             <button onClick={() => navigateTo('projects')}>
               See what I&apos;ve built &rarr;
             </button>
           </nav>
-        )}
 
       </div>
 
@@ -676,10 +637,7 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo, autoSequence = false,
         </div>
       )}
 
-      {/* Hint Terminal (compact, shown if user doesn't click Add to Cart) */}
-      <HintTerminal lines={ABOUT_HINT_LINES} visible={hintVisible && !showReactError && !vibeActive} />
-
-      {/* VibeCoding Overlay */}
+      {/* VibeCoding Overlay (easter egg — triggered by "Add to Cart") */}
       <VibeCodingOverlay sequence={vibeSequence} active={vibeActive} />
     </>
   );
