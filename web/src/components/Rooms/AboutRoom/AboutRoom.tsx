@@ -1,41 +1,12 @@
-import React, { useState, useCallback } from 'react';
-import VibeCodingOverlay from '../../VibeCodingOverlay/VibeCodingOverlay';
+import React, { useState } from 'react';
 import DeveloperShop from './DeveloperShop';
-import {
-  ABOUT_ERROR_JOSH_LINES,
-  ABOUT_ERROR_TERMINAL_LINES,
-  ABOUT_TO_LOBBY_COPILOT,
-} from '../../VibeCodingOverlay/sequences';
-import type { VibeCodingSequence, TerminalLine } from '../../VibeCodingOverlay/VibeCodingOverlay';
 
 interface AboutRoomProps {
   navigateTo: (phase: 'lobby' | 'projects') => void;
 }
 
 const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo }) => {
-  const [showReactError, setShowReactError] = useState(false);
-  const [vibeActive, setVibeActive] = useState(false);
   const [showShop, setShowShop] = useState(false);
-
-  // "Add to Cart" easter egg — triggers fake React error → VibeCoding overlay
-  const handleAddToCart = useCallback(() => {
-    if (showReactError || vibeActive) return;
-    setShowReactError(true);
-    setTimeout(() => setVibeActive(true), 2000);
-  }, [showReactError, vibeActive]);
-
-  const handleVibeComplete = useCallback(() => {
-    setVibeActive(false);
-    setShowReactError(false);
-  }, []);
-
-  const allJoshLines: TerminalLine[] = [...ABOUT_ERROR_JOSH_LINES, ...ABOUT_ERROR_TERMINAL_LINES];
-
-  const vibeSequence: VibeCodingSequence = {
-    joshLines: allJoshLines,
-    copilotMessages: ABOUT_TO_LOBBY_COPILOT,
-    onComplete: handleVibeComplete,
-  };
 
   return (
     <>
@@ -328,77 +299,6 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo }) => {
         .about-table tr.about-price-row td:nth-child(2) { color: #888; }
         .about-table tr.about-price-row td:nth-child(3) { color: #111; }
 
-        /* ── CTA AREA ── */
-        .about-cta-area {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-          margin-top: 22px;
-          justify-content: flex-end;
-        }
-
-        .about-cta-btn {
-          display: inline-block;
-          padding: 14px 34px;
-          background: #111;
-          color: #fff;
-          font-family: 'Lato', sans-serif;
-          font-size: 16px;
-          font-weight: 700;
-          letter-spacing: 0.5px;
-          border: none;
-          cursor: pointer;
-          position: relative;
-          overflow: hidden;
-          animation: aboutBreathe 3s ease-in-out infinite;
-          transition: transform 0.3s ease;
-        }
-        .about-cta-btn:hover {
-          transform: scale(1.04);
-        }
-
-        /* Breathing box-shadow pulse */
-        @keyframes aboutBreathe {
-          0%, 100% { box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
-          50% { box-shadow: 0 4px 24px rgba(0,0,0,0.35); }
-        }
-
-        /* Shimmer sweep */
-        .about-cta-btn::after {
-          content: '';
-          position: absolute;
-          top: 0; left: -100%;
-          width: 60%;
-          height: 100%;
-          background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
-          animation: aboutShimmer 4s ease-in-out infinite;
-        }
-        @keyframes aboutShimmer {
-          0%   { left: -100%; }
-          50%  { left: 140%; }
-          100% { left: 140%; }
-        }
-
-        /* Best Value typewriter */
-        .about-best-value {
-          font-size: 13px;
-          font-weight: 900;
-          letter-spacing: 2px;
-          text-transform: uppercase;
-          color: #f59e42;
-          white-space: nowrap;
-          overflow: hidden;
-          border-right: 2px solid #f59e42;
-          width: 0;
-          animation: aboutTypewriter 2s steps(10) 1.2s forwards, aboutBlink 0.6s step-end infinite;
-        }
-        @keyframes aboutTypewriter {
-          to { width: 10ch; }
-        }
-        @keyframes aboutBlink {
-          50% { border-color: transparent; }
-        }
-
         /* ── BROKEN HTML GAG ── */
         .about-broken-html {
           font-family: 'Courier New', monospace;
@@ -595,10 +495,7 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo }) => {
                 </tbody>
               </table>
 
-              <div className="about-cta-area">
-                <span className="about-best-value">BEST VALUE</span>
-                <button className="about-cta-btn" onClick={handleAddToCart}>🛒 Add to Cart</button>
-              </div>
+
 
               <p className="about-fine-print">
                 * &ldquo;The Other Guy&rdquo; is fictional. Any resemblance to actual developers, living or mass-deployed, is purely coincidental.
@@ -622,53 +519,7 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo }) => {
 
       </div>
 
-      {/* Fake React Error Boundary */}
-      {showReactError && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          backgroundColor: '#1e1e1e',
-          color: '#f44747',
-          fontFamily: 'monospace',
-          padding: '40px',
-          zIndex: 10000,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'flex-start',
-          overflow: 'auto',
-        }}>
-          <h1 style={{ color: '#f44747', fontSize: '2rem', marginBottom: '1rem' }}>
-            Unhandled Runtime Error
-          </h1>
-          <div style={{
-            backgroundColor: '#2d2020',
-            border: '1px solid #f44747',
-            borderRadius: '4px',
-            padding: '16px',
-            marginBottom: '1rem',
-          }}>
-            <p style={{ color: '#f44747', fontSize: '1.1rem', margin: '0 0 12px 0' }}>
-              TypeError: Cannot read properties of undefined (reading 'checkout')
-            </p>
-            <p style={{ color: '#888', fontSize: '0.85rem', margin: 0, lineHeight: 1.7 }}>
-              at CartProvider.addItem (Cart.tsx:42:18)<br/>
-              at AboutRoom.handleAddToCart (AboutRoom.tsx:156:9)<br/>
-              at onClick (AboutRoom.tsx:204:22)<br/>
-              at HTMLButtonElement.dispatch (react-dom.production.min.js:44)<br/>
-              at HTMLButtonElement.handleClick (react-dom.production.min.js:44)
-            </p>
-          </div>
-          <p style={{ color: '#888', fontSize: '0.9rem' }}>
-            There is no CartProvider wrapping this component.
-          </p>
-        </div>
-      )}
 
-      {/* VibeCoding Overlay (easter egg — triggered by "Add to Cart") */}
-      <VibeCodingOverlay sequence={vibeSequence} active={vibeActive} />
     </>
   );
 };
