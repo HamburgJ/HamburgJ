@@ -394,7 +394,7 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo }) => {
             {/* Education */}
             <div className="about-section-label">Education</div>
             <div className="about-edu-row">
-              <img src={`${process.env.PUBLIC_URL}/images/University_of_Waterloo_seal.svg.png`} alt="UWaterloo" />
+              <img src={`${import.meta.env.BASE_URL}images/University_of_Waterloo_seal.svg.png`} alt="UWaterloo" />
               <div className="about-edu-text">
                 <strong>University of Waterloo</strong><br/>
                 <span>BASc Computer Engineering · Dean&apos;s Honours</span>

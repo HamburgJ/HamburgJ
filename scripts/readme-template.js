@@ -3,7 +3,6 @@ const generateTemplate = (data) => {
   const gameConfig = {
     'Infinite Levels!': { emoji: '∞', bgcolor: '#3730A3', badgeColor: '4F46E5', action: 'PLAY', desc: 'A recursive descent into mathematical madness. Every level reveals another. There is no end.' },
     'Match Five':      { emoji: '🧩', bgcolor: '#6B21A8', badgeColor: '8B5CF6', action: 'PLAY', desc: 'One word. Five meanings. Vocabulary meets lateral thinking. No clutter. Just words.' },
-    'Four Nines':      { emoji: '🔢', bgcolor: '#991B1B', badgeColor: 'EF4444', action: 'SOLVE', desc: 'You have exactly four 9s. Combine them with any operation. Hit the target. Keep the streak.' },
   };
   const projectConfig = {
     'PlantGuru':       { emoji: '🌱', bgcolor: '#14532D', badgeColor: '22C55E', action: 'EXPLORE', desc: 'IoT-powered botanical intelligence. Cloud-predicted watering schedules. Sensor-verified vibes. UWaterloo Capstone.' },
@@ -54,7 +53,7 @@ const generateTemplate = (data) => {
 <img src="https://img.shields.io/badge/💼_Connect_on_LinkedIn-161b22?style=for-the-badge&logoColor=white" alt="LinkedIn" height="40">
 </a>
 
-<a href="https://hamburgj.github.io/">
+<a href="https://hamburgj.github.io/HamburgJ/">
 <img src="https://img.shields.io/badge/Portfolio-fcfbf9?style=for-the-badge&logo=safari&logoColor=333" alt="Portfolio">
 </a>
 
@@ -90,7 +89,7 @@ ${projectCards}
 <br>
 <h3>🍔 hamburgj.github.io</h3>
 <p>My interactive portfolio site. Poke around — there's more than meets the eye.</p>
-<a href="https://hamburgj.github.io/"><img src="https://img.shields.io/badge/VISIT-58a6ff?style=for-the-badge" alt="Visit"></a>
+<a href="https://hamburgj.github.io/HamburgJ/"><img src="https://img.shields.io/badge/VISIT-58a6ff?style=for-the-badge" alt="Visit"></a>
 <br><br>
 </td>
 </tr>

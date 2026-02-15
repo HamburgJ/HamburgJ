@@ -14,7 +14,7 @@
 <img src="https://img.shields.io/badge/💼_Connect_on_LinkedIn-161b22?style=for-the-badge&logoColor=white" alt="LinkedIn" height="40">
 </a>
 
-<a href="https://hamburgj.github.io/">
+<a href="https://hamburgj.github.io/HamburgJ/">
 <img src="https://img.shields.io/badge/Portfolio-fcfbf9?style=for-the-badge&logo=safari&logoColor=333" alt="Portfolio">
 </a>
 
@@ -33,15 +33,6 @@
 <p>A recursive descent into mathematical madness. Every level reveals another. There is no end.</p>
 <a href="https://hamburgj.github.io/Infinite-Levels/"><img src="https://img.shields.io/badge/▶_PLAY-4F46E5?style=flat-square" alt="PLAY"></a>
 <a href="https://github.com/HamburgJ/Infinite-Levels"><img src="https://img.shields.io/badge/Code-24292e?style=flat-square&logo=github&logoColor=white" alt="Code"></a>
-<br><br>
-</td>
-<td align="center" bgcolor="#991B1B" width="220">
-<br>
-<h1>🔢</h1>
-<h3>Four Nines</h3>
-<p>You have exactly four 9s. Combine them with any operation. Hit the target. Keep the streak.</p>
-<a href="https://hamburgj.github.io/four-nines-game/"><img src="https://img.shields.io/badge/▶_SOLVE-EF4444?style=flat-square" alt="SOLVE"></a>
-<a href="https://github.com/HamburgJ/four-nines-game"><img src="https://img.shields.io/badge/Code-24292e?style=flat-square&logo=github&logoColor=white" alt="Code"></a>
 <br><br>
 </td>
 <td align="center" bgcolor="#6B21A8" width="220">
@@ -91,7 +82,7 @@
 <br>
 <h3>🍔 hamburgj.github.io</h3>
 <p>My interactive portfolio site. Poke around — there's more than meets the eye.</p>
-<a href="https://hamburgj.github.io/"><img src="https://img.shields.io/badge/VISIT-58a6ff?style=for-the-badge" alt="Visit"></a>
+<a href="https://hamburgj.github.io/HamburgJ/"><img src="https://img.shields.io/badge/VISIT-58a6ff?style=for-the-badge" alt="Visit"></a>
 <br><br>
 </td>
 </tr>
