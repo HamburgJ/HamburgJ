@@ -120,7 +120,7 @@ const HintTerminal: React.FC<HintTerminalProps> = ({ lines, visible }) => {
             borderRight: '1px solid #252526',
           }}>
             <TerminalIconHint />
-            <span>TERMINAL</span>
+            <span>josh@portfolio</span>
           </div>
           <div style={{ flex: 1 }} />
           <div style={{ display: 'flex', alignItems: 'center', paddingRight: '4px' }}>

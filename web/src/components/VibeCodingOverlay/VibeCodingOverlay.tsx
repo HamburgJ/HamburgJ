@@ -50,7 +50,7 @@ interface VibeCodingOverlayProps {
   embedded?: boolean;
 }
 
-// ── Inline SVGs (minimal, neutral) ───────────────────────────────────────────
+// ── Inline SVGs ──────────────────────────────────────────────────────────────
 
 export const CopilotSparkle: React.FC<{ size?: number; id?: string }> = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -62,6 +62,37 @@ const TerminalIcon: React.FC = () => (
   <svg width="14" height="14" viewBox="0 0 16 16" fill="#cccccc" aria-hidden="true">
     <path d="M6 9l3-3-3-3-.7.7L7.6 6 5.3 8.3zm4 1H7v1h3z" />
     <path d="M1 2.5A1.5 1.5 0 012.5 1h11A1.5 1.5 0 0115 2.5v11a1.5 1.5 0 01-1.5 1.5h-11A1.5 1.5 0 011 13.5zm1.5-.5a.5.5 0 00-.5.5v11a.5.5 0 00.5.5h11a.5.5 0 00.5-.5v-11a.5.5 0 00-.5-.5z" />
+  </svg>
+);
+
+const FileIcon: React.FC = () => (
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="#cccccc" aria-hidden="true">
+    <path d="M13.71 4.29l-3-3A1 1 0 0010 1H4a1 1 0 00-1 1v12a1 1 0 001 1h8a1 1 0 001-1V5a1 1 0 00-.29-.71zM12 14H4V2h5v3a1 1 0 001 1h3v8z" />
+  </svg>
+);
+
+const CheckIcon: React.FC = () => (
+  <svg width="12" height="12" viewBox="0 0 16 16" fill="#4ec9b0" aria-hidden="true">
+    <path d="M6.27 10.87h.01l4.49-4.49-.7-.71-3.78 3.78L4.41 7.6l-.71.71 2.56 2.56z" />
+  </svg>
+);
+
+const SpinnerIcon: React.FC = () => (
+  <span style={{
+    display: 'inline-block',
+    width: '12px',
+    height: '12px',
+    border: '1.5px solid #555',
+    borderTop: '1.5px solid #d4d4d4',
+    borderRadius: '50%',
+    animation: 'vcSpin 0.8s linear infinite',
+    flexShrink: 0,
+  }} />
+);
+
+const PencilIcon: React.FC = () => (
+  <svg width="12" height="12" viewBox="0 0 16 16" fill="#888" aria-hidden="true">
+    <path d="M13.23 1h-1.46L3.52 9.25l-.16.22L1 13.59 2.41 15l4.12-2.36.22-.16L15 4.23V2.77L13.23 1zM2.41 13.59l1.51-3 1.45 1.45-2.96 1.55zm3.83-2.06L4.47 9.76l6-6 1.77 1.77-6 6z" />
   </svg>
 );
 
@@ -235,7 +266,7 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
         const t = setTimeout(typeChar, 300);
         timersRef.current.push(t);
       } else {
-        // Show thinking dots
+        // Show thinking indicator
         setShowTypingIndicator(true);
         const dotDelay = 700 + Math.random() * 500;
         const t = setTimeout(() => {
@@ -303,7 +334,6 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
   const playSteps = useCallback(
     (steps: VibeStep[], index: number) => {
       if (index >= steps.length) {
-        // All steps done — close
         const t = setTimeout(startClosing, 1800);
         timersRef.current.push(t);
         return;
@@ -311,11 +341,8 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
       const step = steps[index];
 
       const afterReaction = () => {
-        // Play this step's copilot messages
-        // Override the onComplete behavior: instead of closing, move to next step
         const playStepMessages = (msgs: CopilotMessage[], msgIdx: number) => {
           if (msgIdx >= msgs.length) {
-            // Step complete — notify and move to next
             if (sequence.onStepComplete) sequence.onStepComplete(index);
             const t = setTimeout(() => playSteps(steps, index + 1), 800);
             timersRef.current.push(t);
@@ -399,7 +426,6 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
         playStepMessages(step.copilotMessages, 0);
       };
 
-      // Type josh's reaction lines first (if any)
       if (step.joshReaction.length > 0) {
         typeJoshLines(step.joshReaction, 0, afterReaction);
       } else {
@@ -418,11 +444,9 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
       setShowCopilotPanel(true);
 
       if (sequence.steps && sequence.steps.length > 0) {
-        // Multi-step mode: play through steps sequentially
         const t = setTimeout(() => playSteps(sequence.steps!, 0), 450);
         timersRef.current.push(t);
       } else {
-        // Single sequence mode (legacy)
         const t = setTimeout(() => playCopilotMessages(sequence.copilotMessages, 0), 450);
         timersRef.current.push(t);
       }
@@ -455,77 +479,69 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
     return <p key={i} style={lineStyle}><span style={{ color: '#a0a0a0' }}>{line.text}</span></p>;
   };
 
-  const renderFileEdit = (fileEdit: FileEdit) => (
-    <div style={{
-      background: '#1a1a1a',
-      borderRadius: '6px',
-      border: '1px solid #333',
-      overflow: 'hidden',
-      marginTop: '8px',
-    }}>
+  /** Compact file edit action row — shows file name with status badge, no full diff */
+  const renderFileEditCompact = (fileEdit: FileEdit, done: boolean) => {
+    const addCount = fileEdit.lines.filter(l => l.startsWith('+')).length;
+    const removeCount = fileEdit.lines.filter(l => l.startsWith('-')).length;
+    return (
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '6px',
+        gap: '8px',
         padding: '6px 10px',
-        background: '#252526',
-        borderBottom: '1px solid #333',
-        fontSize: '11px',
-        color: '#999',
+        background: '#1a1a2e',
+        border: '1px solid #2a2a3e',
+        borderRadius: '6px',
+        marginTop: '6px',
         fontFamily: MONO_STACK,
+        fontSize: '12px',
+        animation: 'vcFadeIn 0.3s ease-out',
       }}>
-        <span>{fileEdit.fileName}</span>
+        <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+          {done ? <CheckIcon /> : <SpinnerIcon />}
+        </span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+          <FileIcon />
+        </span>
+        <span style={{ color: '#ccc', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {fileEdit.fileName}
+        </span>
+        {addCount > 0 && (
+          <span style={{ color: '#4ec9b0', fontSize: '11px', fontWeight: 600 }}>+{addCount}</span>
+        )}
+        {removeCount > 0 && (
+          <span style={{ color: '#f44747', fontSize: '11px', fontWeight: 600 }}>-{removeCount}</span>
+        )}
         <span style={{
-          marginLeft: 'auto',
           fontSize: '9px',
-          color: '#4ec9b0',
-          background: 'rgba(78, 201, 176, 0.1)',
+          color: done ? '#4ec9b0' : '#888',
+          background: done ? 'rgba(78, 201, 176, 0.1)' : 'rgba(136, 136, 136, 0.1)',
           padding: '2px 6px',
           borderRadius: '3px',
-          fontFamily: MONO_STACK,
           textTransform: 'uppercase' as const,
           fontWeight: 600,
-        }}>Modified</span>
+          letterSpacing: '0.5px',
+        }}>{done ? 'Saved' : 'Editing'}</span>
       </div>
-      <div style={{
-        padding: '4px 0',
-        fontFamily: MONO_STACK,
-        fontSize: '11px',
-        lineHeight: 1.7,
-      }}>
-        {fileEdit.lines.map((line, j) => {
-          const isAdd = line.startsWith('+');
-          const isRemove = line.startsWith('-');
-          return (
-            <div key={j} style={{
-              display: 'flex',
-              alignItems: 'stretch',
-              background: isAdd
-                ? 'rgba(78, 201, 176, 0.06)'
-                : isRemove
-                  ? 'rgba(244, 71, 71, 0.06)'
-                  : 'transparent',
-              paddingLeft: '10px',
-            }}>
-              <span style={{
-                width: '20px',
-                textAlign: 'center' as const,
-                color: isAdd ? '#4ec9b0' : isRemove ? '#f44747' : 'transparent',
-                userSelect: 'none' as const,
-                flexShrink: 0,
-                fontWeight: 700,
-              }}>{isAdd ? '+' : isRemove ? '\u2212' : ' '}</span>
-              <span style={{
-                color: isAdd ? '#4ec9b0' : isRemove ? '#f44747' : '#606060',
-                opacity: isRemove ? 0.5 : 1,
-                textDecoration: isRemove ? 'line-through' : 'none',
-                paddingRight: '12px',
-                whiteSpace: 'pre' as const,
-              }}>{isAdd || isRemove ? line.slice(2) : line}</span>
-            </div>
-          );
-        })}
-      </div>
+    );
+  };
+
+  /** Render an inline action step (thinking, reading, etc.) */
+  const renderActionIndicator = (label: string, spinning: boolean) => (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+      padding: '4px 0',
+      fontSize: '12px',
+      color: '#888',
+      fontFamily: FONT_STACK,
+      animation: 'vcFadeIn 0.25s ease-out',
+    }}>
+      <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+        {spinning ? <SpinnerIcon /> : <CheckIcon />}
+      </span>
+      <span>{label}</span>
     </div>
   );
 
@@ -563,7 +579,7 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
             borderRight: '1px solid #252526',
           }}>
             <TerminalIcon />
-            <span>TERMINAL</span>
+            <span>josh@portfolio</span>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', paddingRight: '4px' }}>
@@ -610,14 +626,14 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
     </>
   );
 
-  // ── Copilot chat panel (minimal dark) ──────────────────────────────────
+  // ── Copilot Agent Panel ────────────────────────────────────────────────
 
   const copilotPanel = (
     <div style={{
       position: 'fixed',
       top: 0,
       right: 0,
-      width: '360px',
+      width: '380px',
       height: '100vh',
       background: '#1e1e1e',
       borderLeft: '1px solid #333',
@@ -634,69 +650,79 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '10px 14px',
+        padding: '8px 14px',
         borderBottom: '1px solid #333',
         flexShrink: 0,
         background: '#252526',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <CopilotSparkle size={16} />
-          <span style={{ color: '#cccccc', fontSize: '13px', fontWeight: 600 }}>
-            Copilot Chat
+          <span style={{ color: '#cccccc', fontSize: '12px', fontWeight: 600, letterSpacing: '0.3px' }}>
+            Copilot
           </span>
+          <span style={{
+            fontSize: '9px',
+            color: '#888',
+            background: '#333',
+            padding: '1px 6px',
+            borderRadius: '3px',
+            fontWeight: 500,
+            letterSpacing: '0.5px',
+            textTransform: 'uppercase' as const,
+          }}>Agent</span>
         </div>
         <button type="button" style={{
-          background: 'none', border: 'none', color: '#999',
+          background: 'none', border: 'none', color: '#666',
           fontSize: '16px', cursor: 'default', padding: '2px 6px',
         }}>&times;</button>
       </div>
 
-      {/* Messages */}
+      {/* Agent activity log */}
       <div ref={copilotMsgRef} style={{
-        flex: 1, overflowY: 'auto', padding: '14px',
-        display: 'flex', flexDirection: 'column', gap: '12px',
+        flex: 1, overflowY: 'auto', padding: '12px 16px',
+        display: 'flex', flexDirection: 'column', gap: '2px',
       }}>
         {copilotMessages.map((msg, i) => {
           if (msg.role === 'user') {
+            // User prompt — shown as a task block, not a chat bubble
             return (
               <div key={i} style={{
-                display: 'flex', justifyContent: 'flex-end',
-                animation: 'vcMsgIn 0.25s ease-out',
+                padding: '10px 12px',
+                background: '#1a1a2e',
+                border: '1px solid #2a2a3e',
+                borderRadius: '6px',
+                marginBottom: '10px',
+                animation: 'vcFadeIn 0.25s ease-out',
               }}>
                 <div style={{
-                  background: '#264f78',
-                  color: '#e0e0e0',
-                  borderRadius: '12px 12px 4px 12px',
-                  padding: '8px 12px',
+                  fontSize: '10px',
+                  color: '#666',
+                  textTransform: 'uppercase' as const,
+                  letterSpacing: '0.5px',
+                  marginBottom: '4px',
+                  fontWeight: 600,
+                }}>Prompt</div>
+                <div style={{
+                  color: '#ccc',
                   fontSize: '13px',
-                  maxWidth: '85%',
                   lineHeight: 1.5,
                 }}>{msg.text}</div>
               </div>
             );
           }
+          // Assistant — flat agent-style output with inline actions
           return (
             <div key={i} style={{
-              display: 'flex', flexDirection: 'column',
-              alignItems: 'flex-start',
-              animation: 'vcMsgIn 0.25s ease-out',
+              marginBottom: '8px',
+              animation: 'vcFadeIn 0.25s ease-out',
             }}>
               <div style={{
-                fontSize: '11px', fontWeight: 600, color: '#888',
-                marginBottom: '4px', marginLeft: '2px',
-              }}>Copilot</div>
-              <div style={{
-                background: '#2d2d2d',
                 color: '#d4d4d4',
-                borderRadius: '12px 12px 12px 4px',
-                padding: '10px 12px',
                 fontSize: '13px',
-                maxWidth: '85%',
-                lineHeight: 1.5,
-              }}>
-                {msg.text}
-                {msg.fileEdit && renderFileEdit(msg.fileEdit)}
-              </div>
+                lineHeight: 1.6,
+                padding: '2px 0',
+              }}>{msg.text}</div>
+              {msg.fileEdit && renderFileEditCompact(msg.fileEdit, true)}
             </div>
           );
         })}
@@ -704,22 +730,14 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
         {/* Currently streaming assistant message */}
         {currentStreamingMsg && (
           <div style={{
-            display: 'flex', flexDirection: 'column',
-            alignItems: 'flex-start',
-            animation: 'vcMsgIn 0.25s ease-out',
+            marginBottom: '8px',
+            animation: 'vcFadeIn 0.25s ease-out',
           }}>
             <div style={{
-              fontSize: '11px', fontWeight: 600, color: '#888',
-              marginBottom: '4px', marginLeft: '2px',
-            }}>Copilot</div>
-            <div style={{
-              background: '#2d2d2d',
               color: '#d4d4d4',
-              borderRadius: '12px 12px 12px 4px',
-              padding: '10px 12px',
               fontSize: '13px',
-              maxWidth: '85%',
-              lineHeight: 1.5,
+              lineHeight: 1.6,
+              padding: '2px 0',
             }}>
               {streamingText}
               <span style={{
@@ -731,62 +749,58 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
                 verticalAlign: 'text-bottom',
                 animation: 'vcBlink 1s step-end infinite',
               }} />
-              {showStreamingFileEdit && currentStreamingMsg.fileEdit && (
-                <div style={{ animation: 'vcMsgIn 0.3s ease-out' }}>
-                  {renderFileEdit(currentStreamingMsg.fileEdit)}
-                </div>
-              )}
             </div>
+            {showStreamingFileEdit && currentStreamingMsg.fileEdit && (
+              <div style={{ animation: 'vcFadeIn 0.3s ease-out' }}>
+                {renderFileEditCompact(currentStreamingMsg.fileEdit, false)}
+              </div>
+            )}
           </div>
         )}
 
-        {/* Typing indicator (three dots) */}
+        {/* Thinking indicator — agent-style with spinner */}
         {showTypingIndicator && (
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: '4px',
-            padding: '8px 4px',
-            animation: 'vcMsgIn 0.25s ease-out',
-          }}>
-            {[0, 1, 2].map(di => (
-              <span key={di} style={{
-                width: '6px', height: '6px',
-                background: '#666', borderRadius: '50%',
-                animation: `vcDotPulse 1.4s ease-in-out ${di * 0.2}s infinite`,
-              }} />
-            ))}
+          <div style={{ animation: 'vcFadeIn 0.25s ease-out' }}>
+            {renderActionIndicator('Thinking...', true)}
           </div>
         )}
       </div>
 
-      {/* Input area */}
+      {/* Input area — minimal prompt bar */}
       <div style={{
         borderTop: '1px solid #333',
-        padding: '10px 14px',
+        padding: '8px 14px',
         background: '#252526',
         flexShrink: 0,
       }}>
         <div style={{
-          background: '#3c3c3c',
-          border: '1px solid #555',
-          borderRadius: '8px',
+          background: '#2d2d2d',
+          border: '1px solid #3c3c3c',
+          borderRadius: '6px',
           padding: '8px 12px',
           fontSize: '13px',
           fontFamily: FONT_STACK,
           minHeight: '20px',
-          color: inputTypingBuffer ? '#e0e0e0' : '#666',
+          color: inputTypingBuffer ? '#e0e0e0' : '#555',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
         }}>
-          {inputTypingBuffer || 'Ask Copilot...'}
-          {inputTypingBuffer && (
-            <span style={{
-              display: 'inline-block',
-              width: '2px',
-              height: '14px',
-              background: '#e0e0e0',
-              marginLeft: '1px',
-              verticalAlign: 'text-bottom',
-              animation: 'vcBlink 1s step-end infinite',
-            }} />
-          )}
+          <PencilIcon />
+          <span style={{ flex: 1 }}>
+            {inputTypingBuffer || 'Ask Copilot to do something...'}
+            {inputTypingBuffer && (
+              <span style={{
+                display: 'inline-block',
+                width: '2px',
+                height: '14px',
+                background: '#e0e0e0',
+                marginLeft: '1px',
+                verticalAlign: 'text-bottom',
+                animation: 'vcBlink 1s step-end infinite',
+              }} />
+            )}
+          </span>
         </div>
       </div>
     </div>
@@ -814,7 +828,7 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
         position: embedded ? 'relative' : 'fixed',
         bottom: embedded ? undefined : 0,
         left: 0,
-        right: showCopilotPanel ? '360px' : 0,
+        right: showCopilotPanel ? '380px' : 0,
         height: embedded ? '40vh' : '40vh',
         zIndex: 10000,
         display: 'flex',
@@ -837,9 +851,9 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
           0%, 100% { opacity: 1; }
           50% { opacity: 0; }
         }
-        @keyframes vcDotPulse {
-          0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
-          40% { opacity: 1; transform: scale(1.1); }
+        @keyframes vcSpin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
         }
         @keyframes vcSlideUp {
           from { transform: translateY(100%); opacity: 0; }
@@ -849,8 +863,8 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
           from { transform: translateY(0); opacity: 1; }
           to { transform: translateY(100%); opacity: 0; }
         }
-        @keyframes vcMsgIn {
-          from { opacity: 0; transform: translateY(6px); }
+        @keyframes vcFadeIn {
+          from { opacity: 0; transform: translateY(4px); }
           to { opacity: 1; transform: translateY(0); }
         }
       `}</style>

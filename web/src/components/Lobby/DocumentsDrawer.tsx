@@ -27,7 +27,7 @@ const FILES: VirtualFile[] = [
     name: 'todo.txt',
     icon: '📝',
     type: 'text',
-    content: `TODO LIST\n=========\n\n[x] wake up\n[x] mass update this if someone is looking\n[ ] finish portfolio website\n[ ] finish OTHER portfolio website\n[ ] learn kubernetes (been on list since 2021)\n[ ] reply to that email from 6 months ago\n[ ] water the plants (RIP)\n[ ] figure out what "synergy" means\n[x] add easter eggs to portfolio\n[ ] add easter eggs to the easter eggs\n[ ] open source ligma\n[ ] invent new sorting algorithm\n    (current idea: BogoSort but with AI)\n[x] eat a hamburger (personal brand synergy)\n[ ] delete this file before someone finds it\n[ ] seriously delete this file\n[ ] WHY IS THIS FILE STILL HERE`,
+    content: `TODO LIST\n=========\n\n[x] wake up\n[x] update this if someone is looking\n[ ] finish portfolio website\n[ ] finish OTHER portfolio website\n[ ] learn kubernetes (been on list since 2021)\n[ ] reply to that email from 6 months ago\n[ ] water the plants (RIP)\n[ ] figure out what "synergy" means\n[x] add easter eggs to portfolio\n[ ] add easter eggs to the easter eggs\n[ ] open source ligma\n[ ] invent new sorting algorithm\n    (current idea: BogoSort but with AI)\n[x] eat a hamburger (personal brand synergy)\n[ ] delete this file before someone finds it\n[ ] seriously delete this file\n[ ] WHY IS THIS FILE STILL HERE`,
   },
   {
     name: 'free_bitcoin.exe',

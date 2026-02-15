@@ -155,10 +155,10 @@ const DIALOGUE: Record<string, DialogueNode> = {
     const facts = [
       'He once participated in 4 hackathons in a single month. Won two of them.',
       'His first program was a TI-84 calculator game in grade 9. It was terrible. He loved it.',
-      'He has strong opinions about monospace fonts. JetBrains Mono supremacy.',
+      'He once renamed 200 variables at 1am because one naming convention bothered him. On a Tuesday.',
       "He's the kind of person who automates a 5-minute task and spends 3 weeks on it.",
-      'He once debugged a production issue in his sleep. Literally dreamed the fix. It worked.',
-      "He's the kind of person who actually reads the docs.",
+      'His most-starred GitHub repo is a calculator game he made in an afternoon. His serious projects have like 3 stars each.',
+      'He treats package.json like a personal diary. You can carbon-date his install phases by the dependency history.',
       'Fun fact: this portfolio has more lines of code than some of his actual projects.',
       'He once accidentally pushed to production from his phone. On a bus. It was fine. Mostly.',
     ];
@@ -408,7 +408,7 @@ const DIALOGUE: Record<string, DialogueNode> = {
     const jokes = [
       "Someone once called Josh 'hamburger boy' in a meeting. He has never recovered.",
       "Josh walks into a restaurant. Orders a hamburger. The waiter says 'is this cannibalism?' Josh has heard this 4,671 times.",
-      "Why did Josh become a developer? Because 'hamburger engineer' wasn't a real title. Yet.",
+      "Josh's email autocomplete suggests 'hamburger' before 'hello'. He doesn't correct it anymore.",
       "Josh's GitHub username is HamburgJ. The J stands for Josh. Not 'just a hamburger'.",
       "Josh's password hint question was 'favourite food'. Three guesses what everyone assumed.",
     ];

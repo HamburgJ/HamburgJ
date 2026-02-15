@@ -561,7 +561,7 @@ const JOSH_LINES_2: TermLine[] = [
   { type: 'comment', text: 'oh no.' },
   { type: 'comment', text: "that's worse" },
   { type: 'blank', text: '' },
-  { type: 'comment', text: 'ok you know what, let me just ask copilot...' },
+  { type: 'comment', text: 'ok you know what. copilot.' },
 ];
 
 interface CopilotMsg {
@@ -576,15 +576,15 @@ interface CopilotMsg {
 const COPILOT_MESSAGES: CopilotMsg[] = [
   {
     role: 'user',
-    text: 'my portfolio is completely broken, the whole config folder just disappeared?? can you just fix it',
+    text: 'fix it',
   },
   {
     role: 'assistant',
-    text: "I see the issue — your portfolio is importing from a config file that doesn't exist anymore. Let me fix that.",
+    text: 'I can fix this. I can also see 14 other problems. Let me fix all of them.',
   },
   {
     role: 'assistant',
-    text: "I'll scaffold a complete portfolio with inline data so you don't need that config file.",
+    text: "Rebuilding your portfolio from scratch. Don't worry about it.",
     fileEdit: {
       fileName: 'src/components/Portfolio.jsx',
       lines: [
@@ -594,18 +594,19 @@ const COPILOT_MESSAGES: CopilotMsg[] = [
         '+ const portfolio = {',
         '+   name: "Joshua Hamburger",',
         '+   skills: ["React", "TypeScript", "Node.js"],',
-        '+   theme: "modern-gradient"',
+        '+   theme: "saas-pricing-page",',
+        '+   chatbot: true,',
         '+ };',
       ],
     },
   },
   {
     role: 'assistant',
-    text: 'Adding a hero section, animated skill bars, and a testimonials carousel...',
+    text: "Also adding a comparison table, an 'Add to Cart' button, and... a chatbot? Sure, why not.",
   },
   {
     role: 'assistant',
-    text: '\u2705 Done! Try running the build again.',
+    text: '\u2705 Done! I also refactored your project structure, rewrote your README, and updated all your dependencies. You\'re welcome.',
   },
 ];
 
@@ -1115,7 +1116,7 @@ const LoadingSequence: React.FC<LoadingSequenceProps> = ({
             <div style={styles.terminalTabs}>
               <div style={styles.terminalTab}>
                 <TerminalIcon />
-                <span>TERMINAL</span>
+                <span>josh@portfolio</span>
               </div>
             </div>
             <div style={styles.terminalWindowControls}>

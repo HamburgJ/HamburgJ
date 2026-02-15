@@ -27,17 +27,17 @@ const JOSH_LINES = [
   'no no no no no',
   'what did you do',
   "that's absolutely terrible",
-  'ok let me try this again...',
+  'ok let me try this again',
 ];
 
 const COPILOT_MSGS_TT: TTCopilotMsg[] = [
   {
     role: 'user',
-    text: 'scrap everything. build me an about page that actually stands out.',
+    text: 'ok try again. make it like... professional or whatever',
   },
   {
     role: 'assistant',
-    text: "Standing out? I've got an idea. What if we lean into the absurdity \u2014 make it feel like you're being sold as a product. Full product page energy.",
+    text: "Professional. Got it. I'm thinking clean comparison table, urgency badges, clear call-to-action. Full product page energy.",
   },
   {
     role: 'assistant',
@@ -48,11 +48,11 @@ const COPILOT_MSGS_TT: TTCopilotMsg[] = [
         '- import { FireDivider, SparkleCanvas }',
         '- fontFamily: "Comic Sans MS"',
         '+ const AboutPage: React.FC = () => (',
-        '+   <SaaSLayout>',
-        '+     <ComparisonTable />',
-        '+     <UrgencyBadges />',
+        '+   <ProductPage layout="saas">',
+        '+     <ComparisonTable columns={["Other Dev", "This Guy"]} />',
+        '+     <PricingBadge text="BEST VALUE" />',
         '+     <AddToCartButton price="FREE" />',
-        '+   </SaaSLayout>',
+        '+   </ProductPage>',
         '+ );',
       ],
     },
@@ -529,7 +529,7 @@ const TerribleTemplate: React.FC<TerribleTemplateProps> = ({ onComplete }) => {
                 borderRight: '1px solid #252526',
               }}>
                 <TerminalIconTT />
-                <span>TERMINAL</span>
+                <span>josh@portfolio</span>
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', paddingRight: '4px' }}>

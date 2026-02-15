@@ -10,34 +10,31 @@ export const ABOUT_HINT_LINES: string[] = [
 ];
 
 export const ABOUT_ERROR_JOSH_LINES: TerminalLine[] = [
-  { type: 'comment', text: 'hmm, I wonder what happens if I press "add to cart"...' },
+  { type: 'comment', text: 'oh no.' },
 ];
 
 export const ABOUT_ERROR_TERMINAL_LINES: TerminalLine[] = [
-  { type: 'error', text: "TypeError: Cannot read properties of undefined (reading 'checkout')" },
-  { type: 'error', text: '  at CartProvider.addItem (src/components/Cart.tsx:42:18)' },
-  { type: 'comment', text: 'oh, of course. no cart provider. classic.' },
+  { type: 'comment', text: 'right... no cart provider. classic.' },
 ];
 
 export const ABOUT_TO_LOBBY_COPILOT: CopilotMessage[] = [
   {
     role: 'user',
-    text: "ok forget the cart, the whole page is a mess. just make me a lobby — a clean hub that links to about and projects. throw in a chatbot too, give it AIM buddy energy.",
+    text: 'scrap it. give me like a homepage or something. idk add a chatbot',
   },
   {
     role: 'assistant',
-    text: "On it — I'll build a clean lobby with door-style navigation to each room. And for the chatbot I'll give it a retro AIM window with a snarky personality.",
+    text: 'Got it. Building you a lobby with rooms, a chatbot, and a few creative liberties.',
     fileEdit: {
       fileName: 'src/components/Lobby.tsx',
       lines: [
         '+ const Lobby: React.FC = () => (',
-        '+   <LobbyLayout>',
-        '+     <WelcomeHeader />',
+        '+   <div className="homepage-or-something">',
         '+     <RoomGrid>',
-        '+       <RoomDoor to="about" label="About" />',
-        '+       <RoomDoor to="projects" label="Projects" />',
+        '+       <Room to="about" />',
+        '+       <Room to="projects" />',
         '+     </RoomGrid>',
-        '+     <ChatBot personality="snarky-aim-buddy" />',
+        '+     <ChatBot />  {/* idk */}',
         '+   </LobbyLayout>',
         '+ );',
       ],
@@ -53,14 +50,14 @@ export const ABOUT_TO_PROJECTS_COPILOT = ABOUT_TO_LOBBY_COPILOT;
 // ══════════════════════════════════════════════════════════════════════════════
 
 export const ABOUT_AUTO_JOSH_LINES: TerminalLine[] = [
-  { type: 'comment', text: "actually wait, let me try something..." },
-  { type: 'comment', text: 'I wonder what happens if I press "add to cart"...' },
+  { type: 'comment', text: 'hold on...' },
+  { type: 'comment', text: 'what does this button do' },
 ];
 
 export const ABOUT_AUTO_ERROR_LINES: TerminalLine[] = [
   { type: 'error', text: "TypeError: Cannot read properties of undefined (reading 'checkout')" },
   { type: 'error', text: '  at CartProvider.addItem (src/components/Cart.tsx:42:18)' },
-  { type: 'comment', text: 'oh, of course. no cart provider. classic.' },
+  { type: 'comment', text: '...there is no cart provider. why would there be a cart provider.' },
 ];
 
 // ══════════════════════════════════════════════════════════════════════════════

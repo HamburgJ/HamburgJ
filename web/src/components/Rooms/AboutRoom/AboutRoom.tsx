@@ -501,7 +501,7 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo, autoSequence = false,
             {/* Education */}
             <div className="about-section-label">Education</div>
             <div className="about-edu-row">
-              <img src="https://upload.wikimedia.org/wikipedia/en/thumb/6/6e/University_of_Waterloo_seal.svg/150px-University_of_Waterloo_seal.svg.png" alt="UWaterloo" />
+              <img src={`${process.env.PUBLIC_URL}/images/University_of_Waterloo_seal.svg.png`} alt="UWaterloo" />
               <div className="about-edu-text">
                 <strong>University of Waterloo</strong><br/>
                 <span>BASc Computer Engineering · Dean&apos;s Honours</span>
@@ -550,14 +550,14 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo, autoSequence = false,
                   <tr>
                     <td>
                       <div className="about-feat-name">Clean Code</div>
-                      <div className="about-feat-detail">Readable, maintainable code</div>
+                      <div className="about-feat-detail">Readable, maintainable</div>
                     </td>
                     <td><span className="about-mark about-mark-no">✗</span></td>
                     <td><span className="about-mark about-mark-yes">✓</span></td>
                   </tr>
                   <tr>
                     <td>
-                      <div className="about-feat-name">Full-Stack Skills</div>
+                      <div className="about-feat-name">Full-Stack</div>
                       <div className="about-feat-detail">Front-end to back-end</div>
                     </td>
                     <td><span className="about-mark about-mark-no">✗</span></td>
@@ -566,7 +566,7 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo, autoSequence = false,
                   <tr>
                     <td>
                       <div className="about-feat-name">Reads Error Messages</div>
-                      <div className="about-feat-detail">The entire stack trace, even</div>
+                      <div className="about-feat-detail">The whole stack trace</div>
                     </td>
                     <td><span className="about-mark about-mark-no">✗</span></td>
                     <td><span className="about-mark about-mark-yes">✓</span></td>
@@ -574,15 +574,7 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo, autoSequence = false,
                   <tr>
                     <td>
                       <div className="about-feat-name">Deploys on Fridays</div>
-                      <div className="about-feat-detail">And survives</div>
-                    </td>
-                    <td><span className="about-mark about-mark-no">✗</span></td>
-                    <td><span className="about-mark about-mark-yes">✓</span></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div className="about-feat-name">Cover Letter Quality</div>
-                      <div className="about-feat-detail">Makes recruiters weep</div>
+                      <div className="about-feat-detail">And doesn&apos;t get fired</div>
                     </td>
                     <td><span className="about-mark about-mark-no">✗</span></td>
                     <td><span className="about-mark about-mark-yes">✓</span></td>
@@ -590,15 +582,15 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo, autoSequence = false,
                   <tr>
                     <td>
                       <div className="about-feat-name">Code Comments</div>
-                      <div className="about-feat-detail">Written in haiku form</div>
+                      <div className="about-feat-detail">Mostly apologies</div>
                     </td>
                     <td><span className="about-mark about-mark-no">✗</span></td>
                     <td><span className="about-mark about-mark-yes">✓</span></td>
                   </tr>
                   <tr>
                     <td>
-                      <div className="about-feat-name">Fun Portfolio Site</div>
-                      <div className="about-feat-detail">You&apos;re looking at it</div>
+                      <div className="about-feat-name">Has a Portfolio Site</div>
+                      <div className="about-feat-detail">You&apos;re on it right now</div>
                     </td>
                     <td><span className="about-mark about-mark-no">✗</span></td>
                     <td><span className="about-mark about-mark-yes">✓</span></td>
@@ -617,8 +609,7 @@ const AboutRoom: React.FC<AboutRoomProps> = ({ navigateTo, autoSequence = false,
               </div>
 
               <p className="about-fine-print">
-                * This is not a real product. No developers were harmed in the making of this comparison table.
-                Side effects may include mass hiring, mass confusion, or mass compliments. Results not guaranteed.
+                * No developers were harmed in the making of this comparison table. Results not guaranteed.
               </p>
 
             </div>
