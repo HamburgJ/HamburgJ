@@ -1,22 +1,17 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { TerminalPanel } from './Shared/TerminalPanel';
+import { CopilotAgentPanel } from './Shared/CopilotAgentPanel';
+import { useTerminalTyper, TerminalLine } from './Shared/useTerminalTyper';
+import { useAgentSequencer, AgentMessage } from './Shared/useAgentSequencer';
+import { FileEditData } from './Shared/AgentParts';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
-export interface FileEdit {
-  fileName: string;
-  lines: string[];
-}
+export type { TerminalLine };
 
-export interface CopilotMessage {
-  role: 'user' | 'assistant';
-  text: string;
-  fileEdit?: FileEdit;
-}
+export interface FileEdit extends FileEditData {}
 
-export interface TerminalLine {
-  type: 'prompt-cmd' | 'output' | 'error' | 'blank' | 'comment';
-  text: string;
-}
+export interface CopilotMessage extends AgentMessage {}
 
 export interface VibeStep {
   /** Terminal comment Josh makes before this step's copilot exchange */
@@ -50,57 +45,6 @@ interface VibeCodingOverlayProps {
   embedded?: boolean;
 }
 
-// ── Inline SVGs ──────────────────────────────────────────────────────────────
-
-export const CopilotSparkle: React.FC<{ size?: number; id?: string }> = ({ size = 20 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <path d="M12 2L14.09 8.26L20 9.27L15.55 13.97L16.91 20L12 16.9L7.09 20L8.45 13.97L4 9.27L9.91 8.26L12 2Z" fill="#888" />
-  </svg>
-);
-
-const TerminalIcon: React.FC = () => (
-  <svg width="14" height="14" viewBox="0 0 16 16" fill="#cccccc" aria-hidden="true">
-    <path d="M6 9l3-3-3-3-.7.7L7.6 6 5.3 8.3zm4 1H7v1h3z" />
-    <path d="M1 2.5A1.5 1.5 0 012.5 1h11A1.5 1.5 0 0115 2.5v11a1.5 1.5 0 01-1.5 1.5h-11A1.5 1.5 0 011 13.5zm1.5-.5a.5.5 0 00-.5.5v11a.5.5 0 00.5.5h11a.5.5 0 00.5-.5v-11a.5.5 0 00-.5-.5z" />
-  </svg>
-);
-
-const FileIcon: React.FC = () => (
-  <svg width="14" height="14" viewBox="0 0 16 16" fill="#cccccc" aria-hidden="true">
-    <path d="M13.71 4.29l-3-3A1 1 0 0010 1H4a1 1 0 00-1 1v12a1 1 0 001 1h8a1 1 0 001-1V5a1 1 0 00-.29-.71zM12 14H4V2h5v3a1 1 0 001 1h3v8z" />
-  </svg>
-);
-
-const CheckIcon: React.FC = () => (
-  <svg width="12" height="12" viewBox="0 0 16 16" fill="#4ec9b0" aria-hidden="true">
-    <path d="M6.27 10.87h.01l4.49-4.49-.7-.71-3.78 3.78L4.41 7.6l-.71.71 2.56 2.56z" />
-  </svg>
-);
-
-const SpinnerIcon: React.FC = () => (
-  <span style={{
-    display: 'inline-block',
-    width: '12px',
-    height: '12px',
-    border: '1.5px solid #555',
-    borderTop: '1.5px solid #d4d4d4',
-    borderRadius: '50%',
-    animation: 'vcSpin 0.8s linear infinite',
-    flexShrink: 0,
-  }} />
-);
-
-const PencilIcon: React.FC = () => (
-  <svg width="12" height="12" viewBox="0 0 16 16" fill="#888" aria-hidden="true">
-    <path d="M13.23 1h-1.46L3.52 9.25l-.16.22L1 13.59 2.41 15l4.12-2.36.22-.16L15 4.23V2.77L13.23 1zM2.41 13.59l1.51-3 1.45 1.45-2.96 1.55zm3.83-2.06L4.47 9.76l6-6 1.77 1.77-6 6z" />
-  </svg>
-);
-
-// ── Constants ────────────────────────────────────────────────────────────────
-
-const FONT_STACK = 'system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
-const MONO_STACK = '"Cascadia Code", Consolas, "Courier New", monospace';
-
 // ── Component ────────────────────────────────────────────────────────────────
 
 const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
@@ -108,115 +52,48 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
   active,
   embedded = false,
 }) => {
-  // Terminal state
-  const [terminalLines, setTerminalLines] = useState<TerminalLine[]>([]);
-  const [typingBuffer, setTypingBuffer] = useState('');
-  const [typingLineType, setTypingLineType] = useState<TerminalLine['type']>('comment');
-  const [isTyping, setIsTyping] = useState(false);
+  // Use shared hooks
+  const {
+    terminalLines,
+    typingBuffer,
+    typingLineType,
+    isTyping,
+    typeLines,
+    clearLines,
+  } = useTerminalTyper();
 
-  // Copilot panel state
+  const {
+    copilotMessages,
+    inputTypingBuffer,
+    showTypingIndicator,
+    currentStreamingMsg,
+    streamingText,
+    showStreamingFileEdit,
+    playMessages,
+    reset: resetAgent,
+  } = useAgentSequencer();
+
+  // Local state for panel visibility & coordination
   const [showCopilotPanel, setShowCopilotPanel] = useState(false);
-  const [copilotMessages, setCopilotMessages] = useState<CopilotMessage[]>([]);
-  const [showTypingIndicator, setShowTypingIndicator] = useState(false);
-
-  // Input typing & response streaming
-  const [inputTypingBuffer, setInputTypingBuffer] = useState('');
-  const [streamingText, setStreamingText] = useState('');
-  const [currentStreamingMsg, setCurrentStreamingMsg] = useState<CopilotMessage | null>(null);
-  const [showStreamingFileEdit, setShowStreamingFileEdit] = useState(false);
-
-  // Lifecycle
   const [joshDone, setJoshDone] = useState(false);
   const [closing, setClosing] = useState(false);
-
-  const terminalRef = useRef<HTMLDivElement>(null);
-  const copilotMsgRef = useRef<HTMLDivElement>(null);
+  
   const completedRef = useRef(false);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   // Reset on new sequence
   useEffect(() => {
     if (!active) {
-      setTerminalLines([]);
-      setTypingBuffer('');
-      setIsTyping(false);
+      clearLines();
+      resetAgent();
       setShowCopilotPanel(false);
-      setCopilotMessages([]);
-      setShowTypingIndicator(false);
-      setInputTypingBuffer('');
-      setStreamingText('');
-      setCurrentStreamingMsg(null);
-      setShowStreamingFileEdit(false);
       setJoshDone(false);
       setClosing(false);
       completedRef.current = false;
       timersRef.current.forEach(clearTimeout);
       timersRef.current = [];
     }
-  }, [active]);
-
-  // Auto-scroll
-  useEffect(() => {
-    if (terminalRef.current) terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-  }, [terminalLines, typingBuffer]);
-
-  useEffect(() => {
-    if (copilotMsgRef.current) copilotMsgRef.current.scrollTop = copilotMsgRef.current.scrollHeight;
-  }, [copilotMessages, showTypingIndicator, streamingText, inputTypingBuffer]);
-
-  // ── Terminal typing helper ─────────────────────────────────────────────
-
-  const typeTerminalLine = useCallback(
-    (line: TerminalLine, onDone: () => void, instant = false) => {
-      if (line.type === 'blank') {
-        setTerminalLines(prev => [...prev, line]);
-        onDone();
-        return;
-      }
-      if (instant || line.type === 'output' || line.type === 'error') {
-        setTerminalLines(prev => [...prev, line]);
-        onDone();
-        return;
-      }
-      setIsTyping(true);
-      setTypingBuffer('');
-      setTypingLineType(line.type);
-      let i = 0;
-      const tick = () => {
-        if (i < line.text.length) {
-          setTypingBuffer(line.text.slice(0, i + 1));
-          i++;
-          const delay = line.type === 'prompt-cmd' ? 20 + Math.random() * 40 : 30 + Math.random() * 60;
-          const t = setTimeout(tick, delay);
-          timersRef.current.push(t);
-        } else {
-          setIsTyping(false);
-          setTerminalLines(prev => [...prev, line]);
-          setTypingBuffer('');
-          onDone();
-        }
-      };
-      tick();
-    },
-    [],
-  );
-
-  const typeJoshLines = useCallback(
-    (lines: TerminalLine[], index: number, onAllDone: () => void) => {
-      if (index >= lines.length) {
-        onAllDone();
-        return;
-      }
-      const line = lines[index];
-      const isInstant = line.type === 'output' || line.type === 'error' || line.type === 'blank';
-      const pauseBefore = index === 0 ? 400 : isInstant ? 80 : 300 + Math.random() * 500;
-      const t = setTimeout(() => {
-        typeTerminalLine(line, () => typeJoshLines(lines, index + 1, onAllDone), isInstant);
-      }, pauseBefore);
-      timersRef.current.push(t);
-    },
-    [typeTerminalLine],
-  );
+  }, [active, clearLines, resetAgent]);
 
   // ── Exit animation ─────────────────────────────────────────────────────
 
@@ -231,109 +108,12 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
     timersRef.current.push(t);
   }, [sequence]);
 
-  // ── Copilot message sequencer (typing + streaming) ─────────────────────
-
-  const playCopilotMessages = useCallback(
-    (msgs: CopilotMessage[], index: number) => {
-      if (index >= msgs.length) {
-        const t = setTimeout(startClosing, 1800);
-        timersRef.current.push(t);
-        return;
-      }
-      const msg = msgs[index];
-
-      if (msg.role === 'user') {
-        // Type message in input area character by character
-        let i = 0;
-        const typeChar = () => {
-          if (i < msg.text.length) {
-            setInputTypingBuffer(msg.text.slice(0, i + 1));
-            i++;
-            const delay = 22 + Math.random() * 38;
-            const t = setTimeout(typeChar, delay);
-            timersRef.current.push(t);
-          } else {
-            // Pause then "send"
-            const t = setTimeout(() => {
-              setCopilotMessages(prev => [...prev, msg]);
-              setInputTypingBuffer('');
-              const t2 = setTimeout(() => playCopilotMessages(msgs, index + 1), 500);
-              timersRef.current.push(t2);
-            }, 350);
-            timersRef.current.push(t);
-          }
-        };
-        const t = setTimeout(typeChar, 300);
-        timersRef.current.push(t);
-      } else {
-        // Show thinking indicator
-        setShowTypingIndicator(true);
-        const dotDelay = 700 + Math.random() * 500;
-        const t = setTimeout(() => {
-          setShowTypingIndicator(false);
-
-          // Stream text word by word
-          setCurrentStreamingMsg(msg);
-          setShowStreamingFileEdit(false);
-          setStreamingText('');
-          let charIdx = 0;
-          const fullText = msg.text;
-
-          const streamWord = () => {
-            if (charIdx < fullText.length) {
-              // Find end of next word
-              let end = fullText.indexOf(' ', charIdx + 1);
-              if (end === -1) end = fullText.length;
-              else end += 1;
-              setStreamingText(fullText.slice(0, end));
-              charIdx = end;
-              const delay = 30 + Math.random() * 40;
-              const t2 = setTimeout(streamWord, delay);
-              timersRef.current.push(t2);
-            } else {
-              // Text done streaming
-              if (msg.fileEdit) {
-                // Show file edit after brief pause
-                const t2 = setTimeout(() => {
-                  setShowStreamingFileEdit(true);
-                  // Wait for user to see file edit, then finalize
-                  const t3 = setTimeout(() => {
-                    setCopilotMessages(prev => [...prev, msg]);
-                    setStreamingText('');
-                    setCurrentStreamingMsg(null);
-                    setShowStreamingFileEdit(false);
-                    const t4 = setTimeout(() => playCopilotMessages(msgs, index + 1), 600);
-                    timersRef.current.push(t4);
-                  }, 1200);
-                  timersRef.current.push(t3);
-                }, 400);
-                timersRef.current.push(t2);
-              } else {
-                // No file edit — finalize after pause
-                const t2 = setTimeout(() => {
-                  setCopilotMessages(prev => [...prev, msg]);
-                  setStreamingText('');
-                  setCurrentStreamingMsg(null);
-                  const t3 = setTimeout(() => playCopilotMessages(msgs, index + 1), 600);
-                  timersRef.current.push(t3);
-                }, 400);
-                timersRef.current.push(t2);
-              }
-            }
-          };
-          streamWord();
-        }, dotDelay);
-        timersRef.current.push(t);
-      }
-    },
-    [startClosing],
-  );
-
   // ── Multi-step sequencer ───────────────────────────────────────────────
 
   const playSteps = useCallback(
     (steps: VibeStep[], index: number) => {
       if (index >= steps.length) {
+        // All steps done — close
         const t = setTimeout(startClosing, 1800);
         timersRef.current.push(t);
         return;
@@ -341,116 +121,52 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
       const step = steps[index];
 
       const afterReaction = () => {
-        const playStepMessages = (msgs: CopilotMessage[], msgIdx: number) => {
-          if (msgIdx >= msgs.length) {
-            if (sequence.onStepComplete) sequence.onStepComplete(index);
-            const t = setTimeout(() => playSteps(steps, index + 1), 800);
-            timersRef.current.push(t);
-            return;
-          }
-          const msg = msgs[msgIdx];
-
-          if (msg.role === 'user') {
-            let i = 0;
-            const typeChar = () => {
-              if (i < msg.text.length) {
-                setInputTypingBuffer(msg.text.slice(0, i + 1));
-                i++;
-                const delay = 22 + Math.random() * 38;
-                const t = setTimeout(typeChar, delay);
-                timersRef.current.push(t);
-              } else {
-                const t = setTimeout(() => {
-                  setCopilotMessages(prev => [...prev, msg]);
-                  setInputTypingBuffer('');
-                  const t2 = setTimeout(() => playStepMessages(msgs, msgIdx + 1), 500);
-                  timersRef.current.push(t2);
-                }, 350);
-                timersRef.current.push(t);
-              }
-            };
-            const t = setTimeout(typeChar, 300);
-            timersRef.current.push(t);
-          } else {
-            setShowTypingIndicator(true);
-            const dotDelay = 700 + Math.random() * 500;
-            const t = setTimeout(() => {
-              setShowTypingIndicator(false);
-              setCurrentStreamingMsg(msg);
-              setShowStreamingFileEdit(false);
-              setStreamingText('');
-              let charIdx = 0;
-              const fullText = msg.text;
-              const streamWord = () => {
-                if (charIdx < fullText.length) {
-                  let end = fullText.indexOf(' ', charIdx + 1);
-                  if (end === -1) end = fullText.length;
-                  else end += 1;
-                  setStreamingText(fullText.slice(0, end));
-                  charIdx = end;
-                  const delay = 30 + Math.random() * 40;
-                  const t2 = setTimeout(streamWord, delay);
-                  timersRef.current.push(t2);
-                } else {
-                  if (msg.fileEdit) {
-                    const t2 = setTimeout(() => {
-                      setShowStreamingFileEdit(true);
-                      const t3 = setTimeout(() => {
-                        setCopilotMessages(prev => [...prev, msg]);
-                        setStreamingText('');
-                        setCurrentStreamingMsg(null);
-                        setShowStreamingFileEdit(false);
-                        const t4 = setTimeout(() => playStepMessages(msgs, msgIdx + 1), 600);
-                        timersRef.current.push(t4);
-                      }, 1200);
-                      timersRef.current.push(t3);
-                    }, 400);
-                    timersRef.current.push(t2);
-                  } else {
-                    const t2 = setTimeout(() => {
-                      setCopilotMessages(prev => [...prev, msg]);
-                      setStreamingText('');
-                      setCurrentStreamingMsg(null);
-                      const t3 = setTimeout(() => playStepMessages(msgs, msgIdx + 1), 600);
-                      timersRef.current.push(t3);
-                    }, 400);
-                    timersRef.current.push(t2);
-                  }
-                }
-              };
-              streamWord();
-            }, dotDelay);
-            timersRef.current.push(t);
-          }
-        };
-        playStepMessages(step.copilotMessages, 0);
+        // Play this step's copilot messages
+        playMessages(step.copilotMessages, 0, () => {
+          // Step complete — notify and move to next
+          if (sequence.onStepComplete) sequence.onStepComplete(index);
+          const t = setTimeout(() => playSteps(steps, index + 1), 800);
+          timersRef.current.push(t);
+        });
       };
 
+      // Type josh's reaction lines first (if any)
       if (step.joshReaction.length > 0) {
-        typeJoshLines(step.joshReaction, 0, afterReaction);
+        typeLines(step.joshReaction, 0, afterReaction);
       } else {
         afterReaction();
       }
     },
-    [startClosing, typeJoshLines, sequence],
+    [startClosing, typeLines, playMessages, sequence],
   );
 
   // ── Trigger sequence ───────────────────────────────────────────────────
 
   useEffect(() => {
     if (!active || joshDone) return;
-    typeJoshLines(sequence.joshLines, 0, () => {
+    
+    // Start with Josh's initial lines
+    typeLines(sequence.joshLines, 0, () => {
       setJoshDone(true);
       setShowCopilotPanel(true);
 
       if (sequence.steps && sequence.steps.length > 0) {
+        // Multi-step mode
         const t = setTimeout(() => playSteps(sequence.steps!, 0), 450);
         timersRef.current.push(t);
       } else {
-        const t = setTimeout(() => playCopilotMessages(sequence.copilotMessages, 0), 450);
+        // Single sequence mode (legacy)
+        const t = setTimeout(() => 
+          playMessages(sequence.copilotMessages, 0, () => {
+             const t2 = setTimeout(startClosing, 1800);
+             timersRef.current.push(t2);
+          }), 
+          450
+        );
         timersRef.current.push(t);
       }
     });
+    
     return () => {
       timersRef.current.forEach(clearTimeout);
       timersRef.current = [];
@@ -464,347 +180,43 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
     <span style={{ color: '#4ec9b0' }}>~/portfolio $ </span>
   );
 
-  const renderTerminalLine = (line: TerminalLine, i: number) => {
-    const lineStyle: React.CSSProperties = { margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: '20px' };
-    if (line.type === 'blank') return <p key={i} style={lineStyle}>&nbsp;</p>;
-    if (line.type === 'prompt-cmd') {
-      return <p key={i} style={lineStyle}>{renderPrompt()}<span style={{ color: '#cccccc' }}>{line.text}</span></p>;
-    }
-    if (line.type === 'error') {
-      return <p key={i} style={lineStyle}><span style={{ color: '#f44747' }}>{line.text}</span></p>;
-    }
-    if (line.type === 'output') {
-      return <p key={i} style={lineStyle}><span style={{ color: '#cccccc' }}>{line.text}</span></p>;
-    }
-    return <p key={i} style={lineStyle}><span style={{ color: '#a0a0a0' }}>{line.text}</span></p>;
-  };
-
-  /** Compact file edit action row — shows file name with status badge, no full diff */
-  const renderFileEditCompact = (fileEdit: FileEdit, done: boolean) => {
-    const addCount = fileEdit.lines.filter(l => l.startsWith('+')).length;
-    const removeCount = fileEdit.lines.filter(l => l.startsWith('-')).length;
-    return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        padding: '6px 10px',
-        background: '#1a1a2e',
-        border: '1px solid #2a2a3e',
-        borderRadius: '6px',
-        marginTop: '6px',
-        fontFamily: MONO_STACK,
-        fontSize: '12px',
-        animation: 'vcFadeIn 0.3s ease-out',
-      }}>
-        <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-          {done ? <CheckIcon /> : <SpinnerIcon />}
-        </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
-          <FileIcon />
-        </span>
-        <span style={{ color: '#ccc', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {fileEdit.fileName}
-        </span>
-        {addCount > 0 && (
-          <span style={{ color: '#4ec9b0', fontSize: '11px', fontWeight: 600 }}>+{addCount}</span>
-        )}
-        {removeCount > 0 && (
-          <span style={{ color: '#f44747', fontSize: '11px', fontWeight: 600 }}>-{removeCount}</span>
-        )}
-        <span style={{
-          fontSize: '9px',
-          color: done ? '#4ec9b0' : '#888',
-          background: done ? 'rgba(78, 201, 176, 0.1)' : 'rgba(136, 136, 136, 0.1)',
-          padding: '2px 6px',
-          borderRadius: '3px',
-          textTransform: 'uppercase' as const,
-          fontWeight: 600,
-          letterSpacing: '0.5px',
-        }}>{done ? 'Saved' : 'Editing'}</span>
-      </div>
-    );
-  };
-
-  /** Render an inline action step (thinking, reading, etc.) */
-  const renderActionIndicator = (label: string, spinning: boolean) => (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-      padding: '4px 0',
-      fontSize: '12px',
-      color: '#888',
-      fontFamily: FONT_STACK,
-      animation: 'vcFadeIn 0.25s ease-out',
-    }}>
-      <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-        {spinning ? <SpinnerIcon /> : <CheckIcon />}
-      </span>
-      <span>{label}</span>
-    </div>
-  );
-
-  if (!active && !closing) return null;
-
-  // ── Terminal content ───────────────────────────────────────────────────
-
-  const terminalContent = (
+  const renderTerminalLines = () => (
     <>
-      {/* Blue accent separator */}
-      <div style={{ height: '2px', background: '#007acc', flexShrink: 0 }} />
+      {terminalLines.map((line, i) => {
+        const lineStyle: React.CSSProperties = { margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: '20px' };
+        if (line.type === 'blank') return <p key={i} style={lineStyle}>&nbsp;</p>;
+        if (line.type === 'prompt-cmd') {
+          return <p key={i} style={lineStyle}>{renderPrompt()}<span style={{ color: '#cccccc' }}>{line.text}</span></p>;
+        }
+        if (line.type === 'error') {
+          return <p key={i} style={lineStyle}><span style={{ color: '#f44747' }}>{line.text}</span></p>;
+        }
+        if (line.type === 'output') {
+          return <p key={i} style={lineStyle}><span style={{ color: '#cccccc' }}>{line.text}</span></p>;
+        }
+        return <p key={i} style={lineStyle}><span style={{ color: '#a0a0a0' }}>{line.text}</span></p>;
+      })}
 
-      {/* Title bar */}
-      <div style={{
-        background: '#252526',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        height: '35px',
-        flexShrink: 0,
-        borderBottom: '1px solid #1e1e1e',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '0 12px',
-            height: '100%',
-            background: '#1e1e1e',
-            color: '#cccccc',
-            fontSize: '12px',
-            fontFamily: FONT_STACK,
-            borderTop: '1px solid #007acc',
-            borderRight: '1px solid #252526',
+      {isTyping && typingBuffer && (
+        <p style={{ margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: '20px' }}>
+          {typingLineType === 'prompt-cmd' && renderPrompt()}
+          <span style={{
+            color: typingLineType === 'prompt-cmd' ? '#cccccc'
+              : typingLineType === 'error' ? '#f44747' : '#a0a0a0',
           }}>
-            <TerminalIcon />
-            <span>josh@portfolio</span>
-          </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', paddingRight: '4px' }}>
-          {['\u2013', '\u25A1', '\u00D7'].map((ch, idx) => (
-            <span key={idx} style={{
-              color: '#999', fontSize: '16px', padding: '0 8px',
-              height: '35px', display: 'flex', alignItems: 'center',
-              justifyContent: 'center', fontFamily: FONT_STACK,
-            }}>{ch}</span>
-          ))}
-        </div>
-      </div>
-
-      {/* Terminal body */}
-      <div ref={terminalRef} style={{
-        flex: 1,
-        background: '#1e1e1e',
-        color: '#cccccc',
-        fontFamily: MONO_STACK,
-        fontSize: '13px',
-        padding: '8px 16px',
-        overflowY: 'auto',
-        lineHeight: 1.5,
-      }}>
-        {terminalLines.map((line, i) => renderTerminalLine(line, i))}
-
-        {isTyping && typingBuffer && (
-          <p style={{ margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: '20px' }}>
-            {typingLineType === 'prompt-cmd' && renderPrompt()}
-            <span style={{
-              color: typingLineType === 'prompt-cmd' ? '#cccccc'
-                : typingLineType === 'error' ? '#f44747' : '#a0a0a0',
-            }}>
-              {typingBuffer}
-            </span>
-            <span style={{
-              display: 'inline-block', width: '7px', height: '14px',
-              background: '#cccccc', marginLeft: '2px', verticalAlign: 'text-bottom',
-              animation: 'vcBlink 1s step-end infinite',
-            }} />
-          </p>
-        )}
-      </div>
+            {typingBuffer}
+          </span>
+          <span style={{
+            display: 'inline-block', width: '7px', height: '14px',
+            background: '#cccccc', marginLeft: '2px', verticalAlign: 'text-bottom',
+            animation: 'vcBlink 1s step-end infinite',
+          }} />
+        </p>
+      )}
     </>
   );
 
-  // ── Copilot Agent Panel ────────────────────────────────────────────────
-
-  const copilotPanel = (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      right: 0,
-      width: '380px',
-      height: '100vh',
-      background: '#1e1e1e',
-      borderLeft: '1px solid #333',
-      zIndex: 10001,
-      display: 'flex',
-      flexDirection: 'column',
-      transform: showCopilotPanel ? 'translateX(0)' : 'translateX(100%)',
-      transition: 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
-      fontFamily: FONT_STACK,
-      boxShadow: showCopilotPanel ? '-4px 0 16px rgba(0,0,0,0.3)' : 'none',
-    }}>
-      {/* Header */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '8px 14px',
-        borderBottom: '1px solid #333',
-        flexShrink: 0,
-        background: '#252526',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <CopilotSparkle size={16} />
-          <span style={{ color: '#cccccc', fontSize: '12px', fontWeight: 600, letterSpacing: '0.3px' }}>
-            Copilot
-          </span>
-          <span style={{
-            fontSize: '9px',
-            color: '#888',
-            background: '#333',
-            padding: '1px 6px',
-            borderRadius: '3px',
-            fontWeight: 500,
-            letterSpacing: '0.5px',
-            textTransform: 'uppercase' as const,
-          }}>Agent</span>
-        </div>
-        <button type="button" style={{
-          background: 'none', border: 'none', color: '#666',
-          fontSize: '16px', cursor: 'default', padding: '2px 6px',
-        }}>&times;</button>
-      </div>
-
-      {/* Agent activity log */}
-      <div ref={copilotMsgRef} style={{
-        flex: 1, overflowY: 'auto', padding: '12px 16px',
-        display: 'flex', flexDirection: 'column', gap: '2px',
-      }}>
-        {copilotMessages.map((msg, i) => {
-          if (msg.role === 'user') {
-            // User prompt — shown as a task block, not a chat bubble
-            return (
-              <div key={i} style={{
-                padding: '10px 12px',
-                background: '#1a1a2e',
-                border: '1px solid #2a2a3e',
-                borderRadius: '6px',
-                marginBottom: '10px',
-                animation: 'vcFadeIn 0.25s ease-out',
-              }}>
-                <div style={{
-                  fontSize: '10px',
-                  color: '#666',
-                  textTransform: 'uppercase' as const,
-                  letterSpacing: '0.5px',
-                  marginBottom: '4px',
-                  fontWeight: 600,
-                }}>Prompt</div>
-                <div style={{
-                  color: '#ccc',
-                  fontSize: '13px',
-                  lineHeight: 1.5,
-                }}>{msg.text}</div>
-              </div>
-            );
-          }
-          // Assistant — flat agent-style output with inline actions
-          return (
-            <div key={i} style={{
-              marginBottom: '8px',
-              animation: 'vcFadeIn 0.25s ease-out',
-            }}>
-              <div style={{
-                color: '#d4d4d4',
-                fontSize: '13px',
-                lineHeight: 1.6,
-                padding: '2px 0',
-              }}>{msg.text}</div>
-              {msg.fileEdit && renderFileEditCompact(msg.fileEdit, true)}
-            </div>
-          );
-        })}
-
-        {/* Currently streaming assistant message */}
-        {currentStreamingMsg && (
-          <div style={{
-            marginBottom: '8px',
-            animation: 'vcFadeIn 0.25s ease-out',
-          }}>
-            <div style={{
-              color: '#d4d4d4',
-              fontSize: '13px',
-              lineHeight: 1.6,
-              padding: '2px 0',
-            }}>
-              {streamingText}
-              <span style={{
-                display: 'inline-block',
-                width: '2px',
-                height: '14px',
-                background: '#d4d4d4',
-                marginLeft: '2px',
-                verticalAlign: 'text-bottom',
-                animation: 'vcBlink 1s step-end infinite',
-              }} />
-            </div>
-            {showStreamingFileEdit && currentStreamingMsg.fileEdit && (
-              <div style={{ animation: 'vcFadeIn 0.3s ease-out' }}>
-                {renderFileEditCompact(currentStreamingMsg.fileEdit, false)}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Thinking indicator — agent-style with spinner */}
-        {showTypingIndicator && (
-          <div style={{ animation: 'vcFadeIn 0.25s ease-out' }}>
-            {renderActionIndicator('Thinking...', true)}
-          </div>
-        )}
-      </div>
-
-      {/* Input area — minimal prompt bar */}
-      <div style={{
-        borderTop: '1px solid #333',
-        padding: '8px 14px',
-        background: '#252526',
-        flexShrink: 0,
-      }}>
-        <div style={{
-          background: '#2d2d2d',
-          border: '1px solid #3c3c3c',
-          borderRadius: '6px',
-          padding: '8px 12px',
-          fontSize: '13px',
-          fontFamily: FONT_STACK,
-          minHeight: '20px',
-          color: inputTypingBuffer ? '#e0e0e0' : '#555',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-        }}>
-          <PencilIcon />
-          <span style={{ flex: 1 }}>
-            {inputTypingBuffer || 'Ask Copilot to do something...'}
-            {inputTypingBuffer && (
-              <span style={{
-                display: 'inline-block',
-                width: '2px',
-                height: '14px',
-                background: '#e0e0e0',
-                marginLeft: '1px',
-                verticalAlign: 'text-bottom',
-                animation: 'vcBlink 1s step-end infinite',
-              }} />
-            )}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
+  if (!active && !closing) return null;
 
   // ── Error overlay ────────────────────────────────────────────────────────
 
@@ -824,36 +236,40 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
       {errorOverlayEl}
 
       {/* Terminal panel */}
-      <div style={{
-        position: embedded ? 'relative' : 'fixed',
-        bottom: embedded ? undefined : 0,
-        left: 0,
-        right: showCopilotPanel ? '380px' : 0,
-        height: embedded ? '40vh' : '40vh',
-        zIndex: 10000,
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        transition: 'right 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
-        animation: closing
-          ? 'vcSlideDown 0.6s cubic-bezier(0.4, 0, 1, 1) forwards'
-          : 'vcSlideUp 0.5s cubic-bezier(0, 0, 0.2, 1) forwards',
-      }}>
-        {terminalContent}
-      </div>
+      <TerminalPanel
+        className={closing ? 'vcSlideDown' : 'vcSlideUp'}
+        style={{
+          position: embedded ? 'relative' : 'fixed',
+          bottom: embedded ? undefined : 0,
+          left: 0,
+          right: showCopilotPanel ? '380px' : 0,
+          height: embedded ? '40vh' : '40vh',
+          zIndex: 10000,
+          transition: 'right 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
+          animation: closing
+            ? 'vcSlideDown 0.6s cubic-bezier(0.4, 0, 1, 1) forwards'
+            : 'vcSlideUp 0.5s cubic-bezier(0, 0, 0.2, 1) forwards',
+        }}
+      >
+        {renderTerminalLines()}
+      </TerminalPanel>
 
       {/* Copilot panel */}
-      {copilotPanel}
+      <CopilotAgentPanel
+        visible={showCopilotPanel}
+        messages={copilotMessages}
+        streamingMessage={currentStreamingMsg}
+        streamingText={streamingText}
+        showStreamingFileEdit={showStreamingFileEdit}
+        isThinking={showTypingIndicator}
+        inputBuffer={inputTypingBuffer}
+      />
 
       {/* Keyframes */}
       <style>{`
         @keyframes vcBlink {
           0%, 100% { opacity: 1; }
           50% { opacity: 0; }
-        }
-        @keyframes vcSpin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
         }
         @keyframes vcSlideUp {
           from { transform: translateY(100%); opacity: 0; }
@@ -862,10 +278,6 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
         @keyframes vcSlideDown {
           from { transform: translateY(0); opacity: 1; }
           to { transform: translateY(100%); opacity: 0; }
-        }
-        @keyframes vcFadeIn {
-          from { opacity: 0; transform: translateY(4px); }
-          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </>

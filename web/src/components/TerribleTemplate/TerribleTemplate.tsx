@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import RebuildDeploy from '../LoadingSequence/RebuildDeploy';
+import { useTerminalTyper, TerminalLine } from '../VibeCodingOverlay/Shared/useTerminalTyper';
+import { useAgentSequencer, AgentMessage } from '../VibeCodingOverlay/Shared/useAgentSequencer';
+import { TerminalPanel } from '../VibeCodingOverlay/Shared/TerminalPanel';
+import { CopilotAgentPanel } from '../VibeCodingOverlay/Shared/CopilotAgentPanel';
 
 interface TerribleTemplateProps {
   onComplete: () => void;
@@ -14,23 +18,14 @@ type Phase =
   | 'rebuild'
   | 'done';
 
-interface TTCopilotMsg {
-  role: 'user' | 'assistant';
-  text: string;
-  fileEdit?: {
-    fileName: string;
-    lines: string[];
-  };
-}
-
-const JOSH_LINES = [
-  'no no no no no',
-  'what did you do',
-  "that's absolutely terrible",
-  'ok let me try this again',
+const TERMINAL_LINES: TerminalLine[] = [
+  { type: 'prompt-cmd', text: 'no no no no no' },
+  { type: 'prompt-cmd', text: 'what did you do' },
+  { type: 'prompt-cmd', text: "that's absolutely terrible" },
+  { type: 'prompt-cmd', text: 'ok let me try this again' },
 ];
 
-const COPILOT_MSGS_TT: TTCopilotMsg[] = [
+const COPILOT_MSGS: AgentMessage[] = [
   {
     role: 'user',
     text: 'ok try again. make it like... professional or whatever',
@@ -62,22 +57,6 @@ const COPILOT_MSGS_TT: TTCopilotMsg[] = [
     text: '\u2705 Done. Building now...',
   },
 ];
-
-const CopilotSparkleTT: React.FC<{ size?: number }> = ({ size = 20 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <path d="M12 2L14.09 8.26L20 9.27L15.55 13.97L16.91 20L12 16.9L7.09 20L8.45 13.97L4 9.27L9.91 8.26L12 2Z" fill="#888" />
-  </svg>
-);
-
-const TerminalIconTT: React.FC = () => (
-  <svg width="14" height="14" viewBox="0 0 16 16" fill="#cccccc" aria-hidden="true">
-    <path d="M6 9l3-3-3-3-.7.7L7.6 6 5.3 8.3zm4 1H7v1h3z" />
-    <path d="M1 2.5A1.5 1.5 0 012.5 1h11A1.5 1.5 0 0115 2.5v11a1.5 1.5 0 01-1.5 1.5h-11A1.5 1.5 0 011 13.5zm1.5-.5a.5.5 0 00-.5.5v11a.5.5 0 00.5.5h11a.5.5 0 00.5-.5v-11a.5.5 0 00-.5-.5z" />
-  </svg>
-);
-
-const FONT_STACK_TT = 'system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
-const MONO_STACK_TT = '"Cascadia Code", Consolas, "Courier New", monospace';
 
 const keyframesCSS = `
 @keyframes tt-marquee {
@@ -148,6 +127,12 @@ const keyframesCSS = `
   0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 7px #0ff, 0 0 10px #0ff, 0 0 21px #0ff, 0 0 42px #0ff; }
   20%, 24%, 55% { text-shadow: none; }
 }
+/* Shared component animations */
+@keyframes vcBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes vcSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes vcSlideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes vcSlideDown { from { transform: translateY(0); opacity: 1; } to { transform: translateY(100%); opacity: 0; } }
+@keyframes vcFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 `;
 
 const FireDivider: React.FC = () => (
@@ -167,22 +152,34 @@ const FireDivider: React.FC = () => (
 
 const TerribleTemplate: React.FC<TerribleTemplateProps> = ({ onComplete }) => {
   const [phase, setPhase] = useState<Phase>('showing');
-  const [joshLineIndex, setJoshLineIndex] = useState(0);
-  const [joshCharIndex, setJoshCharIndex] = useState(0);
   const [crumbleStarted, setCrumbleStarted] = useState(false);
   const [showCopilotPanel, setShowCopilotPanel] = useState(false);
-  const [copilotMessages, setCopilotMessages] = useState<TTCopilotMsg[]>([]);
-  const [showTypingIndicator, setShowTypingIndicator] = useState(false);
-  const [inputTypingBuffer, setInputTypingBuffer] = useState('');
-  const [streamingText, setStreamingText] = useState('');
-  const [currentStreamingMsg, setCurrentStreamingMsg] = useState<TTCopilotMsg | null>(null);
-  const [showStreamingFileEdit, setShowStreamingFileEdit] = useState(false);
+  
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animFrameRef = useRef<number>(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const terminalRef = useRef<HTMLDivElement>(null);
-  const copilotMsgRef = useRef<HTMLDivElement>(null);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  // Shared Hooks
+  const {
+    terminalLines,
+    typingBuffer,
+    typingLineType,
+    isTyping,
+    typeLines,
+    clearLines: clearTerminal,
+  } = useTerminalTyper();
+
+  const {
+    copilotMessages,
+    inputTypingBuffer,
+    showTypingIndicator,
+    currentStreamingMsg,
+    streamingText,
+    showStreamingFileEdit,
+    playMessages,
+    reset: resetAgent,
+  } = useAgentSequencer();
 
   // Sparkle canvas
   const setupSparkles = useCallback(() => {
@@ -261,103 +258,6 @@ const TerribleTemplate: React.FC<TerribleTemplateProps> = ({ onComplete }) => {
     };
   }, [setupSparkles]);
 
-  // Copilot message sequencer
-  const playCopilotMessages = useCallback((index: number) => {
-    if (index >= COPILOT_MSGS_TT.length) {
-      setTimeout(() => {
-        setPhase('crumbling');
-        setCrumbleStarted(true);
-      }, 1800);
-      return;
-    }
-    const msg = COPILOT_MSGS_TT[index];
-    if (msg.role === 'user') {
-      // Type in input area char by char
-      let i = 0;
-      const typeChar = () => {
-        if (i < msg.text.length) {
-          setInputTypingBuffer(msg.text.slice(0, i + 1));
-          i++;
-          const t = setTimeout(typeChar, 22 + Math.random() * 38);
-          timersRef.current.push(t);
-        } else {
-          const t = setTimeout(() => {
-            setCopilotMessages(prev => [...prev, msg]);
-            setInputTypingBuffer('');
-            const t2 = setTimeout(() => playCopilotMessages(index + 1), 500);
-            timersRef.current.push(t2);
-          }, 350);
-          timersRef.current.push(t);
-        }
-      };
-      const t = setTimeout(typeChar, 300);
-      timersRef.current.push(t);
-    } else {
-      setShowTypingIndicator(true);
-      const dotDelay = 700 + Math.random() * 500;
-      const t = setTimeout(() => {
-        setShowTypingIndicator(false);
-        setCurrentStreamingMsg(msg);
-        setShowStreamingFileEdit(false);
-        setStreamingText('');
-        let charIdx = 0;
-        const fullText = msg.text;
-        const streamWord = () => {
-          if (charIdx < fullText.length) {
-            let end = fullText.indexOf(' ', charIdx + 1);
-            if (end === -1) end = fullText.length;
-            else end += 1;
-            setStreamingText(fullText.slice(0, end));
-            charIdx = end;
-            const t2 = setTimeout(streamWord, 30 + Math.random() * 40);
-            timersRef.current.push(t2);
-          } else {
-            if (msg.fileEdit) {
-              const t2 = setTimeout(() => {
-                setShowStreamingFileEdit(true);
-                const t3 = setTimeout(() => {
-                  setCopilotMessages(prev => [...prev, msg]);
-                  setStreamingText('');
-                  setCurrentStreamingMsg(null);
-                  setShowStreamingFileEdit(false);
-                  const t4 = setTimeout(() => playCopilotMessages(index + 1), 600);
-                  timersRef.current.push(t4);
-                }, 1200);
-                timersRef.current.push(t3);
-              }, 400);
-              timersRef.current.push(t2);
-            } else {
-              const t2 = setTimeout(() => {
-                setCopilotMessages(prev => [...prev, msg]);
-                setStreamingText('');
-                setCurrentStreamingMsg(null);
-                const t3 = setTimeout(() => playCopilotMessages(index + 1), 600);
-                timersRef.current.push(t3);
-              }, 400);
-              timersRef.current.push(t2);
-            }
-          }
-        };
-        streamWord();
-      }, dotDelay);
-      timersRef.current.push(t);
-    }
-  }, []);
-
-  // Auto-scroll terminal
-  useEffect(() => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-    }
-  }, [joshLineIndex, joshCharIndex]);
-
-  // Auto-scroll copilot messages
-  useEffect(() => {
-    if (copilotMsgRef.current) {
-      copilotMsgRef.current.scrollTop = copilotMsgRef.current.scrollHeight;
-    }
-  }, [copilotMessages, showTypingIndicator, streamingText, inputTypingBuffer]);
-
   // Phase state machine
   useEffect(() => {
     // After 7s of showing, start josh typing
@@ -374,39 +274,32 @@ const TerribleTemplate: React.FC<TerribleTemplateProps> = ({ onComplete }) => {
   // Josh typing effect
   useEffect(() => {
     if (phase !== 'josh-typing') return;
-
-    const currentLine = JOSH_LINES[joshLineIndex];
-    if (joshLineIndex >= JOSH_LINES.length) {
-      // All lines typed, open copilot
-      const t = setTimeout(() => {
-        setPhase('copilot-reprompt');
-      }, 600);
-      timersRef.current.push(t);
-      return;
-    }
-
-    if (joshCharIndex < currentLine.length) {
-      const t = setTimeout(() => {
-        setJoshCharIndex((prev) => prev + 1);
-      }, 50 + Math.random() * 40);
-      timersRef.current.push(t);
-    } else {
-      // Line done, pause then next line
-      const t = setTimeout(() => {
-        setJoshLineIndex((prev) => prev + 1);
-        setJoshCharIndex(0);
-      }, 800);
-      timersRef.current.push(t);
-    }
-  }, [phase, joshLineIndex, joshCharIndex]);
+    
+    typeLines(TERMINAL_LINES, 0, () => {
+        // Once typing is done, switch phase
+        const t = setTimeout(() => {
+            setPhase('copilot-reprompt');
+        }, 600);
+        timersRef.current.push(t);
+    });
+  }, [phase, typeLines]);
 
   // Copilot reprompt phase
   useEffect(() => {
     if (phase !== 'copilot-reprompt') return;
     setShowCopilotPanel(true);
-    const t = setTimeout(() => playCopilotMessages(0), 450);
+    
+    const t = setTimeout(() => {
+        playMessages(COPILOT_MSGS, 0, () => {
+            // Sequence done
+             setTimeout(() => {
+                setPhase('crumbling');
+                setCrumbleStarted(true);
+              }, 1800);
+        });
+    }, 450);
     timersRef.current.push(t);
-  }, [phase, playCopilotMessages]);
+  }, [phase, playMessages]);
 
   // Crumble + fade + complete
   useEffect(() => {
@@ -423,6 +316,15 @@ const TerribleTemplate: React.FC<TerribleTemplateProps> = ({ onComplete }) => {
     timersRef.current.push(t1, t2);
   }, [phase, onComplete]);
 
+
+  // Clean up hooks on unmount (optional, but good practice)
+  useEffect(() => {
+      return () => {
+          clearTerminal();
+          resetAgent();
+      }
+  }, [clearTerminal, resetAgent]);
+
   // Build crumble transforms per-element
   const getCrumbleStyle = (index: number): React.CSSProperties => {
     if (!crumbleStarted) return {};
@@ -436,6 +338,47 @@ const TerribleTemplate: React.FC<TerribleTemplateProps> = ({ onComplete }) => {
   };
 
   const showJosh = phase === 'josh-typing' || phase === 'copilot-reprompt' || phase === 'crumbling';
+
+  // Render Helpers
+  const renderPrompt = () => (
+    <span style={{ color: '#4ec9b0' }}>~/portfolio $ </span>
+  );
+
+  const renderTerminalLines = () => (
+    <>
+      {terminalLines.map((line, i) => {
+        const lineStyle: React.CSSProperties = { margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: '20px' };
+        if (line.type === 'blank') return <p key={i} style={lineStyle}>&nbsp;</p>;
+        if (line.type === 'prompt-cmd') {
+          return <p key={i} style={lineStyle}>{renderPrompt()}<span style={{ color: '#cccccc' }}>{line.text}</span></p>;
+        }
+        if (line.type === 'error') {
+          return <p key={i} style={lineStyle}><span style={{ color: '#f44747' }}>{line.text}</span></p>;
+        }
+        if (line.type === 'output') {
+          return <p key={i} style={lineStyle}><span style={{ color: '#cccccc' }}>{line.text}</span></p>;
+        }
+        return <p key={i} style={lineStyle}><span style={{ color: '#a0a0a0' }}>{line.text}</span></p>;
+      })}
+
+      {isTyping && typingBuffer && (
+        <p style={{ margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: '20px' }}>
+          {typingLineType === 'prompt-cmd' && renderPrompt()}
+          <span style={{
+            color: typingLineType === 'prompt-cmd' ? '#cccccc'
+              : typingLineType === 'error' ? '#f44747' : '#a0a0a0',
+          }}>
+            {typingBuffer}
+          </span>
+          <span style={{
+            display: 'inline-block', width: '7px', height: '14px',
+            background: '#cccccc', marginLeft: '2px', verticalAlign: 'text-bottom',
+            animation: 'vcBlink 1s step-end infinite',
+          }} />
+        </p>
+      )}
+    </>
+  );
 
   // Rebuild phase: show the quick successful deploy screen
   if (phase === 'rebuild') {
@@ -491,325 +434,31 @@ const TerribleTemplate: React.FC<TerribleTemplateProps> = ({ onComplete }) => {
       )}
 
       {/* VS Code Terminal Panel */}
-      {showJosh && (
-        <div style={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: showCopilotPanel ? '360px' : 0,
-          height: '40vh',
-          zIndex: 9998,
-          display: 'flex',
-          flexDirection: 'column' as const,
-          overflow: 'hidden',
-          transition: 'right 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
-        }}>
-          <div style={{ height: '2px', background: '#007acc', flexShrink: 0 }} />
-          <div style={{
-            background: '#252526',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            height: '35px',
-            flexShrink: 0,
-            borderBottom: '1px solid #1e1e1e',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '0 12px',
-                height: '100%',
-                background: '#1e1e1e',
-                color: '#cccccc',
-                fontSize: '12px',
-                fontFamily: FONT_STACK_TT,
-                borderTop: '1px solid #007acc',
-                borderRight: '1px solid #252526',
-              }}>
-                <TerminalIconTT />
-                <span>josh@portfolio</span>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', paddingRight: '4px' }}>
-              {['\u2013', '\u25A1', '\u00D7'].map((ch, idx) => (
-                <span key={idx} style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#999',
-                  fontSize: '16px',
-                  padding: '0 8px',
-                  height: '35px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontFamily: FONT_STACK_TT,
-                }}>{ch}</span>
-              ))}
-            </div>
-          </div>
-          <div ref={terminalRef} style={{
-            flex: 1,
-            background: '#1e1e1e',
-            color: '#cccccc',
-            fontFamily: MONO_STACK_TT,
-            fontSize: '13px',
-            padding: '8px 16px',
-            overflowY: 'auto' as const,
-            lineHeight: 1.5,
-          }}>
-            {JOSH_LINES.slice(0, Math.min(joshLineIndex + 1, JOSH_LINES.length)).map((line, i) => {
-              const displayText = i < joshLineIndex ? line : line.substring(0, joshCharIndex);
-              return (
-                <p key={i} style={{ margin: 0, whiteSpace: 'pre-wrap' as const, lineHeight: 1.5, minHeight: '20px' }}>
-                  <span style={{ color: '#a0a0a0' }}>{displayText}</span>
-                  {i === joshLineIndex && phase === 'josh-typing' && (
-                    <span style={{
-                      display: 'inline-block',
-                      width: '7px',
-                      height: '14px',
-                      background: '#cccccc',
-                      marginLeft: '2px',
-                      verticalAlign: 'text-bottom',
-                      animation: 'tt-cursor-blink 1s step-end infinite',
-                    }} />
-                  )}
-                </p>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      <TerminalPanel
+        className={!showJosh ? "vcSlideDown" : "vcSlideUp"}
+        style={{
+            position: 'fixed',
+            bottom: showJosh ? 0 : -400, // naive slide out
+            left: 0,
+            right: showCopilotPanel ? '380px' : 0,
+            height: '40vh',
+            zIndex: 10000,
+            transition: 'right 0.35s cubic-bezier(0.22, 1, 0.36, 1), bottom 0.5s ease',
+        }}
+      >
+        {renderTerminalLines()}
+      </TerminalPanel>
 
-      {/* Copilot Chat Panel */}
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        right: 0,
-        width: '360px',
-        height: '100vh',
-        background: '#1e1e1e',
-        borderLeft: '1px solid #333',
-        zIndex: 10001,
-        display: 'flex',
-        flexDirection: 'column' as const,
-        transform: showCopilotPanel ? 'translateX(0)' : 'translateX(100%)',
-        transition: 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
-        fontFamily: FONT_STACK_TT,
-        boxShadow: showCopilotPanel ? '-4px 0 16px rgba(0,0,0,0.3)' : 'none',
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '10px 14px',
-          borderBottom: '1px solid #333',
-          flexShrink: 0,
-          background: '#252526',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <CopilotSparkleTT size={16} />
-            <span style={{ color: '#cccccc', fontSize: '13px', fontWeight: 600 }}>Copilot Chat</span>
-          </div>
-          <button type="button" style={{
-            background: 'none', border: 'none', color: '#999', fontSize: '16px', cursor: 'default', padding: '2px 6px',
-          }}>&times;</button>
-        </div>
-        <div ref={copilotMsgRef} style={{
-          flex: 1,
-          overflowY: 'auto' as const,
-          padding: '14px',
-          display: 'flex',
-          flexDirection: 'column' as const,
-          gap: '12px',
-        }}>
-          {copilotMessages.map((msg, i) => {
-            if (msg.role === 'user') {
-              return (
-                <div key={i} style={{
-                  display: 'flex', justifyContent: 'flex-end',
-                  animation: 'tt-msg-in 0.25s ease-out',
-                }}>
-                  <div style={{
-                    background: '#264f78',
-                    color: '#e0e0e0',
-                    borderRadius: '12px 12px 4px 12px',
-                    padding: '8px 12px',
-                    fontSize: '13px',
-                    maxWidth: '85%',
-                    lineHeight: 1.5,
-                  }}>{msg.text}</div>
-                </div>
-              );
-            }
-            return (
-              <div key={i} style={{
-                display: 'flex', flexDirection: 'column' as const,
-                alignItems: 'flex-start',
-                animation: 'tt-msg-in 0.25s ease-out',
-              }}>
-                <div style={{ fontSize: '11px', fontWeight: 600, color: '#888', marginBottom: '4px', marginLeft: '2px' }}>Copilot</div>
-                <div style={{
-                  background: '#2d2d2d',
-                  color: '#d4d4d4',
-                  borderRadius: '12px 12px 12px 4px',
-                  padding: '10px 12px',
-                  fontSize: '13px',
-                  maxWidth: '85%',
-                  lineHeight: 1.5,
-                }}>
-                  {msg.text}
-                  {msg.fileEdit && (
-                    <div style={{
-                      background: '#1a1a1a',
-                      borderRadius: '6px',
-                      border: '1px solid #333',
-                      overflow: 'hidden',
-                      marginTop: '8px',
-                    }}>
-                      <div style={{
-                        display: 'flex', alignItems: 'center', gap: '6px',
-                        padding: '6px 10px',
-                        background: '#252526',
-                        borderBottom: '1px solid #333',
-                        fontSize: '11px',
-                        color: '#999',
-                        fontFamily: MONO_STACK_TT,
-                      }}>
-                        <span>{msg.fileEdit.fileName}</span>
-                        <span style={{
-                          marginLeft: 'auto', fontSize: '9px', color: '#4ec9b0',
-                          background: 'rgba(78,201,176,0.1)', padding: '2px 6px',
-                          borderRadius: '3px', fontFamily: MONO_STACK_TT,
-                          textTransform: 'uppercase' as const, fontWeight: 600,
-                        }}>Modified</span>
-                      </div>
-                      <div style={{
-                        padding: '8px 12px',
-                        fontFamily: MONO_STACK_TT,
-                        fontSize: '11px',
-                        lineHeight: 1.6,
-                      }}>
-                        {msg.fileEdit.lines.map((line, j) => (
-                          <div key={j} style={{
-                            color: line.startsWith('+') ? '#4ec9b0'
-                              : line.startsWith('-') ? '#f44747' : '#808080',
-                            ...(line.startsWith('-') ? { textDecoration: 'line-through', opacity: 0.7 } : {}),
-                          }}>{line}</div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-
-          {/* Currently streaming assistant message */}
-          {currentStreamingMsg && (
-            <div style={{
-              display: 'flex', flexDirection: 'column' as const,
-              alignItems: 'flex-start',
-              animation: 'tt-msg-in 0.25s ease-out',
-            }}>
-              <div style={{ fontSize: '11px', fontWeight: 600, color: '#888', marginBottom: '4px', marginLeft: '2px' }}>Copilot</div>
-              <div style={{
-                background: '#2d2d2d',
-                color: '#d4d4d4',
-                borderRadius: '12px 12px 12px 4px',
-                padding: '10px 12px',
-                fontSize: '13px',
-                maxWidth: '85%',
-                lineHeight: 1.5,
-              }}>
-                {streamingText}
-                <span style={{
-                  display: 'inline-block', width: '2px', height: '14px',
-                  background: '#d4d4d4', marginLeft: '2px', verticalAlign: 'text-bottom',
-                  animation: 'tt-cursor-blink 1s step-end infinite',
-                }} />
-                {showStreamingFileEdit && currentStreamingMsg.fileEdit && (
-                  <div style={{
-                    background: '#1a1a1a',
-                    borderRadius: '6px',
-                    border: '1px solid #333',
-                    overflow: 'hidden',
-                    marginTop: '8px',
-                    animation: 'tt-msg-in 0.3s ease-out',
-                  }}>
-                    <div style={{
-                      display: 'flex', alignItems: 'center', gap: '6px',
-                      padding: '6px 10px',
-                      background: '#252526',
-                      borderBottom: '1px solid #333',
-                      fontSize: '11px',
-                      color: '#999',
-                      fontFamily: MONO_STACK_TT,
-                    }}>
-                      <span>{currentStreamingMsg.fileEdit.fileName}</span>
-                      <span style={{
-                        marginLeft: 'auto', fontSize: '9px', color: '#4ec9b0',
-                        background: 'rgba(78,201,176,0.1)', padding: '2px 6px',
-                        borderRadius: '3px', fontFamily: MONO_STACK_TT,
-                        textTransform: 'uppercase' as const, fontWeight: 600,
-                      }}>Modified</span>
-                    </div>
-                    <div style={{
-                      padding: '8px 12px',
-                      fontFamily: MONO_STACK_TT,
-                      fontSize: '11px',
-                      lineHeight: 1.6,
-                    }}>
-                      {currentStreamingMsg.fileEdit.lines.map((line, j) => (
-                        <div key={j} style={{
-                          color: line.startsWith('+') ? '#4ec9b0'
-                            : line.startsWith('-') ? '#f44747' : '#808080',
-                          ...(line.startsWith('-') ? { textDecoration: 'line-through', opacity: 0.7 } : {}),
-                        }}>{line}</div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {showTypingIndicator && (
-            <div style={{ display: 'flex', gap: '4px', padding: '8px 4px', alignItems: 'center', animation: 'tt-msg-in 0.25s ease-out' }}>
-              <span style={{ width: '6px', height: '6px', background: '#666', borderRadius: '50%', animation: 'tt-dot-pulse 1.4s ease-in-out 0s infinite' }} />
-              <span style={{ width: '6px', height: '6px', background: '#666', borderRadius: '50%', animation: 'tt-dot-pulse 1.4s ease-in-out 0.2s infinite' }} />
-              <span style={{ width: '6px', height: '6px', background: '#666', borderRadius: '50%', animation: 'tt-dot-pulse 1.4s ease-in-out 0.4s infinite' }} />
-            </div>
-          )}
-        </div>
-        <div style={{
-          borderTop: '1px solid #333',
-          padding: '10px 14px',
-          background: '#252526',
-          flexShrink: 0,
-        }}>
-          <div style={{
-            background: '#3c3c3c',
-            border: '1px solid #555',
-            borderRadius: '8px',
-            padding: '8px 12px',
-            fontSize: '13px',
-            fontFamily: FONT_STACK_TT,
-            minHeight: '20px',
-            color: inputTypingBuffer ? '#e0e0e0' : '#666',
-          }}>
-            {inputTypingBuffer || 'Ask Copilot...'}
-            {inputTypingBuffer && (
-              <span style={{
-                display: 'inline-block', width: '2px', height: '14px',
-                background: '#e0e0e0', marginLeft: '1px', verticalAlign: 'text-bottom',
-                animation: 'tt-cursor-blink 1s step-end infinite',
-              }} />
-            )}
-          </div>
-        </div>
-      </div>
+      {/* Copilot panel */}
+      <CopilotAgentPanel
+        visible={showCopilotPanel}
+        messages={copilotMessages}
+        streamingMessage={currentStreamingMsg}
+        streamingText={streamingText}
+        showStreamingFileEdit={showStreamingFileEdit}
+        isThinking={showTypingIndicator}
+        inputBuffer={inputTypingBuffer}
+      />
 
       {/* Main terrible template */}
       <div

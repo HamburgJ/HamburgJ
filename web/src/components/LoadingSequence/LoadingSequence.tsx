@@ -1,5 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import RebuildDeploy from './RebuildDeploy';
+import { useTerminalTyper, TerminalLine } from '../VibeCodingOverlay/Shared/useTerminalTyper';
+import { useAgentSequencer, AgentMessage } from '../VibeCodingOverlay/Shared/useAgentSequencer';
+import { TerminalPanel } from '../VibeCodingOverlay/Shared/TerminalPanel';
+import { CopilotAgentPanel } from '../VibeCodingOverlay/Shared/CopilotAgentPanel';
+import { TerminalIcon, CopilotSparkle } from '../VibeCodingOverlay/Shared/Icons';
 
 interface LoadingSequenceProps {
   isFirstVisit: boolean;
@@ -42,29 +47,6 @@ const LoadingGearSVG: React.FC = () => (
       strokeLinecap="round"
     />
     <circle cx="24" cy="24" r="5" stroke="#3b82f6" strokeWidth="2" fill="none" />
-  </svg>
-);
-
-const CopilotSparkle: React.FC<{ size?: number }> = ({ size = 20 }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    aria-hidden="true"
-  >
-    <path
-      d="M12 2L14.09 8.26L20 9.27L15.55 13.97L16.91 20L12 16.9L7.09 20L8.45 13.97L4 9.27L9.91 8.26L12 2Z"
-      fill="#888"
-    />
-  </svg>
-);
-
-const TerminalIcon: React.FC = () => (
-  <svg width="14" height="14" viewBox="0 0 16 16" fill="#cccccc" aria-hidden="true">
-    <path d="M6 9l3-3-3-3-.7.7L7.6 6 5.3 8.3zm4 1H7v1h3z" />
-    <path d="M1 2.5A1.5 1.5 0 012.5 1h11A1.5 1.5 0 0115 2.5v11a1.5 1.5 0 01-1.5 1.5h-11A1.5 1.5 0 011 13.5zm1.5-.5a.5.5 0 00-.5.5v11a.5.5 0 00.5.5h11a.5.5 0 00.5-.5v-11a.5.5 0 00-.5-.5z" />
   </svg>
 );
 
@@ -263,256 +245,7 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '6px',
   },
 
-  // ── VS Code Terminal ─────────────────────────────────────────────────────
-
-  terminalWrapper: {
-    position: 'fixed' as const,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: '40vh',
-    zIndex: 10000,
-    display: 'flex',
-    flexDirection: 'column' as const,
-    overflow: 'hidden',
-  },
-  terminalSeparator: {
-    height: '2px',
-    background: '#007acc',
-    flexShrink: 0,
-  },
-  terminalTitleBar: {
-    background: '#252526',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '0',
-    flexShrink: 0,
-    borderBottom: '1px solid #1e1e1e',
-    height: '35px',
-  },
-  terminalTabs: {
-    display: 'flex',
-    alignItems: 'center',
-    height: '100%',
-  },
-  terminalTab: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '6px',
-    padding: '0 12px',
-    height: '100%',
-    background: '#1e1e1e',
-    color: '#cccccc',
-    fontSize: '12px',
-    fontFamily: FONT_STACK,
-    borderTop: '1px solid #007acc',
-    borderRight: '1px solid #252526',
-    cursor: 'default',
-  },
-  terminalWindowControls: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0',
-    paddingRight: '4px',
-  },
-  terminalWindowBtn: {
-    background: 'none',
-    border: 'none',
-    color: '#999',
-    fontSize: '16px',
-    padding: '0 8px',
-    cursor: 'default',
-    height: '35px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontFamily: FONT_STACK,
-  },
-  terminalBody: {
-    flex: 1,
-    background: '#1e1e1e',
-    color: '#cccccc',
-    fontFamily: MONO_STACK,
-    fontSize: '13px',
-    padding: '8px 16px',
-    overflowY: 'auto' as const,
-    lineHeight: 1.5,
-  },
-  terminalLine: {
-    margin: '0',
-    whiteSpace: 'pre-wrap' as const,
-    lineHeight: 1.5,
-    minHeight: '20px',
-  },
-  prompt: {
-    color: '#4ec9b0',
-  },
-  errorColor: {
-    color: '#f44747',
-  },
-  dimColor: {
-    color: '#a0a0a0',
-  },
-  textColor: {
-    color: '#cccccc',
-  },
-
-  // ── Copilot Chat Panel ───────────────────────────────────────────────────
-
-  copilotPanel: {
-    position: 'fixed' as const,
-    top: 0,
-    right: 0,
-    width: '360px',
-    height: '100vh',
-    background: '#1e1e1e',
-    borderLeft: '1px solid #333',
-    zIndex: 10001,
-    display: 'flex',
-    flexDirection: 'column' as const,
-    transform: 'translateX(100%)',
-    transition: 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
-    fontFamily: FONT_STACK,
-  },
-  copilotPanelVisible: {
-    transform: 'translateX(0)',
-  },
-  copilotHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    padding: '10px 14px',
-    borderBottom: '1px solid #333',
-    flexShrink: 0,
-    background: '#252526',
-  },
-  copilotHeaderTitle: {
-    color: '#cccccc',
-    fontSize: '13px',
-    fontWeight: 600,
-    flex: 1,
-  },
-  copilotCloseBtn: {
-    background: 'none',
-    border: 'none',
-    color: '#999',
-    fontSize: '16px',
-    cursor: 'default',
-    padding: '2px 6px',
-  },
-  copilotMessages: {
-    flex: 1,
-    overflowY: 'auto' as const,
-    padding: '12px 14px',
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '14px',
-  },
-  copilotMessageUser: {
-    alignSelf: 'flex-end' as const,
-    background: '#264f78',
-    color: '#e0e0e0',
-    borderRadius: '12px 12px 4px 12px',
-    padding: '8px 12px',
-    fontSize: '13px',
-    maxWidth: '85%',
-    lineHeight: 1.45,
-  },
-  copilotMessageAssistant: {
-    alignSelf: 'flex-start' as const,
-    background: '#2d2d2d',
-    color: '#d4d4d4',
-    borderRadius: '12px 12px 12px 4px',
-    padding: '10px 12px',
-    fontSize: '13px',
-    maxWidth: '85%',
-    lineHeight: 1.5,
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '6px',
-  },
-  copilotAssistantHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '6px',
-    marginBottom: '2px',
-  },
-  copilotAssistantName: {
-    fontSize: '11px',
-    fontWeight: 600,
-    color: '#888',
-  },
-  fileEditContainer: {
-    background: '#1a1a1a',
-    borderRadius: '6px',
-    border: '1px solid #333',
-    overflow: 'hidden',
-    marginTop: '6px',
-  },
-  fileEditHeader: {
-    background: '#252526',
-    padding: '4px 10px',
-    fontSize: '11px',
-    color: '#999',
-    borderBottom: '1px solid #333',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '6px',
-  },
-  fileEditBody: {
-    padding: '8px 12px',
-    fontFamily: MONO_STACK,
-    fontSize: '11px',
-    lineHeight: 1.6,
-  },
-  fileEditLineAdd: {
-    color: '#4ec9b0',
-  },
-  fileEditLineRemove: {
-    color: '#f44747',
-    textDecoration: 'line-through' as const,
-    opacity: 0.7,
-  },
-  fileEditLineNeutral: {
-    color: '#999999',
-  },
-  typingIndicator: {
-    display: 'flex',
-    gap: '4px',
-    padding: '8px 12px',
-    alignItems: 'center',
-    alignSelf: 'flex-start' as const,
-  },
-  typingDot: {
-    width: '6px',
-    height: '6px',
-    background: '#666',
-    borderRadius: '50%',
-  },
-  copilotInputBar: {
-    borderTop: '1px solid #333',
-    padding: '10px 14px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    background: '#252526',
-    flexShrink: 0,
-  },
-  copilotInput: {
-    flex: 1,
-    background: '#3c3c3c',
-    border: '1px solid #555',
-    borderRadius: '6px',
-    padding: '8px 10px',
-    color: '#888',
-    fontSize: '13px',
-    fontFamily: FONT_STACK,
-    cursor: 'default',
-  },
-
-  // ── Skip button ──────────────────────────────────────────────────────────
-
+  // Skip button
   skipButton: {
     position: 'fixed' as const,
     bottom: '16px',
@@ -532,12 +265,7 @@ const styles: Record<string, React.CSSProperties> = {
 
 // ── Script Data ──────────────────────────────────────────────────────────────
 
-interface TermLine {
-  type: 'prompt-cmd' | 'output' | 'error' | 'blank' | 'comment';
-  text: string;
-}
-
-const JOSH_LINES: TermLine[] = [
+const JOSH_LINES: TerminalLine[] = [
   { type: 'prompt-cmd', text: 'npm run build' },
   { type: 'blank', text: '' },
   { type: 'error', text: 'ERROR in src/components/Portfolio.jsx' },
@@ -556,7 +284,7 @@ const JOSH_LINES: TermLine[] = [
   { type: 'output', text: 'Compiled with errors.' },
 ];
 
-const JOSH_LINES_2: TermLine[] = [
+const JOSH_LINES_2: TerminalLine[] = [
   { type: 'comment', text: 'oh.' },
   { type: 'comment', text: 'oh no.' },
   { type: 'comment', text: "that's worse" },
@@ -564,16 +292,7 @@ const JOSH_LINES_2: TermLine[] = [
   { type: 'comment', text: 'ok you know what. copilot.' },
 ];
 
-interface CopilotMsg {
-  role: 'user' | 'assistant';
-  text: string;
-  fileEdit?: {
-    fileName: string;
-    lines: string[];
-  };
-}
-
-const COPILOT_MESSAGES: CopilotMsg[] = [
+const COPILOT_MESSAGES: AgentMessage[] = [
   {
     role: 'user',
     text: 'fix it',
@@ -613,16 +332,16 @@ const COPILOT_MESSAGES: CopilotMsg[] = [
 // ── Phase enum ───────────────────────────────────────────────────────────────
 
 type Phase =
-  | 'progress'        // 0-3 s  smooth bar
-  | 'slow'            // 3-6 s  choppy bar
-  | 'error'           // 6-8 s  error overlay
-  | 'notify'          // 8-9 s  + notify text
-  | 'josh'            // 9 s    terminal typing (first batch)
-  | 'joshFix'         // Josh tries npm start
-  | 'errorBoundary'   // Fake React error boundary appears
-  | 'josh2'           // Josh lines 2 in terminal
-  | 'copilot'         // Copilot Chat panel
-  | 'rebuild'         // Quick successful GitHub Pages deploy
+  | 'progress'
+  | 'slow'
+  | 'error'
+  | 'notify'
+  | 'josh'
+  | 'joshFix'         
+  | 'errorBoundary'
+  | 'josh2'
+  | 'copilot'
+  | 'rebuild'
   | 'done';
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -636,413 +355,221 @@ const LoadingSequence: React.FC<LoadingSequenceProps> = ({
   const [progress, setProgress] = useState(0);
   const [showError, setShowError] = useState(false);
   const [showNotify, setShowNotify] = useState(false);
-  const [terminalLines, setTerminalLines] = useState<TermLine[]>([]);
-  const [typingBuffer, setTypingBuffer] = useState('');
-  const [typingLineType, setTypingLineType] = useState<TermLine['type']>('comment');
-  const [isTyping, setIsTyping] = useState(false);
   const [showErrorBoundary, setShowErrorBoundary] = useState(false);
   const [showCopilotPanel, setShowCopilotPanel] = useState(false);
-  const [copilotMessages, setCopilotMessages] = useState<CopilotMsg[]>([]);
-  const [showTypingIndicator, setShowTypingIndicator] = useState(false);
-  const [inputTypingBuffer, setInputTypingBuffer] = useState('');
-  const [streamingText, setStreamingText] = useState('');
-  const [currentStreamingMsg, setCurrentStreamingMsg] = useState<CopilotMsg | null>(null);
-  const [showStreamingFileEdit, setShowStreamingFileEdit] = useState(false);
-
-  const terminalRef = useRef<HTMLDivElement>(null);
-  const copilotMsgRef = useRef<HTMLDivElement>(null);
+  
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const completedRef = useRef(false);
 
-  // Auto-scroll terminal
+  // Shared Hooks
+  const {
+    terminalLines,
+    typingBuffer,
+    typingLineType,
+    isTyping,
+    typeLines,
+    clearLines: clearTerminal,
+  } = useTerminalTyper();
+
+  const {
+    copilotMessages,
+    inputTypingBuffer,
+    showTypingIndicator,
+    currentStreamingMsg,
+    streamingText,
+    showStreamingFileEdit,
+    playMessages,
+    reset: resetAgent,
+  } = useAgentSequencer();
+
+  // ── Sequence Logic ─────────────────────────────────────────────────────────
+
+  // 1. Initial mounting & progress bar
   useEffect(() => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-    }
-  }, [terminalLines, typingBuffer]);
+    // 0s: start
+    const t1 = setTimeout(() => {
+      setProgress(30);
+    }, 100);
 
-  // Auto-scroll copilot messages
-  useEffect(() => {
-    if (copilotMsgRef.current) {
-      copilotMsgRef.current.scrollTop = copilotMsgRef.current.scrollHeight;
-    }
-  }, [copilotMessages, showTypingIndicator, streamingText, inputTypingBuffer]);
-
-  // ── Terminal typing helper ───────────────────────────────────────────────
-
-  const typeTerminalLine = useCallback(
-    (line: TermLine, onDone: () => void, instant = false) => {
-      if (line.type === 'blank') {
-        setTerminalLines((prev) => [...prev, line]);
-        onDone();
-        return;
-      }
-
-      if (instant || line.type === 'output' || line.type === 'error') {
-        setTerminalLines((prev) => [...prev, line]);
-        onDone();
-        return;
-      }
-
-      // Typed character-by-character for commands and comments
-      setIsTyping(true);
-      setTypingBuffer('');
-      setTypingLineType(line.type);
-      let i = 0;
-
-      const tick = () => {
-        if (i < line.text.length) {
-          setTypingBuffer(line.text.slice(0, i + 1));
-          i++;
-          const delay = line.type === 'prompt-cmd'
-            ? 20 + Math.random() * 40
-            : 30 + Math.random() * 60;
-          setTimeout(tick, delay);
-        } else {
-          setIsTyping(false);
-          setTerminalLines((prev) => [...prev, line]);
-          setTypingBuffer('');
-          onDone();
-        }
-      };
-
-      tick();
-    },
-    [],
-  );
-
-  // ── Josh lines sequencer ─────────────────────────────────────────────────
-
-  const typeJoshLines = useCallback(
-    (lines: TermLine[], index: number, onAllDone: () => void) => {
-      if (index >= lines.length) {
-        onAllDone();
-        return;
-      }
-
-      const line = lines[index];
-      const isInstant =
-        line.type === 'output' || line.type === 'error' || line.type === 'blank';
-      const pauseBefore = index === 0
-        ? 400
-        : isInstant
-          ? 80
-          : 300 + Math.random() * 500;
-
-      setTimeout(() => {
-        typeTerminalLine(line, () => {
-          typeJoshLines(lines, index + 1, onAllDone);
-        }, isInstant);
-      }, pauseBefore);
-    },
-    [typeTerminalLine],
-  );
-
-  // ── Copilot message sequencer (typing + streaming) ──────────────────────
-
-  const playCopilotMessages = useCallback(
-    (index: number) => {
-      if (index >= COPILOT_MESSAGES.length) {
-        // All messages done — transition to rebuild deploy screen
-        setTimeout(() => {
-          if (!completedRef.current) {
-            completedRef.current = true;
-            setPhase('rebuild');
-          }
-        }, 1800);
-        return;
-      }
-
-      const msg = COPILOT_MESSAGES[index];
-
-      if (msg.role === 'user') {
-        // Type message in input area character by character
-        let i = 0;
-        const typeChar = () => {
-          if (i < msg.text.length) {
-            setInputTypingBuffer(msg.text.slice(0, i + 1));
-            i++;
-            setTimeout(typeChar, 22 + Math.random() * 38);
-          } else {
-            // Pause then "send"
-            setTimeout(() => {
-              setCopilotMessages((prev) => [...prev, msg]);
-              setInputTypingBuffer('');
-              setTimeout(() => playCopilotMessages(index + 1), 500);
-            }, 350);
-          }
-        };
-        setTimeout(typeChar, 300);
-      } else {
-        // Show thinking dots
-        setShowTypingIndicator(true);
-        const dotDelay = 700 + Math.random() * 500;
-        setTimeout(() => {
-          setShowTypingIndicator(false);
-
-          // Stream text word by word
-          setCurrentStreamingMsg(msg);
-          setShowStreamingFileEdit(false);
-          setStreamingText('');
-          let charIdx = 0;
-          const fullText = msg.text;
-
-          const streamWord = () => {
-            if (charIdx < fullText.length) {
-              let end = fullText.indexOf(' ', charIdx + 1);
-              if (end === -1) end = fullText.length;
-              else end += 1;
-              setStreamingText(fullText.slice(0, end));
-              charIdx = end;
-              setTimeout(streamWord, 30 + Math.random() * 40);
-            } else {
-              // Text done streaming
-              if (msg.fileEdit) {
-                setTimeout(() => {
-                  setShowStreamingFileEdit(true);
-                  setTimeout(() => {
-                    setCopilotMessages((prev) => [...prev, msg]);
-                    setStreamingText('');
-                    setCurrentStreamingMsg(null);
-                    setShowStreamingFileEdit(false);
-                    setTimeout(() => playCopilotMessages(index + 1), 600);
-                  }, 1200);
-                }, 400);
-              } else {
-                setTimeout(() => {
-                  setCopilotMessages((prev) => [...prev, msg]);
-                  setStreamingText('');
-                  setCurrentStreamingMsg(null);
-                  setTimeout(() => playCopilotMessages(index + 1), 600);
-                }, 400);
-              }
-            }
-          };
-          streamWord();
-        }, dotDelay);
-      }
-    },
-    [onComplete],
-  );
-
-  // ── Master timeline ──────────────────────────────────────────────────────
-
-  useEffect(() => {
-    const t1 = setTimeout(() => setPhase('slow'), 3000);
     const t2 = setTimeout(() => {
+      setProgress(65);
+    }, 1500);
+
+    // 3s: slow phase
+    const t3 = setTimeout(() => {
+        setPhase('slow');
+      setProgress(85);
+    }, 3000);
+
+    // 6s: error phase
+    const t4 = setTimeout(() => {
       setPhase('error');
       setShowError(true);
+      setProgress(90);
     }, 6000);
-    const t3 = setTimeout(() => {
+
+    // 8s: notify ("checking browser...")
+    const t5 = setTimeout(() => {
       setPhase('notify');
       setShowNotify(true);
     }, 8000);
-    const t4 = setTimeout(() => setPhase('josh'), 9000);
+
+    // 9s: terminal appears (start Josh lines)
+    const t6 = setTimeout(() => {
+      setPhase('josh');
+    }, 9000);
+
+    timersRef.current.push(t1, t2, t3, t4, t5, t6);
 
     return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-      clearTimeout(t4);
+      timersRef.current.forEach(clearTimeout);
     };
   }, []);
 
-  // ── Progress bar animation ───────────────────────────────────────────────
-
+  // 2. Josh typing phase 1
   useEffect(() => {
-    if (phase === 'progress') {
-      const start = performance.now();
-      let raf: number;
-      const animate = (now: number) => {
-        const elapsed = now - start;
-        const t = Math.min(elapsed / 3000, 1);
-        setProgress(t * 65);
-        if (t < 1) raf = requestAnimationFrame(animate);
-      };
-      raf = requestAnimationFrame(animate);
-      return () => cancelAnimationFrame(raf);
-    }
+    if (phase !== 'josh') return;
 
-    if (phase === 'slow') {
-      const targets = [67, 72, 78, 83, 89, 91, 92, 92, 92];
-      let i = 0;
-      const step = () => {
-        if (i < targets.length) {
-          setProgress(targets[i]);
-          i++;
-          const delay = 200 + Math.random() * 500;
-          setTimeout(step, delay);
-        }
-      };
-      step();
-    }
-  }, [phase]);
-
-  // ── Josh typing trigger ──────────────────────────────────────────────────
-
-  useEffect(() => {
-    if (phase === 'josh') {
-      typeJoshLines(JOSH_LINES, 0, () => setPhase('joshFix'));
-    }
-  }, [phase, typeJoshLines]);
-
-  // ── joshFix → errorBoundary ──────────────────────────────────────────────
-
-  useEffect(() => {
-    if (phase === 'joshFix') {
-      const t = setTimeout(() => {
-        setShowErrorBoundary(true);
+    // Type the first batch
+    typeLines(JOSH_LINES, 0, () => {
         setPhase('errorBoundary');
-      }, 800);
-      return () => clearTimeout(t);
-    }
+    });
+
+  }, [phase, typeLines]);
+
+  // 3. Error Boundary phase
+  useEffect(() => {
+      if (phase !== 'errorBoundary') return;
+
+      const t1 = setTimeout(() => {
+          setShowErrorBoundary(true);
+      }, 500);
+      
+      const t2 = setTimeout(() => {
+          setPhase('josh2');
+      }, 3500); // 3s of staring at error
+
+      timersRef.current.push(t1, t2);
   }, [phase]);
 
-  // ── errorBoundary → josh lines 2 ────────────────────────────────────────
-
+  // 4. Josh typing phase 2
   useEffect(() => {
-    if (phase === 'errorBoundary') {
-      const t = setTimeout(() => {
-        setPhase('josh2');
-      }, 2500);
-      return () => clearTimeout(t);
-    }
-  }, [phase]);
+      if (phase !== 'josh2') return;
 
-  // ── Josh lines 2 ────────────────────────────────────────────────────────
+      typeLines(JOSH_LINES_2, 0, () => {
+          setPhase('copilot');
+      });
+  }, [phase, typeLines]);
 
+  // 5. Copilot phase
   useEffect(() => {
-    if (phase === 'josh2') {
-      typeJoshLines(JOSH_LINES_2, 0, () => setPhase('copilot'));
-    }
-  }, [phase, typeJoshLines]);
-
-  // ── Copilot panel trigger ────────────────────────────────────────────────
-
-  useEffect(() => {
-    if (phase === 'copilot') {
+      if (phase !== 'copilot') return;
+      
       setShowCopilotPanel(true);
-      // Start messages after slide-in animation
       const t = setTimeout(() => {
-        playCopilotMessages(0);
+          playMessages(COPILOT_MESSAGES, 0, () => {
+              const t2 = setTimeout(() => {
+                  setPhase('rebuild');
+              }, 1800);
+              timersRef.current.push(t2);
+          });
       }, 450);
-      return () => clearTimeout(t);
-    }
-  }, [phase, playCopilotMessages]);
+      timersRef.current.push(t);
+  }, [phase, playMessages]);
+  
+  // Clean up hooks on unmount
+  useEffect(() => {
+    return () => {
+        clearTerminal();
+        resetAgent();
+    };
+  }, [clearTerminal, resetAgent]);
 
-  // ── Render helpers ───────────────────────────────────────────────────────
 
-  const showTerminal =
-    phase === 'josh' || phase === 'joshFix' || phase === 'errorBoundary' ||
-    phase === 'josh2' || phase === 'copilot' || phase === 'done';
+  // ── Render Helpers ─────────────────────────────────────────────────────────
 
-  const renderPrompt = () => (
-    <span style={styles.prompt}>~/portfolio $ </span>
-  );
-
-  const renderTerminalLine = (line: TermLine, i: number) => {
-    if (line.type === 'blank') {
-      return <p key={i} style={styles.terminalLine}>&nbsp;</p>;
-    }
-    if (line.type === 'prompt-cmd') {
-      return (
-        <p key={i} style={styles.terminalLine}>
-          {renderPrompt()}
-          <span style={styles.textColor}>{line.text}</span>
-        </p>
-      );
-    }
-    if (line.type === 'error') {
-      return (
-        <p key={i} style={styles.terminalLine}>
-          <span style={styles.errorColor}>{line.text}</span>
-        </p>
-      );
-    }
-    if (line.type === 'output') {
-      return (
-        <p key={i} style={styles.terminalLine}>
-          <span style={styles.textColor}>{line.text}</span>
-        </p>
-      );
-    }
-    // comment (Josh's aside)
-    return (
-      <p key={i} style={styles.terminalLine}>
-        <span style={styles.dimColor}>{line.text}</span>
-      </p>
-    );
-  };
-
-  // ── Render ───────────────────────────────────────────────────────────────
-
-  // Rebuild phase: show the quick successful deploy screen
   if (phase === 'rebuild') {
-    return <RebuildDeploy onComplete={onComplete} />;
+      return <RebuildDeploy onComplete={onComplete} />;
   }
+
+  const showTerminal = phase === 'josh' || phase === 'errorBoundary' || phase === 'josh2' || phase === 'copilot';
+
+  // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
     <div style={styles.root}>
-      {/* GitHub-style header */}
+      {/* Header */}
       <div style={styles.header}>
-        <OctocatSVG size={24} />
-        <span style={styles.headerText}>
-          GitHub Pages / hamburgj.github.io
-        </span>
+        <OctocatSVG size={28} />
+        <span style={styles.headerText}>GitHub Pages</span>
       </div>
 
-      {/* Main card area */}
+      {/* Main Content */}
       <div style={styles.main}>
         <div style={styles.card}>
-          <p style={styles.siteUrl}>hamburgj.github.io</p>
-          <h1 style={{ ...styles.heading, ...(showError ? { color: '#dc2626' } : {}) }}>
-            {showError ? 'Deploy failed' : 'Deploying to GitHub Pages'}
-          </h1>
+          <div style={styles.shieldWrap}>
+            <LoadingGearSVG />
+          </div>
+
+          <h2 style={styles.heading}>Checking your browser before accessing joshua.dev</h2>
 
           <div style={styles.progressTrack}>
             <div
-              style={{ ...styles.progressBar, width: `${progress}%`, ...(showError ? { background: '#dc2626' } : {}) }}
+              style={{
+                ...styles.progressBar,
+                width: `${progress}%`,
+                transition: phase === 'slow' ? 'width 4s linear' : 'width 0.3s ease',
+              }}
             />
           </div>
 
           <p style={styles.subtext}>
-            Building from branch <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>main</span> &middot; commit <span style={{ fontFamily: 'monospace' }}>8f2a3c1</span>
+            This process is automatic. Your browser will redirect to your requested
+            content shortly.
           </p>
+          <p style={styles.subtext}>Please allow up to 5 seconds...</p>
+
           <p style={styles.autoText}>
-            Deployment is running. The site will be available shortly.
-          </p>
-          <p style={styles.rayId}>
-            github.com/HamburgJ &middot; GitHub Actions
+            DDoS protection by <span style={{ color: '#3b82f6' }}>Cloudflare</span>
           </p>
 
-          {/* Error overlay — GitHub Actions style */}
-          {showError && (
+          <p style={styles.rayId}> Ray ID: 8c1d3f9e2a5b0001 </p>
+
+          {/* Error & Notify Overlay in Card */}
+          {(showError || showNotify) && (
             <div style={styles.errorOverlay}>
               <div style={styles.errorStatusRow}>
-                <div style={styles.errorStatusIcon}>✕</div>
-                <span style={styles.errorStatusText}>build and deploy</span>
-                <span style={styles.errorStatusTime}>failed in 47s</span>
+                <div style={styles.errorStatusIcon}>!</div>
+                <div style={styles.errorStatusText}>Connection Error</div>
+                <div style={styles.errorStatusTime}>Just now</div>
               </div>
+
               <div style={styles.errorLogBox}>
                 <div style={styles.errorLogHeader}>
-                  <span>▸</span>
-                  <span>Build with Node.js</span>
+                  <TerminalIcon />
+                  <span>Build Log</span>
                 </div>
                 <div style={styles.errorLogBody}>
-                  <p style={{ ...styles.errorLogLine, ...styles.errorLogDim }}>Run npm run build</p>
-                  <p style={styles.errorLogLine}>&gt; portfolio@1.0.0 build</p>
-                  <p style={styles.errorLogLine}>&gt; react-scripts build</p>
-                  <p style={styles.errorLogLine}>&nbsp;</p>
-                  <p style={{ ...styles.errorLogLine, ...styles.errorLogError }}>ERROR in src/components/Portfolio.jsx</p>
-                  <p style={{ ...styles.errorLogLine, ...styles.errorLogError }}>  Module not found: Can't resolve './config/portfolio-data'</p>
-                  <p style={styles.errorLogLine}>&nbsp;</p>
-                  <p style={{ ...styles.errorLogLine, ...styles.errorLogError }}>Process completed with exit code 1.</p>
+                  <p style={styles.errorLogLine}>
+                    <span style={styles.dimColor}>[14:02:33]</span> Starting build...
+                  </p>
+                  <p style={styles.errorLogLine}>
+                    <span style={styles.dimColor}>[14:02:34]</span> Building entry points...
+                  </p>
+                  <p style={styles.errorLogLine}>
+                    <span style={styles.errorColor}>Error:</span> Module build failed
+                  </p>
+                  <p style={styles.errorLogLine}>
+                    <span style={styles.errorColor}>Error:</span> Unexpected token in src/App.tsx
+                  </p>
                 </div>
               </div>
+
               {showNotify && (
-                <p style={styles.notifyText}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f9826c', display: 'inline-block' }} />
-                  Notifying site owner…
-                </p>
+                <div style={styles.notifyText}>
+                  <CopilotSparkle size={14} />
+                  <span>System alerting administrator...</span>
+                </div>
               )}
             </div>
           )}
@@ -1051,299 +578,97 @@ const LoadingSequence: React.FC<LoadingSequenceProps> = ({
 
       {/* Footer */}
       <div style={styles.footer}>
-        <OctocatSVG size={16} color="#586069" />
-        <span>
-          This site is deployed via GitHub Pages &middot; &copy; 2026 GitHub,
-          Inc.
-        </span>
+        <span>Performance & security by</span>
+        <span style={{ fontWeight: 600 }}>Cloudflare</span>
       </div>
 
-      {/* ── Fake React Error Boundary overlay ───────────────────────────── */}
+      {/* Fake Error Boundary */}
       {showErrorBoundary && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            backgroundColor: '#1e1e1e',
-            color: '#f44747',
-            fontFamily: 'monospace',
-            padding: '40px',
-            zIndex: 10000,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            overflow: 'auto',
-          }}
-        >
-          <h1 style={{ color: '#f44747', fontSize: '2rem', marginBottom: '1rem' }}>
-            Unhandled Runtime Error
-          </h1>
-          <div style={{
-            backgroundColor: '#2d2020',
-            border: '1px solid #f44747',
-            borderRadius: '4px',
-            padding: '16px',
-            marginBottom: '1rem',
-          }}>
-            <p style={{ color: '#f44747', fontSize: '1.1rem', margin: '0 0 12px 0' }}>
-              TypeError: Cannot read properties of undefined (reading &apos;map&apos;)
-            </p>
-            <p style={{ color: '#888', fontSize: '0.85rem', margin: 0, lineHeight: 1.7 }}>
-              at Portfolio (Portfolio.jsx:42:15)<br/>
-              at PortfolioGrid (PortfolioGrid.tsx:18:9)<br/>
-              at MainContent (MainContent.tsx:27:5)<br/>
-              at ErrorBoundary (ErrorBoundary.tsx:8:3)<br/>
-              at App (App.tsx:18:5)
-            </p>
-          </div>
-          <p style={{ color: '#888', fontSize: '0.9rem' }}>
-            This error occurred during rendering and was not recovered.
-          </p>
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: '#fff1f0',
+          color: '#c00',
+          zIndex: 10005,
+          padding: '40px',
+          fontFamily: '-apple-system, sans-serif',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          animation: 'vcFadeIn 0.3s ease-out',
+        }}>
+           <h2 style={{ fontSize: '24px', marginBottom: '16px' }}>
+             Something went wrong.
+           </h2>
+           <p style={{ fontSize: '16px', color: '#333', maxWidth: '500px', lineHeight: 1.5, textAlign: 'center' }}>
+             React Error Boundary caught an error in Component <strong>&lt;Portfolio /&gt;</strong>:
+             <br/>
+             <br/>
+             <code style={{ background: '#ffe', padding: '4px', border: '1px solid #ecc' }}>
+               TypeError: Cannot read properties of undefined (reading 'config')
+             </code>
+           </p>
+           <button style={{
+             marginTop: '24px',
+             padding: '8px 16px',
+             background: '#c00',
+             color: '#fff',
+             border: 'none',
+             borderRadius: '4px',
+             cursor: 'pointer',
+           }}>Reload Page</button>
         </div>
       )}
 
-      {/* ── VS Code Terminal Panel ──────────────────────────────────────── */}
-      {showTerminal && (
-        <div style={styles.terminalWrapper}>
-          {/* Blue accent separator */}
-          <div style={styles.terminalSeparator} />
-
-          {/* Title bar with tab + window controls */}
-          <div style={styles.terminalTitleBar}>
-            <div style={styles.terminalTabs}>
-              <div style={styles.terminalTab}>
-                <TerminalIcon />
-                <span>josh@portfolio</span>
-              </div>
-            </div>
-            <div style={styles.terminalWindowControls}>
-              <span style={styles.terminalWindowBtn}>&#x2013;</span>
-              <span style={styles.terminalWindowBtn}>&#x25A1;</span>
-              <span style={styles.terminalWindowBtn}>&times;</span>
-            </div>
-          </div>
-
-          {/* Terminal body */}
-          <div style={styles.terminalBody} ref={terminalRef}>
-            {terminalLines.map((line, i) => renderTerminalLine(line, i))}
-
-            {/* Currently typing line */}
-            {isTyping && typingBuffer && (
-              <p style={styles.terminalLine}>
-                {typingLineType === 'prompt-cmd' && renderPrompt()}
-                <span
-                  style={
-                    typingLineType === 'prompt-cmd'
-                      ? styles.textColor
-                      : typingLineType === 'error'
-                        ? styles.errorColor
-                        : styles.dimColor
-                  }
-                >
-                  {typingBuffer}
-                </span>
-                <span
-                  style={{
-                    display: 'inline-block',
-                    width: '7px',
-                    height: '14px',
-                    background: '#cccccc',
-                    marginLeft: '2px',
-                    verticalAlign: 'text-bottom',
-                    animation: 'blink 1s step-end infinite',
-                  }}
-                />
-              </p>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* ── Copilot Chat Panel (slides in from right) ───────────────────── */}
-      <div
+      {/* Terminal Overlay */}
+      <TerminalPanel
+        className={!showTerminal ? 'vcSlideDown' : 'vcSlideUp'}
         style={{
-          ...styles.copilotPanel,
-          ...(showCopilotPanel ? styles.copilotPanelVisible : {}),
+            position: 'fixed',
+            bottom: showTerminal ? 0 : -400,
+            left: 0,
+            right: showCopilotPanel ? '380px' : 0,
+            height: '40vh',
+            zIndex: 10010, // above error boundary? No, error boundary is 10005. Terminal is 10010.
+            transition: 'right 0.35s cubic-bezier(0.22, 1, 0.36, 1), bottom 0.5s ease',
         }}
+        lines={terminalLines}
+        typingBuffer={typingBuffer}
+        isTyping={isTyping}
+        typingLineType={typingLineType}
+      />
+
+      {/* Copilot Agent Panel */}
+      <CopilotAgentPanel
+        visible={showCopilotPanel}
+        messages={copilotMessages}
+        streamingMessage={currentStreamingMsg}
+        streamingText={streamingText}
+        showStreamingFileEdit={showStreamingFileEdit}
+        isThinking={showTypingIndicator}
+        inputBuffer={inputTypingBuffer}
+      />
+
+      {/* Skip Button */}
+      <button
+        style={{
+            ...styles.skipButton,
+            opacity: phase === 'done' ? 0 : 1,
+            pointerEvents: phase === 'done' ? 'none' : 'auto',
+        }}
+        onClick={onSkip}
       >
-        {/* Header */}
-        <div style={styles.copilotHeader}>
-          <CopilotSparkle size={16} />
-          <span style={styles.copilotHeaderTitle}>Copilot Chat</span>
-          <button type="button" style={styles.copilotCloseBtn}>&times;</button>
-        </div>
+        Skip Intro
+      </button>
 
-        {/* Messages */}
-        <div style={styles.copilotMessages} ref={copilotMsgRef}>
-          {copilotMessages.map((msg, i) => {
-            if (msg.role === 'user') {
-              return (
-                <div key={i} style={{ display: 'flex', justifyContent: 'flex-end', animation: 'msgIn 0.25s ease-out' }}>
-                  <div style={styles.copilotMessageUser}>
-                    {msg.text}
-                  </div>
-                </div>
-              );
-            }
-            return (
-              <div key={i} style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'flex-start', animation: 'msgIn 0.25s ease-out' }}>
-                <div style={styles.copilotAssistantHeader}>
-                  <span style={styles.copilotAssistantName}>Copilot</span>
-                </div>
-                <div style={styles.copilotMessageAssistant}>
-                  <span>{msg.text}</span>
-                  {msg.fileEdit && (
-                    <div style={styles.fileEditContainer}>
-                      <div style={styles.fileEditHeader}>
-                        <span>{msg.fileEdit.fileName}</span>
-                        <span style={{
-                          marginLeft: 'auto',
-                          fontSize: '9px',
-                          color: '#4ec9b0',
-                          background: 'rgba(78, 201, 176, 0.1)',
-                          padding: '2px 6px',
-                          borderRadius: '3px',
-                          fontFamily: MONO_STACK,
-                          textTransform: 'uppercase' as const,
-                          fontWeight: 600,
-                        }}>Modified</span>
-                      </div>
-                      <div style={styles.fileEditBody}>
-                        {msg.fileEdit.lines.map((line, j) => (
-                          <div key={j} style={
-                            line.startsWith('+') ? styles.fileEditLineAdd
-                            : line.startsWith('-') ? styles.fileEditLineRemove
-                            : styles.fileEditLineNeutral
-                          }>
-                            {line}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-
-          {/* Currently streaming assistant message */}
-          {currentStreamingMsg && (
-            <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'flex-start', animation: 'msgIn 0.25s ease-out' }}>
-              <div style={styles.copilotAssistantHeader}>
-                <span style={styles.copilotAssistantName}>Copilot</span>
-              </div>
-              <div style={styles.copilotMessageAssistant}>
-                <span>
-                  {streamingText}
-                  <span style={{
-                    display: 'inline-block',
-                    width: '2px',
-                    height: '14px',
-                    background: '#d4d4d4',
-                    marginLeft: '2px',
-                    verticalAlign: 'text-bottom',
-                    animation: 'blink 1s step-end infinite',
-                  }} />
-                </span>
-                {showStreamingFileEdit && currentStreamingMsg.fileEdit && (
-                  <div style={{ ...styles.fileEditContainer, animation: 'msgIn 0.3s ease-out' }}>
-                    <div style={styles.fileEditHeader}>
-                      <span>{currentStreamingMsg.fileEdit.fileName}</span>
-                      <span style={{
-                        marginLeft: 'auto',
-                        fontSize: '9px',
-                        color: '#4ec9b0',
-                        background: 'rgba(78, 201, 176, 0.1)',
-                        padding: '2px 6px',
-                        borderRadius: '3px',
-                        fontFamily: MONO_STACK,
-                        textTransform: 'uppercase' as const,
-                        fontWeight: 600,
-                      }}>Modified</span>
-                    </div>
-                    <div style={styles.fileEditBody}>
-                      {currentStreamingMsg.fileEdit.lines.map((line, j) => (
-                        <div key={j} style={
-                          line.startsWith('+') ? styles.fileEditLineAdd
-                          : line.startsWith('-') ? styles.fileEditLineRemove
-                          : styles.fileEditLineNeutral
-                        }>
-                          {line}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Typing indicator (three pulsing dots) */}
-          {showTypingIndicator && (
-            <div style={styles.typingIndicator}>
-              <span style={{ ...styles.typingDot, animation: 'dotPulse 1.4s ease-in-out 0s infinite' }} />
-              <span style={{ ...styles.typingDot, animation: 'dotPulse 1.4s ease-in-out 0.2s infinite' }} />
-              <span style={{ ...styles.typingDot, animation: 'dotPulse 1.4s ease-in-out 0.4s infinite' }} />
-            </div>
-          )}
-        </div>
-
-        {/* Input bar with typing animation */}
-        <div style={styles.copilotInputBar}>
-          <div style={{
-            ...styles.copilotInput,
-            color: inputTypingBuffer ? '#e0e0e0' : '#666',
-          }}>
-            {inputTypingBuffer || 'Ask Copilot...'}
-            {inputTypingBuffer && (
-              <span style={{
-                display: 'inline-block',
-                width: '2px',
-                height: '14px',
-                background: '#e0e0e0',
-                marginLeft: '1px',
-                verticalAlign: 'text-bottom',
-                animation: 'blink 1s step-end infinite',
-              }} />
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Skip button for return visitors */}
-      {!isFirstVisit && phase !== 'done' && (
-        <button
-          type="button"
-          style={styles.skipButton}
-          onClick={onSkip}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.opacity = '1';
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.opacity = '0.7';
-          }}
-        >
-          Skip
-        </button>
-      )}
-
-      {/* Keyframe animations */}
+      {/* Include Animations */}
       <style>{`
-        @keyframes blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
-        @keyframes dotPulse {
-          0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
-          40% { opacity: 1; transform: scale(1.1); }
-        }
-        @keyframes msgIn {
-          from { opacity: 0; transform: translateY(6px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
+          @keyframes vcBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+          @keyframes vcSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+          @keyframes vcSlideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+          @keyframes vcSlideDown { from { transform: translateY(0); opacity: 1; } to { transform: translateY(100%); opacity: 0; } }
+          @keyframes vcFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
     </div>
   );
