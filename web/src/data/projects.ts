@@ -19,4 +19,4 @@ export interface ProjectsData {
   socialLinks: SocialLinks;
 }
 
-export const { projects, socialLinks } = projectsData as ProjectsData; 
+export const { projects, socialLinks } = projectsData as ProjectsData;

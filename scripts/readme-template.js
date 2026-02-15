@@ -1,47 +1,100 @@
-const generateTemplate = (data) => `<h1 align="center">
-  <a href="#" style="text-decoration: none; font-size: 60px; font-weight: 700;">
-    Joshua Hamburger
-  </a>
-</h1>
+const generateTemplate = (data) => {
+  // Map from projects.json names to showcase card config
+  const gameConfig = {
+    'Infinite Levels!': { emoji: '∞', bgcolor: '#3730A3', badgeColor: '4F46E5', action: 'PLAY', desc: 'A recursive descent into mathematical madness. Every level reveals another. There is no end.' },
+    'Match Five':      { emoji: '🧩', bgcolor: '#6B21A8', badgeColor: '8B5CF6', action: 'PLAY', desc: 'One word. Five meanings. Vocabulary meets lateral thinking. No clutter. Just words.' },
+    'Four Nines':      { emoji: '🔢', bgcolor: '#991B1B', badgeColor: 'EF4444', action: 'SOLVE', desc: 'You have exactly four 9s. Combine them with any operation. Hit the target. Keep the streak.' },
+  };
+  const projectConfig = {
+    'PlantGuru':       { emoji: '🌱', bgcolor: '#14532D', badgeColor: '22C55E', action: 'EXPLORE', desc: 'IoT-powered botanical intelligence. Cloud-predicted watering schedules. Sensor-verified vibes. UWaterloo Capstone.' },
+    'Survivor Stats':  { emoji: '📊', bgcolor: '#7C2D12', badgeColor: 'F97316', action: 'TRY IT', desc: 'The tribe has spoken — and it said "give me a database." 50 seasons of blindsides, alliances, and immunity idols.' },
+  };
 
-<h2 align="center">
-  <a href="#" style="text-decoration: none; font-size: 30px; font-weight: 100;">
-    Projects
-  </a>
-</h2>
+  const games = data.projects.filter(p => p.name in gameConfig);
+  const projects = data.projects.filter(p => p.name in projectConfig);
 
-<div align="center" style="margin: 30px 0">
-${data.projects.map(project => `
-  <div style="background: #1a1b27; padding: 20px; border-radius: 10px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between;">
-    <div style="flex: 1; padding-right: 20px;">
-      <h3 style="color: ${project.color}; font-size: 24px; margin-bottom: 10px;">${project.name}</h3>
-      <p style="font-size: 16px; margin: 15px 0;">${project.description}</p>
-    </div>
-    <div style="display: flex; flex-direction: column; gap: 10px;">
-      <a href="${project.liveUrl}" target="_blank">
-        <img src="https://img.shields.io/badge/${project.actionText.replace(/ /g, '_')}-${project.color.replace('#', '')}?style=for-the-badge&logo=react&logoColor=white" alt="${project.actionText}" height="40">
-      </a>
-      <a href="${project.repoUrl}" target="_blank">
-        <img src="https://img.shields.io/badge/View_Code-2a2e3b?style=for-the-badge&logo=github&logoColor=white" alt="View Code" height="40">
-      </a>
-    </div>
-  </div>`).join('\n')}
-</div>
+  const gameCards = games.map(p => {
+    const c = gameConfig[p.name];
+    return `<td align="center" bgcolor="${c.bgcolor}" width="220">
+<br>
+<h1>${c.emoji}</h1>
+<h3>${p.name.replace('!', '')}</h3>
+<p>${c.desc}</p>
+<a href="${p.liveUrl}"><img src="https://img.shields.io/badge/▶_${c.action}-${c.badgeColor}?style=flat-square" alt="${c.action}"></a>
+<a href="${p.repoUrl}"><img src="https://img.shields.io/badge/Code-24292e?style=flat-square&logo=github&logoColor=white" alt="Code"></a>
+<br><br>
+</td>`;
+  }).join('\n');
+
+  const projectCards = projects.map(p => {
+    const c = projectConfig[p.name];
+    return `<td align="center" bgcolor="${c.bgcolor}" width="340">
+<br>
+<h3>${c.emoji} ${p.name}</h3>
+<p>${c.desc}</p>
+<a href="${p.liveUrl}"><img src="https://img.shields.io/badge/${c.action.replace(/ /g, '_')}-${c.badgeColor}?style=flat-square" alt="${c.action}"></a>
+<a href="${p.repoUrl}"><img src="https://img.shields.io/badge/Code-24292e?style=flat-square&logo=github&logoColor=white" alt="Code"></a>
+<br><br>
+</td>`;
+  }).join('\n');
+
+  return `<div align="center">
+
+![header](https://capsule-render.vercel.app/api?type=venom&color=0:0d1117,100:161b22&height=220&text=Josh%20Hamburger&fontSize=46&fontColor=58a6ff&animation=fadeIn&fontAlignY=32&desc=you%20found%20my%20github%20page.%20congratulations.&descSize=16&descAlignY=55&descColor=8b949e)
+
+🍔 Prompt Engineer at [Expertise AI](https://www.expertise.ai/). ECE UWaterloo 2025.
 
 <br>
-<div align="center">
-  <a href="${data.socialLinks.linkedin}" target="_blank">
-    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
-  </a>
-</div>
-<br>
 
-<div align="center">
-  <img width="50%" src="https://github-readme-stats.vercel.app/api/top-langs/?username=HamburgJ&theme=radical&hide=html,css&layout=compact&langs_count=6&bg_color=101010&hide_title=true">
+<a href="https://www.expertise.ai/">
+<img src="https://img.shields.io/badge/🤖_Try_My_AI-161b22?style=for-the-badge&logoColor=white" alt="Try My AI" height="40">
+</a>
+
+<a href="${data.socialLinks.linkedin}">
+<img src="https://img.shields.io/badge/💼_Connect_on_LinkedIn-161b22?style=for-the-badge&logoColor=white" alt="LinkedIn" height="40">
+</a>
+
+<a href="https://hamburgj.github.io/">
+<img src="https://img.shields.io/badge/Portfolio-fcfbf9?style=for-the-badge&logo=safari&logoColor=333" alt="Portfolio">
+</a>
+
 </div>
+
+---
+
+<h3 align="center">G A M E S</h3>
+
+<table align="center">
+<tr>
+${gameCards}
+</tr>
+</table>
+
+---
+
+<h3 align="center">P R O J E C T S</h3>
+
+<table align="center">
+<tr>
+${projectCards}
+</tr>
+</table>
+
+---
+
+<h3 align="center">P O R T F O L I O</h3>
+
+<table align="center">
+<tr>
+<td align="center" bgcolor="#161b22" width="680">
 <br>
-<div align="center" style="margin-top: 20px;">
-  <img src="https://komarev.com/ghpvc/?username=HamburgJ&color=DD6387&style=for-the-badge">
-</div>`;
+<h3>🍔 hamburgj.github.io</h3>
+<p>My interactive portfolio site. Poke around — there's more than meets the eye.</p>
+<a href="https://hamburgj.github.io/"><img src="https://img.shields.io/badge/VISIT-58a6ff?style=for-the-badge" alt="Visit"></a>
+<br><br>
+</td>
+</tr>
+</table>`;
+};
 
 module.exports = generateTemplate; 
