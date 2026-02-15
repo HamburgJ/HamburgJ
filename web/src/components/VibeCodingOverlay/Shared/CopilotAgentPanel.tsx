@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { CopilotSparkle, PencilIcon } from './Icons';
+import { CopilotSparkle, PencilIcon, SHARED_KEYFRAMES } from './Icons';
 import { FileEditBlock, ActionIndicator, FileEditData } from './AgentParts';
 
 const FONT_STACK = 'system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
@@ -222,20 +222,7 @@ export const CopilotAgentPanel: React.FC<CopilotAgentPanelProps> = ({
         </div>
       </div>
       
-      <style>{`
-        @keyframes vcBlink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
-        @keyframes vcSpin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        @keyframes vcFadeIn {
-          from { opacity: 0; transform: translateY(4px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
+      <style>{SHARED_KEYFRAMES}</style>
     </div>
   );
 };

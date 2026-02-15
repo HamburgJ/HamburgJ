@@ -176,46 +176,6 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
 
   // ── Render helpers ─────────────────────────────────────────────────────
 
-  const renderPrompt = () => (
-    <span style={{ color: '#4ec9b0' }}>~/portfolio $ </span>
-  );
-
-  const renderTerminalLines = () => (
-    <>
-      {terminalLines.map((line, i) => {
-        const lineStyle: React.CSSProperties = { margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: '20px' };
-        if (line.type === 'blank') return <p key={i} style={lineStyle}>&nbsp;</p>;
-        if (line.type === 'prompt-cmd') {
-          return <p key={i} style={lineStyle}>{renderPrompt()}<span style={{ color: '#cccccc' }}>{line.text}</span></p>;
-        }
-        if (line.type === 'error') {
-          return <p key={i} style={lineStyle}><span style={{ color: '#f44747' }}>{line.text}</span></p>;
-        }
-        if (line.type === 'output') {
-          return <p key={i} style={lineStyle}><span style={{ color: '#cccccc' }}>{line.text}</span></p>;
-        }
-        return <p key={i} style={lineStyle}><span style={{ color: '#a0a0a0' }}>{line.text}</span></p>;
-      })}
-
-      {isTyping && typingBuffer && (
-        <p style={{ margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: '20px' }}>
-          {typingLineType === 'prompt-cmd' && renderPrompt()}
-          <span style={{
-            color: typingLineType === 'prompt-cmd' ? '#cccccc'
-              : typingLineType === 'error' ? '#f44747' : '#a0a0a0',
-          }}>
-            {typingBuffer}
-          </span>
-          <span style={{
-            display: 'inline-block', width: '7px', height: '14px',
-            background: '#cccccc', marginLeft: '2px', verticalAlign: 'text-bottom',
-            animation: 'vcBlink 1s step-end infinite',
-          }} />
-        </p>
-      )}
-    </>
-  );
-
   if (!active && !closing) return null;
 
   // ── Error overlay ────────────────────────────────────────────────────────
@@ -250,9 +210,11 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
             ? 'vcSlideDown 0.6s cubic-bezier(0.4, 0, 1, 1) forwards'
             : 'vcSlideUp 0.5s cubic-bezier(0, 0, 0.2, 1) forwards',
         }}
-      >
-        {renderTerminalLines()}
-      </TerminalPanel>
+        lines={terminalLines}
+        typingBuffer={typingBuffer}
+        isTyping={isTyping}
+        typingLineType={typingLineType}
+      />
 
       {/* Copilot panel */}
       <CopilotAgentPanel
@@ -264,22 +226,6 @@ const VibeCodingOverlay: React.FC<VibeCodingOverlayProps> = ({
         isThinking={showTypingIndicator}
         inputBuffer={inputTypingBuffer}
       />
-
-      {/* Keyframes */}
-      <style>{`
-        @keyframes vcBlink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
-        @keyframes vcSlideUp {
-          from { transform: translateY(100%); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes vcSlideDown {
-          from { transform: translateY(0); opacity: 1; }
-          to { transform: translateY(100%); opacity: 0; }
-        }
-      `}</style>
     </>
   );
 };

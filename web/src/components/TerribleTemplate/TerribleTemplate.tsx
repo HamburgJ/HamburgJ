@@ -127,12 +127,7 @@ const keyframesCSS = `
   0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 7px #0ff, 0 0 10px #0ff, 0 0 21px #0ff, 0 0 42px #0ff; }
   20%, 24%, 55% { text-shadow: none; }
 }
-/* Shared component animations */
-@keyframes vcBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-@keyframes vcSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@keyframes vcSlideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-@keyframes vcSlideDown { from { transform: translateY(0); opacity: 1; } to { transform: translateY(100%); opacity: 0; } }
-@keyframes vcFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+/* vc* keyframes provided by shared TerminalPanel/CopilotAgentPanel */
 `;
 
 const FireDivider: React.FC = () => (
@@ -339,47 +334,6 @@ const TerribleTemplate: React.FC<TerribleTemplateProps> = ({ onComplete }) => {
 
   const showJosh = phase === 'josh-typing' || phase === 'copilot-reprompt' || phase === 'crumbling';
 
-  // Render Helpers
-  const renderPrompt = () => (
-    <span style={{ color: '#4ec9b0' }}>~/portfolio $ </span>
-  );
-
-  const renderTerminalLines = () => (
-    <>
-      {terminalLines.map((line, i) => {
-        const lineStyle: React.CSSProperties = { margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: '20px' };
-        if (line.type === 'blank') return <p key={i} style={lineStyle}>&nbsp;</p>;
-        if (line.type === 'prompt-cmd') {
-          return <p key={i} style={lineStyle}>{renderPrompt()}<span style={{ color: '#cccccc' }}>{line.text}</span></p>;
-        }
-        if (line.type === 'error') {
-          return <p key={i} style={lineStyle}><span style={{ color: '#f44747' }}>{line.text}</span></p>;
-        }
-        if (line.type === 'output') {
-          return <p key={i} style={lineStyle}><span style={{ color: '#cccccc' }}>{line.text}</span></p>;
-        }
-        return <p key={i} style={lineStyle}><span style={{ color: '#a0a0a0' }}>{line.text}</span></p>;
-      })}
-
-      {isTyping && typingBuffer && (
-        <p style={{ margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: '20px' }}>
-          {typingLineType === 'prompt-cmd' && renderPrompt()}
-          <span style={{
-            color: typingLineType === 'prompt-cmd' ? '#cccccc'
-              : typingLineType === 'error' ? '#f44747' : '#a0a0a0',
-          }}>
-            {typingBuffer}
-          </span>
-          <span style={{
-            display: 'inline-block', width: '7px', height: '14px',
-            background: '#cccccc', marginLeft: '2px', verticalAlign: 'text-bottom',
-            animation: 'vcBlink 1s step-end infinite',
-          }} />
-        </p>
-      )}
-    </>
-  );
-
   // Rebuild phase: show the quick successful deploy screen
   if (phase === 'rebuild') {
     return <RebuildDeploy onComplete={onComplete} />;
@@ -438,16 +392,18 @@ const TerribleTemplate: React.FC<TerribleTemplateProps> = ({ onComplete }) => {
         className={!showJosh ? "vcSlideDown" : "vcSlideUp"}
         style={{
             position: 'fixed',
-            bottom: showJosh ? 0 : -400, // naive slide out
+            bottom: showJosh ? 0 : -400,
             left: 0,
             right: showCopilotPanel ? '380px' : 0,
             height: '40vh',
             zIndex: 10000,
             transition: 'right 0.35s cubic-bezier(0.22, 1, 0.36, 1), bottom 0.5s ease',
         }}
-      >
-        {renderTerminalLines()}
-      </TerminalPanel>
+        lines={terminalLines}
+        typingBuffer={typingBuffer}
+        isTyping={isTyping}
+        typingLineType={typingLineType}
+      />
 
       {/* Copilot panel */}
       <CopilotAgentPanel

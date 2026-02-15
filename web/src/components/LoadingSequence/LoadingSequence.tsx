@@ -4,7 +4,7 @@ import { useTerminalTyper, TerminalLine } from '../VibeCodingOverlay/Shared/useT
 import { useAgentSequencer, AgentMessage } from '../VibeCodingOverlay/Shared/useAgentSequencer';
 import { TerminalPanel } from '../VibeCodingOverlay/Shared/TerminalPanel';
 import { CopilotAgentPanel } from '../VibeCodingOverlay/Shared/CopilotAgentPanel';
-import { TerminalIcon, CopilotSparkle } from '../VibeCodingOverlay/Shared/Icons';
+import { TerminalIcon, CopilotSparkle, OctocatSVG, SHARED_KEYFRAMES } from '../VibeCodingOverlay/Shared/Icons';
 
 interface LoadingSequenceProps {
   isFirstVisit: boolean;
@@ -13,21 +13,6 @@ interface LoadingSequenceProps {
 }
 
 // ── Inline SVGs ──────────────────────────────────────────────────────────────
-
-const OctocatSVG: React.FC<{ size?: number; color?: string }> = ({
-  size = 32,
-  color = '#fff',
-}) => (
-  <svg
-    height={size}
-    viewBox="0 0 16 16"
-    width={size}
-    fill={color}
-    aria-hidden="true"
-  >
-    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
-  </svg>
-);
 
 const LoadingGearSVG: React.FC = () => (
   <svg
@@ -551,16 +536,16 @@ const LoadingSequence: React.FC<LoadingSequenceProps> = ({
                 </div>
                 <div style={styles.errorLogBody}>
                   <p style={styles.errorLogLine}>
-                    <span style={styles.dimColor}>[14:02:33]</span> Starting build...
+                    <span style={{ color: '#6a737d' }}>[14:02:33]</span> Starting build...
                   </p>
                   <p style={styles.errorLogLine}>
-                    <span style={styles.dimColor}>[14:02:34]</span> Building entry points...
+                    <span style={{ color: '#6a737d' }}>[14:02:34]</span> Building entry points...
                   </p>
                   <p style={styles.errorLogLine}>
-                    <span style={styles.errorColor}>Error:</span> Module build failed
+                    <span style={{ color: '#f97583' }}>Error:</span> Module build failed
                   </p>
                   <p style={styles.errorLogLine}>
-                    <span style={styles.errorColor}>Error:</span> Unexpected token in src/App.tsx
+                    <span style={{ color: '#f97583' }}>Error:</span> Unexpected token in src/App.tsx
                   </p>
                 </div>
               </div>
@@ -662,14 +647,8 @@ const LoadingSequence: React.FC<LoadingSequenceProps> = ({
         Skip Intro
       </button>
 
-      {/* Include Animations */}
-      <style>{`
-          @keyframes vcBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-          @keyframes vcSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-          @keyframes vcSlideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-          @keyframes vcSlideDown { from { transform: translateY(0); opacity: 1; } to { transform: translateY(100%); opacity: 0; } }
-          @keyframes vcFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-      `}</style>
+      {/* Shared keyframes (slide, blink, fade, etc.) */}
+      <style>{SHARED_KEYFRAMES}</style>
     </div>
   );
 };

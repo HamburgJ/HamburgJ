@@ -1,5 +1,5 @@
 import React from 'react';
-import { TerminalIcon } from './Icons';
+import { TerminalIcon, SHARED_KEYFRAMES } from './Icons';
 import { TerminalLine } from './useTerminalTyper';
 
 const FONT_STACK = 'system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
@@ -82,14 +82,11 @@ export const TerminalPanel: React.FC<TerminalPanelProps> = ({
                <span style={{
                  display: 'inline-block', width: '7px', height: '14px',
                  background: '#cccccc', marginLeft: '2px', verticalAlign: 'text-bottom',
-                 animation: 'tpBlink 1s step-end infinite',
+                 animation: 'vcBlink 1s step-end infinite',
                }} />
              )}
            </p>
         )}
-        <style>{`
-          @keyframes tpBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        `}</style>
       </div>
     );
   };
@@ -158,6 +155,9 @@ export const TerminalPanel: React.FC<TerminalPanelProps> = ({
       }}>
         {renderContent()}
       </div>
+
+      {/* Shared keyframes for blink, slide, spin, fade */}
+      <style>{SHARED_KEYFRAMES}</style>
     </div>
   );
 };

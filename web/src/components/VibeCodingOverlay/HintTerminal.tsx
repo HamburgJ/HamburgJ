@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { TerminalPanel } from './Shared/TerminalPanel';
 import { useTerminalTyper } from './Shared/useTerminalTyper';
 
@@ -13,47 +13,30 @@ const HintTerminal: React.FC<HintTerminalProps> = ({ lines, visible }) => {
     typingBuffer, 
     isTyping, 
     typingLineType, 
-    typeLine, 
+    typeLines, 
     clearLines 
   } = useTerminalTyper();
 
-  const [hasStarted, setHasStarted] = useState(false);
-  const queueRef = useRef<string[]>([]);
-  const processingRef = useRef(false);
+  const startedRef = useRef(false);
 
   // Reset when visibility changes
   useEffect(() => {
     if (!visible) {
       clearLines();
-      setHasStarted(false);
-      processingRef.current = false;
-      queueRef.current = [];
+      startedRef.current = false;
     } else {
       // 600ms start delay matching original animation
       const t = setTimeout(() => {
-        setHasStarted(true);
-        queueRef.current = [...lines];
-        processQueue();
+        if (!startedRef.current) {
+          startedRef.current = true;
+          // Convert plain strings to TerminalLine objects
+          const termLines = lines.map(text => ({ type: 'comment' as const, text }));
+          typeLines(termLines, 0, () => { /* done */ });
+        }
       }, 600);
       return () => clearTimeout(t);
     }
-  }, [visible, lines, clearLines]);
-
-  const processQueue = () => {
-    if (processingRef.current || queueRef.current.length === 0) return;
-    
-    processingRef.current = true;
-    const nextText = queueRef.current.shift()!;
-    
-    typeLine(
-      { type: 'comment', text: nextText },
-      () => {
-        processingRef.current = false;
-        // Small pause between lines
-        setTimeout(processQueue, 300); 
-      }
-    );
-  };
+  }, [visible, lines, clearLines, typeLines]);
 
   if (!visible) return null;
 
